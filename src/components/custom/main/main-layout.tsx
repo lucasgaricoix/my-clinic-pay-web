@@ -6,30 +6,34 @@ import {
   Link,
   List,
   ListItem,
-  MenuIcon,
   StackDivider,
   Text,
 } from '@chakra-ui/react'
+import NextLink from 'next/link'
 
 export const MainLayout: React.FC = ({ children }) => {
   const menus = [
-    { description: 'Home', icon: <MenuIcon />, link: '/' },
+    { description: 'Home', icon: '', link: '/' },
     { description: 'Pagamentos', icon: '', link: '/' },
-    { description: 'Pacientes', icon: '', link: '/' },
+    { description: 'Pacientes', icon: '', link: '/patient' },
     { description: 'Tipos de pagamento', icon: '', link: '/payment/type' },
   ]
-  const LeftMenu = () => (
-    <List py={4} spacing={4}>
-      {menus.map((menu) => (
-        <ListItem key={menu.description}>
-          <Link href={menu.link}>
-            <Text color="gray.700" fontSize="md" fontWeight={600}>
-              {menu.description}
-            </Text>
-          </Link>
-        </ListItem>
-      ))}
-    </List>
+  const SideBar = () => (
+    <Flex w="xs">
+      <List py={4} spacing={4}>
+        {menus.map((menu) => (
+          <ListItem key={menu.description}>
+            <NextLink href={menu.link} shallow passHref>
+              <Link>
+                <Text color="gray.700" fontSize="md" fontWeight={600}>
+                  {menu.description}
+                </Text>
+              </Link>
+            </NextLink>
+          </ListItem>
+        ))}
+      </List>
+    </Flex>
   )
   return (
     <Container maxW="full" maxH="full" p="8">
@@ -42,7 +46,7 @@ export const MainLayout: React.FC = ({ children }) => {
         align="stretch"
         divider={<StackDivider borderColor="gray.200" />}
       >
-        <LeftMenu />
+        <SideBar />
         {children}
       </HStack>
     </Container>

@@ -6,7 +6,6 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
-  Select,
   Text,
   useToast,
 } from '@chakra-ui/react'
@@ -14,36 +13,27 @@ import { Field, FieldProps, Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
-import { PaymentTypeService } from '../../../services/payment'
-import { PaymentType } from '../../../types/payment-type/payment-type'
+import { PatientService } from '../../services/patient'
+import { Patient } from '../../types/patient/patient-type'
 
-const initialValues: PaymentType = {
+const initialValues: Patient = {
   id: '',
-  type: 'income',
-  description: '',
-  value: 0.0,
+  name: '',
+  birthDate: '',
+  responsible: {
+    name: '',
+  },
 }
 
 const schema = yup.object().shape({
-  type: yup.string().required(),
-  description: yup.string().required(),
-  value: yup.number().min(1).required(),
+  name: yup.string().required(),
+  birthDate: yup.date().required(),
+  responsible: yup.object().required(),
 })
 
-const types = [
-  {
-    name: 'INCOME',
-    description: 'Receita',
-  },
-  {
-    name: 'EXPENSE',
-    description: 'Despesa',
-  },
-]
-
-export const PaymentTypeFormComponent = () => {
+export const PatientFormComponent = () => {
   const [loading, setLoading] = useState(false)
-  const [paymentType, setPaymentType] = useState<PaymentType>(initialValues)
+  const [paymentType, setPaymentType] = useState<Patient>(initialValues)
   const route = useRouter()
   const { id } = route.query
   const toast = useToast()
@@ -52,7 +42,7 @@ export const PaymentTypeFormComponent = () => {
     async (id: string) => {
       try {
         setLoading(true)
-        const response = await PaymentTypeService.findById(id)
+        const response = await PatientService.findById(id)
         setPaymentType(response.data)
       } catch (error) {
         toast({
@@ -78,12 +68,12 @@ export const PaymentTypeFormComponent = () => {
   }, [id, fetchPaymentType])
 
   const handleSubmit = async (
-    values: PaymentType,
-    action: FormikHelpers<PaymentType>
+    values: Patient,
+    action: FormikHelpers<Patient>
   ) => {
     try {
       const method = values.id ? 'update' : 'save'
-      await PaymentTypeService.save(values, method)
+      await PatientService.save(values, method)
       toast({
         title: 'Sucesso',
         description: 'Dados alterados no servidor :)',
@@ -111,9 +101,9 @@ export const PaymentTypeFormComponent = () => {
     <Flex direction="column" w="full" p="4" mb="4">
       {loading && <CircularProgress />}
       <Text fontWeight="600" fontSize="20" py="2">
-        Tipos de pagamentos
+        Cadastro de paciente
       </Text>
-      <Formik<PaymentType>
+      <Formik<Patient>
         initialValues={paymentType}
         onSubmit={handleSubmit}
         validationSchema={schema}
@@ -142,56 +132,52 @@ export const PaymentTypeFormComponent = () => {
                 )}
               </Field>
             )}
-            <Field as="select" name="type">
+            <Field name="name">
               {({ field }: FieldProps<string>) => {
                 return (
                   <FormControl
-                    w="50%"
                     isRequired
-                    isInvalid={!!errors.type && !!touched.type}
+                    isInvalid={!!errors.name && !!touched.name}
                   >
-                    <FormLabel htmlFor="type">Tipo</FormLabel>
-                    <Select {...field} id="type">
-                      {types.map((type) => (
-                        <option key={type.name} value={type.name}>
-                          {type.description}
-                        </option>
-                      ))}
-                    </Select>
-                    {errors.type && (
-                      <FormErrorMessage>{errors.type}</FormErrorMessage>
+                    <FormLabel htmlFor="name">Nome</FormLabel>
+                    <Input {...field} id="name" />
+                    {errors.name && (
+                      <FormErrorMessage>{errors.name}</FormErrorMessage>
                     )}
                   </FormControl>
                 )
               }}
             </Field>
-            <Field name="description">
-              {({ field }: FieldProps<string>) => {
-                return (
-                  <FormControl
-                    isRequired
-                    isInvalid={!!errors.description && !!touched.description}
-                  >
-                    <FormLabel htmlFor="description">Descrição</FormLabel>
-                    <Input {...field} id="description" />
-                    {errors.description && (
-                      <FormErrorMessage>{errors.description}</FormErrorMessage>
-                    )}
-                  </FormControl>
-                )
-              }}
-            </Field>
-            <Field name="value">
+            <Field name="birthDate">
               {({ field }: FieldProps<number>) => (
                 <FormControl
-                  id="value"
+                  id="birthDate"
                   isRequired
-                  isInvalid={!!errors.value && !!touched.value}
+                  isInvalid={!!errors.birthDate && !!touched.birthDate}
                 >
-                  <FormLabel htmlFor="value">Valor</FormLabel>
-                  <Input {...field} id="value" />
-                  {errors.value && (
-                    <FormErrorMessage>{errors.value}</FormErrorMessage>
+                  <FormLabel htmlFor="birthDate">Data de nascimento</FormLabel>
+                  <Input {...field} id="birthDate" type="date" />
+                  {errors.birthDate && (
+                    <FormErrorMessage>{errors.birthDate}</FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            </Field>
+            <Field name="responsible.name">
+              {({ field }: FieldProps<number>) => (
+                <FormControl
+                  id="responsible.name"
+                  isRequired
+                  isInvalid={
+                    !!errors.responsible?.name && !!touched.responsible?.name
+                  }
+                >
+                  <FormLabel htmlFor="responsible.name">Responsável</FormLabel>
+                  <Input {...field} id="responsible.name" />
+                  {errors.responsible?.name && (
+                    <FormErrorMessage>
+                      {errors.responsible.name}
+                    </FormErrorMessage>
                   )}
                 </FormControl>
               )}

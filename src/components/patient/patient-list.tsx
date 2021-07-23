@@ -15,30 +15,25 @@ import {
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-import { PaymentTypeService } from '../../../services/payment'
-import { PaymentType } from '../../../types/payment-type/payment-type'
-import { CustomAlertDialog } from '../../custom/alert/alert-dialog'
+import { PatientService } from '../../services/patient'
+import { Patient } from '../../types/patient/patient-type'
+import { CustomAlertDialog } from '../custom/alert/alert-dialog'
 
-const typeTranslation: Record<string, string> = {
-  INCOME: 'Receita',
-  EXPENSE: 'Despesa',
-}
-
-export const PaymentTypeComponent = () => {
+export const PatientList = () => {
   const [loading, setLoading] = useState(false)
   const [removeId, setRemoveId] = useState('')
-  const [paymentTypes, setPaymentTypes] = useState<PaymentType[]>([])
+  const [patients, setPatients] = useState<Patient[]>([])
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const fetch = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await PaymentTypeService.getAll()
-      setPaymentTypes(response.data)
+      const response = await PatientService.findAll()
+      setPatients(response.data)
     } catch (error) {
       toast({
-        title: 'Erro ao carregar os tipos de pagamento',
+        title: 'Erro ao carregar os Pacientes',
         description: 'Não funfou :(',
         status: 'error',
         position: 'top-right',
@@ -57,11 +52,11 @@ export const PaymentTypeComponent = () => {
   const handleRemove = useCallback(async () => {
     try {
       setLoading(true)
-      await PaymentTypeService.removeById(removeId)
+      await PatientService.deleteById(removeId)
       onClose()
       toast({
         title: 'Sucesso',
-        description: 'Removido o tipo de pagamento :)',
+        description: 'Removido o paciente :)',
         status: 'success',
         position: 'top-right',
         duration: 5000,
@@ -70,7 +65,7 @@ export const PaymentTypeComponent = () => {
       fetch()
     } catch (error) {
       toast({
-        title: 'Erro ao remover o tipo de pagamento',
+        title: 'Erro ao remover o paciente',
         description: 'Não funfou :(',
         status: 'error',
         position: 'top-right',
@@ -82,17 +77,24 @@ export const PaymentTypeComponent = () => {
     }
   }, [removeId, onClose, toast, fetch])
 
+  function getAge(birthday: string) {
+    const date = new Date(birthday)
+    var ageDifMs = Date.now() - date.getTime()
+    var ageDate = new Date(ageDifMs)
+    return Math.abs(ageDate.getUTCFullYear() - 1970)
+  }
+
   return (
     <Flex w="full" h="full" direction="column" p="4">
       <Text fontWeight="600" fontSize="lg" py="2">
-        Tipos de pagamentos
+        Pacientes
       </Text>
       {loading ? (
         <Progress size="xs" isIndeterminate />
       ) : (
         <>
           <Flex justifyContent="flex-end">
-            <NextLink href="type/new" shallow passHref>
+            <NextLink href="patient/new" shallow passHref>
               <Button>Adicionar</Button>
             </NextLink>
           </Flex>
@@ -100,26 +102,29 @@ export const PaymentTypeComponent = () => {
             <Table>
               <Thead>
                 <Tr>
-                  <Th>Tipo</Th>
-                  <Th>Descrição</Th>
-                  <Th>Valor</Th>
-                  <Th>Opçoes</Th>
+                  <Th>Nome</Th>
+                  <Th>Data de nascimento</Th>
+                  <Th>Idade</Th>
+                  <Th>Responsável</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {paymentTypes.map((paymentType) => (
-                  <Tr key={paymentType.id}>
-                    <Td>{typeTranslation[paymentType.type]}</Td>
-                    <Td>{paymentType.description}</Td>
-                    <Td>{paymentType.value}</Td>
+                {patients.map((patient) => (
+                  <Tr key={patient.id}>
+                    <Td>{patient.name}</Td>
+                    <Td>
+                      {new Date(patient.birthDate).toLocaleDateString('pt')}
+                    </Td>
+                    <Td>{getAge(patient.birthDate) || ''}</Td>
+                    <Td>{patient.responsible.name}</Td>
                     <Td>
                       <Box>
-                        <NextLink href={`type/${paymentType.id}`}>
+                        <NextLink href={`patient/${patient.id}`}>
                           <Button mr="4">Editar</Button>
                         </NextLink>
                         <Button
                           onClick={() => {
-                            setRemoveId(paymentType.id)
+                            setRemoveId(patient.id!)
                             onOpen()
                           }}
                         >
@@ -138,8 +143,8 @@ export const PaymentTypeComponent = () => {
         isOpen={isOpen}
         onClose={onClose}
         onSubmit={handleRemove}
-        title="Remover tipo de pagamento"
-        description="Deseja remover o tipo de pagamento?"
+        title="Remover paciente"
+        description="Deseja remover o paciente?"
       />
     </Flex>
   )

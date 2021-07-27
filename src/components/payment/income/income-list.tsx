@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   Flex,
@@ -7,7 +8,6 @@ import {
   Table,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
@@ -17,30 +17,26 @@ import {
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { IoAddCircleOutline, IoPencil, IoTrash } from 'react-icons/io5'
-import { PaymentTypeService } from '../../../services/payment'
-import { PaymentType } from '../../../types/payment/payment-type'
+import { IncomeService } from '../../../services/payment'
+import { Income } from '../../../types/payment/income'
+import { toBRL } from '../../../utils/format'
 import { CustomAlertDialog } from '../../custom/alert/alert-dialog'
 
-const typeTranslation: Record<string, string> = {
-  INCOME: 'Receita',
-  EXPENSE: 'Despesa',
-}
-
-export const PaymentTypeComponent = () => {
+export const IncomeList = () => {
   const [loading, setLoading] = useState(false)
   const [removeId, setRemoveId] = useState('')
-  const [paymentTypes, setPaymentTypes] = useState<PaymentType[]>([])
+  const [incomes, setIncomes] = useState<Income[]>([])
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const fetch = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await PaymentTypeService.getAll()
-      setPaymentTypes(response.data)
+      const response = await IncomeService.findAll()
+      setIncomes(response.data)
     } catch (error) {
       toast({
-        title: 'Erro ao carregar os tipos de pagamento',
+        title: 'Erro ao carregar as receitas',
         description: 'Não funfou :(',
         status: 'error',
         position: 'top-right',
@@ -59,11 +55,11 @@ export const PaymentTypeComponent = () => {
   const handleRemove = useCallback(async () => {
     try {
       setLoading(true)
-      await PaymentTypeService.removeById(removeId)
+      await IncomeService.deleteById(removeId)
       onClose()
       toast({
         title: 'Sucesso',
-        description: 'Removido o tipo de pagamento :)',
+        description: 'Removido a receita :)',
         status: 'success',
         position: 'top-right',
         duration: 5000,
@@ -72,7 +68,7 @@ export const PaymentTypeComponent = () => {
       fetch()
     } catch (error) {
       toast({
-        title: 'Erro ao remover o tipo de pagamento',
+        title: 'Erro ao remover a receita',
         description: 'Não funfou :(',
         status: 'error',
         position: 'top-right',
@@ -86,23 +82,19 @@ export const PaymentTypeComponent = () => {
 
   return (
     <Flex w="full" h="full" direction="column" p="4">
-      <Flex direction="column" p="4">
-        <Flex justifyContent="space-between">
-          <Text fontWeight="600" fontSize="lg">
-            Tipos de pagamentos
-          </Text>
-          <NextLink href="/type/new" shallow passHref>
-            <Button
-              leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-              bg="primary.purple"
-              textColor="white"
-              _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
-            >
-              Adicionar
-            </Button>
-          </NextLink>
-        </Flex>
+      <Flex justifyContent="flex-end">
+        <NextLink href="/payment/income/new" shallow passHref>
+          <Button
+            leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
+            bg="primary.purple"
+            textColor="white"
+            _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+          >
+            Adicionar
+          </Button>
+        </NextLink>
       </Flex>
+
       {loading ? (
         <Progress size="xs" isIndeterminate />
       ) : (
@@ -111,21 +103,50 @@ export const PaymentTypeComponent = () => {
             <Table>
               <Thead>
                 <Tr>
-                  <Th>Tipo</Th>
-                  <Th>Descrição</Th>
+                  <Th>Nº da sessão</Th>
+                  <Th>Nome</Th>
+                  <Th>Data</Th>
                   <Th>Valor</Th>
-                  <Th>Opçoes</Th>
+                  <Th>Descrição</Th>
+                  <Th>Pago?</Th>
+                  <Th>Valor parcial?</Th>
+                  <Th>Opções</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {paymentTypes.map((paymentType) => (
-                  <Tr key={paymentType.id}>
-                    <Td>{typeTranslation[paymentType.type]}</Td>
-                    <Td>{paymentType.description}</Td>
-                    <Td>{paymentType.value}</Td>
+                {incomes.map((income) => (
+                  <Tr key={income.id}>
+                    <Td>{income.sessionNumber}</Td>
+                    <Td>{income.person.name}</Td>
+                    <Td>{new Date(income.date).toLocaleDateString('pt')}</Td>
+                    <Td>{toBRL(income.paymentType.value)}</Td>
+                    <Td>{income.description}</Td>
+                    <Td>
+                      <Badge
+                        variant="subtle"
+                        colorScheme={
+                          income.isPaid ? 'primary.neongreen' : 'red'
+                        }
+                      >
+                        {income.isPartial ? 'Sim' : 'Não'}
+                      </Badge>
+                    </Td>
+                    <Td>
+                      <Badge
+                        variant="subtle"
+                        colorScheme={
+                          income.isPartial ? 'primary.neongreen' : 'red'
+                        }
+                      >
+                        {income.isPartial ? 'Sim' : 'Não'}
+                      </Badge>
+                    </Td>
                     <Td>
                       <Box>
-                        <NextLink href={`type/${paymentType.id}`}>
+                        <NextLink href="">
+                          <Button mr="4">Pago</Button>
+                        </NextLink>
+                        <NextLink href={`payment/income/${income.id}`}>
                           <Button leftIcon={<Icon as={IoPencil} />} mr="4">
                             Editar
                           </Button>
@@ -133,7 +154,7 @@ export const PaymentTypeComponent = () => {
                         <Button
                           leftIcon={<Icon as={IoTrash} />}
                           onClick={() => {
-                            setRemoveId(paymentType.id!)
+                            setRemoveId(income.id!)
                             onOpen()
                           }}
                         >
@@ -152,8 +173,8 @@ export const PaymentTypeComponent = () => {
         isOpen={isOpen}
         onClose={onClose}
         onSubmit={handleRemove}
-        title="Remover tipo de pagamento"
-        description="Deseja remover o tipo de pagamento?"
+        title="Remover receita"
+        description="Deseja remover a receita?"
       />
     </Flex>
   )

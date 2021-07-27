@@ -15,7 +15,7 @@ import { useRouter } from 'next/dist/client/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { PaymentTypeService } from '../../../services/payment'
-import { PaymentType } from '../../../types/payment-type/payment-type'
+import { PaymentType } from '../../../types/payment/payment-type'
 
 const initialValues: PaymentType = {
   id: '',

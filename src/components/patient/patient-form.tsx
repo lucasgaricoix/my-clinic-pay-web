@@ -182,7 +182,14 @@ export const PatientFormComponent = () => {
                 </FormControl>
               )}
             </Field>
-            <Button type="submit" w="320px" my="4">
+            <Button
+              type="submit"
+              w="320px"
+              my="4"
+              bg="primary.purple"
+              textColor="white"
+              _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+            >
               Salvar
             </Button>
           </Form>

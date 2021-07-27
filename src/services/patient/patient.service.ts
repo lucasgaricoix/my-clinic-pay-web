@@ -1,21 +1,22 @@
-import { Patinet } from "../../types/patient/patient-type"
-import { api } from "../api"
+import { AxiosPromise } from 'axios'
+import { Patient } from '../../types/patient/patient-type'
+import { api } from '../api'
 
-export const findAll = () => {
-  return api.get('/person')
+export const findAll = (): AxiosPromise<Patient[]> => {
+  return api.get('/persons')
 }
 
 export const deleteById = (id: string) => {
-  return api.delete(`/person/${id}`)
+  return api.delete(`/persons/${id}`)
 }
 
 export const findById = (id: string) => {
-  return api.get(`/person/${id}`)
+  return api.get(`/persons/${id}`)
 }
 
-export const save = (patient: Patinet, method = 'save') => {
+export const save = (patient: Patient, method = 'save') => {
   if (method === 'update') {
-    return api.put('/person', patient)
+    return api.put('/persons', patient)
   }
-  return api.post('/person', patient)
+  return api.post('/persons', patient)
 }

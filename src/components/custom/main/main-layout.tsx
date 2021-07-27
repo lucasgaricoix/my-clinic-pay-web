@@ -1,54 +1,15 @@
-import {
-  Container,
-  Divider,
-  Flex,
-  HStack,
-  Link,
-  List,
-  ListItem,
-  StackDivider,
-  Text,
-} from '@chakra-ui/react'
-import NextLink from 'next/link'
+import { Box, Flex } from '@chakra-ui/react'
+import { SideBar } from './side-bar'
 
 export const MainLayout: React.FC = ({ children }) => {
-  const menus = [
-    { description: 'Home', icon: '', link: '/' },
-    { description: 'Pagamentos', icon: '', link: '/' },
-    { description: 'Pacientes', icon: '', link: '/patient' },
-    { description: 'Tipos de pagamento', icon: '', link: '/payment/type' },
-  ]
-  const SideBar = () => (
-    <Flex w="xs">
-      <List py={4} spacing={4}>
-        {menus.map((menu) => (
-          <ListItem key={menu.description}>
-            <NextLink href={menu.link} shallow passHref>
-              <Link>
-                <Text color="gray.700" fontSize="md" fontWeight={600}>
-                  {menu.description}
-                </Text>
-              </Link>
-            </NextLink>
-          </ListItem>
-        ))}
-      </List>
-    </Flex>
-  )
   return (
-    <Container maxW="full" maxH="full" p="8">
-      <Flex>
-        <Text>My clinic pay</Text>
-      </Flex>
-      <Divider />
-      <HStack
-        spacing={4}
-        align="stretch"
-        divider={<StackDivider borderColor="gray.200" />}
-      >
-        <SideBar />
-        {children}
-      </HStack>
-    </Container>
+    <Flex minH="100vh" w="auto" h="auto" direction="row" py="2">
+      <SideBar />
+      <Box w="full" bg="gray.100" borderRadius="lg" p="3">
+        <Box h="full" bg="white" borderRadius="lg" p="3">
+          {children}
+        </Box>
+      </Box>
+    </Flex>
   )
 }

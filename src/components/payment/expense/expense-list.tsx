@@ -7,7 +7,6 @@ import {
   Table,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
@@ -17,25 +16,26 @@ import {
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { IoAddCircleOutline, IoPencil, IoTrash } from 'react-icons/io5'
-import { PatientService } from '../../services/patient'
-import { Patient } from '../../types/patient/patient-type'
-import { CustomAlertDialog } from '../custom/alert/alert-dialog'
+import { ExpenseService } from '../../../services/payment'
+import { Expense } from '../../../types/payment/expense'
+import { toBRL } from '../../../utils/format'
+import { CustomAlertDialog } from '../../custom/alert/alert-dialog'
 
-export const PatientList = () => {
+export const ExpenseList = () => {
   const [loading, setLoading] = useState(false)
   const [removeId, setRemoveId] = useState('')
-  const [patients, setPatients] = useState<Patient[]>([])
+  const [expenses, setExpenses] = useState<Expense[]>([])
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const fetch = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await PatientService.findAll()
-      setPatients(response.data)
+      const response = await ExpenseService.findAll()
+      setExpenses(response.data)
     } catch (error) {
       toast({
-        title: 'Erro ao carregar os Pacientes',
+        title: 'Erro ao carregar as receitas',
         description: 'Não funfou :(',
         status: 'error',
         position: 'top-right',
@@ -54,11 +54,11 @@ export const PatientList = () => {
   const handleRemove = useCallback(async () => {
     try {
       setLoading(true)
-      await PatientService.deleteById(removeId)
+      await ExpenseService.deleteById(removeId)
       onClose()
       toast({
         title: 'Sucesso',
-        description: 'Removido o paciente :)',
+        description: 'Removido a receita :)',
         status: 'success',
         position: 'top-right',
         duration: 5000,
@@ -67,7 +67,7 @@ export const PatientList = () => {
       fetch()
     } catch (error) {
       toast({
-        title: 'Erro ao remover o paciente',
+        title: 'Erro ao remover a receita',
         description: 'Não funfou :(',
         status: 'error',
         position: 'top-right',
@@ -79,31 +79,19 @@ export const PatientList = () => {
     }
   }, [removeId, onClose, toast, fetch])
 
-  const getAge = (birthday: string) => {
-    const date = new Date(birthday)
-    var ageDifMs = Date.now() - date.getTime()
-    var ageDate = new Date(ageDifMs)
-    return Math.abs(ageDate.getUTCFullYear() - 1970)
-  }
-
   return (
-    <Flex direction="column">
-      <Flex direction="column" p="4">
-        <Flex justifyContent="space-between">
-          <Text fontWeight="600" fontSize="lg">
-            Pacientes
-          </Text>
-          <NextLink href="/patient/new" shallow passHref>
-            <Button
-              leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-              bg="primary.purple"
-              textColor="white"
-              _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
-            >
-              Adicionar
-            </Button>
-          </NextLink>
-        </Flex>
+    <Flex w="full" h="full" direction="column" p="4">
+      <Flex justifyContent="flex-end">
+        <NextLink href="/payment/expense/new" shallow passHref>
+          <Button
+            leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
+            bg="primary.purple"
+            textColor="white"
+            _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+          >
+            Adicionar
+          </Button>
+        </NextLink>
       </Flex>
       {loading ? (
         <Progress size="xs" isIndeterminate />
@@ -113,25 +101,29 @@ export const PatientList = () => {
             <Table>
               <Thead>
                 <Tr>
-                  <Th>Nome</Th>
-                  <Th>Data de nascimento</Th>
-                  <Th>Idade</Th>
-                  <Th>Responsável</Th>
-                  <Th>Opçoes</Th>
+                  <Th>Data de vencimento</Th>
+                  <Th>Data de pagamento</Th>
+                  <Th>Valor</Th>
+                  <Th>Descrição</Th>
+                  <Th>Opções</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {patients.map((patient) => (
-                  <Tr key={patient.id}>
-                    <Td>{patient.name}</Td>
+                {expenses.map((expense) => (
+                  <Tr key={expense.id}>
                     <Td>
-                      {new Date(patient.birthDate).toLocaleDateString('pt')}
+                      {new Date(expense.dueDate).toLocaleDateString('pt')}
                     </Td>
-                    <Td>{getAge(patient.birthDate) || ''}</Td>
-                    <Td>{patient.responsible.name}</Td>
+                    <Td>
+                      {expense.paymentDate
+                        ? new Date(expense.paymentDate).toLocaleDateString('pt')
+                        : ''}
+                    </Td>
+                    <Td>{toBRL(expense.paymentType.value)}</Td>
+                    <Td>{expense.description}</Td>
                     <Td>
                       <Box>
-                        <NextLink href={`patient/${patient.id}`}>
+                        <NextLink href={`payment/expense/${expense.id}`}>
                           <Button leftIcon={<Icon as={IoPencil} />} mr="4">
                             Editar
                           </Button>
@@ -139,7 +131,7 @@ export const PatientList = () => {
                         <Button
                           leftIcon={<Icon as={IoTrash} />}
                           onClick={() => {
-                            setRemoveId(patient.id!)
+                            setRemoveId(expense.id!)
                             onOpen()
                           }}
                         >
@@ -158,8 +150,8 @@ export const PatientList = () => {
         isOpen={isOpen}
         onClose={onClose}
         onSubmit={handleRemove}
-        title="Remover paciente"
-        description="Deseja remover o paciente?"
+        title="Remover despesa"
+        description="Deseja remover a despesa?"
       />
     </Flex>
   )

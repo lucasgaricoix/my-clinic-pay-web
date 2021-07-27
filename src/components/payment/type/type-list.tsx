@@ -91,7 +91,7 @@ export const PaymentTypeComponent = () => {
           <Text fontWeight="600" fontSize="lg">
             Tipos de pagamentos
           </Text>
-          <NextLink href="/type/new" shallow passHref>
+          <NextLink href="/payment/type/new" shallow passHref>
             <Button
               leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
               bg="primary.purple"
@@ -125,7 +125,7 @@ export const PaymentTypeComponent = () => {
                     <Td>{paymentType.value}</Td>
                     <Td>
                       <Box>
-                        <NextLink href={`type/${paymentType.id}`}>
+                        <NextLink href={`/payment/type/${paymentType.id}`}>
                           <Button leftIcon={<Icon as={IoPencil} />} mr="4">
                             Editar
                           </Button>

@@ -1,8 +1,8 @@
 import {
   Box,
   Button,
-  CircularProgress,
   Flex,
+  Progress,
   Stack,
   Text,
   useToast,
@@ -201,7 +201,7 @@ export const IncomeFormComponent = () => {
 
   return (
     <Flex direction="column" w="full" p="4" mb="4">
-      {loading && <CircularProgress />}
+      {loading && <Progress size="xs" isIndeterminate />}
       <Text fontWeight="600" fontSize="20" py="2">
         Cadastro de receita
       </Text>
@@ -223,8 +223,9 @@ export const IncomeFormComponent = () => {
                 <FormikCheckbox name="isAbsence" label="Ausência?" />
               )}
             </Stack>
-            <Box w={{ xl: '25%' }}>
+            <Box my="2" w={{ lg: '30%', xl: '25%' }}>
               <FormikInput name="date" label="Data" type="date" />
+              <FormikInput name="sessionNumber" label="Número da sessão" />
             </Box>
             <FormikCustomAutoComplete
               name="paymentType.id"

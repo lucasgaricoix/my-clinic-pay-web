@@ -1,11 +1,11 @@
 import {
   Button,
-  CircularProgress,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
+  Progress,
   Select,
   Text,
   useToast,
@@ -19,7 +19,7 @@ import { PaymentType } from '../../../types/payment/payment-type'
 
 const initialValues: PaymentType = {
   id: '',
-  type: 'income',
+  type: 'INCOME',
   description: '',
   value: 0.0,
 }
@@ -72,7 +72,7 @@ export const PaymentTypeFormComponent = () => {
   )
 
   useEffect(() => {
-    if (String(id) !== 'new') {
+    if (id && id !== 'new') {
       fetchPaymentType(id as string)
     }
   }, [id, fetchPaymentType])
@@ -83,10 +83,11 @@ export const PaymentTypeFormComponent = () => {
   ) => {
     try {
       const method = values.id ? 'update' : 'save'
+      console.log(values.type)
       await PaymentTypeService.save(values, method)
       toast({
         title: 'Sucesso',
-        description: 'Dados alterados no servidor :)',
+        description: 'Dados salvos no servidor :)',
         status: 'success',
         position: 'top-right',
         duration: 5000,
@@ -95,10 +96,10 @@ export const PaymentTypeFormComponent = () => {
       action.resetForm()
       route.back()
     } catch (error) {
+      console.log(error)
       toast({
-        title: 'Erro ao buscar o tipo de pagamento',
-        description:
-          'Não foi encontrado o tipo de pagamento com o id informado :(',
+        title: 'Erro ao salvar',
+        description: 'Não foi possível salvar no servidor :(',
         status: 'warning',
         position: 'top-right',
         duration: 9000,
@@ -109,10 +110,10 @@ export const PaymentTypeFormComponent = () => {
 
   return (
     <Flex direction="column" w="full" p="4" mb="4">
-      {loading && <CircularProgress />}
       <Text fontWeight="600" fontSize="20" py="2">
         Tipos de pagamentos
       </Text>
+      {loading && <Progress size="xs" isIndeterminate />}
       <Formik<PaymentType>
         initialValues={paymentType}
         onSubmit={handleSubmit}
@@ -189,14 +190,21 @@ export const PaymentTypeFormComponent = () => {
                   isInvalid={!!errors.value && !!touched.value}
                 >
                   <FormLabel htmlFor="value">Valor</FormLabel>
-                  <Input {...field} id="value" />
+                  <Input {...field} id="value" type="currency" />
                   {errors.value && (
                     <FormErrorMessage>{errors.value}</FormErrorMessage>
                   )}
                 </FormControl>
               )}
             </Field>
-            <Button type="submit" w="320px" my="4">
+            <Button
+              type="submit"
+              w="320px"
+              my="4"
+              bg="primary.purple"
+              textColor="white"
+              _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+            >
               Salvar
             </Button>
           </Form>

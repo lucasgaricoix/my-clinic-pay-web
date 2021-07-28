@@ -5,12 +5,14 @@ import {
   Flex,
   Icon,
   Progress,
+  Stack,
   Table,
   Tbody,
   Td,
   Th,
   Thead,
   Tr,
+  useBreakpointValue,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
@@ -28,6 +30,7 @@ export const IncomeList = () => {
   const [incomes, setIncomes] = useState<Income[]>([])
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
 
   const fetch = useCallback(async () => {
     try {
@@ -81,8 +84,8 @@ export const IncomeList = () => {
   }, [removeId, onClose, toast, fetch])
 
   return (
-    <Flex w="full" h="full" direction="column" p="4">
-      <Flex justifyContent="flex-end">
+    <Flex w="full" direction="column" p="4">
+      <Flex justifyContent="flex-end" pb="4">
         <NextLink href="/payment/income/new" shallow passHref>
           <Button
             leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
@@ -100,13 +103,13 @@ export const IncomeList = () => {
       ) : (
         <>
           <Box>
-            <Table>
+            <Table size={size}>
               <Thead>
                 <Tr>
                   <Th>Nº da sessão</Th>
                   <Th>Nome</Th>
                   <Th>Data</Th>
-                  <Th>Valor</Th>
+                  <Th isNumeric>Valor</Th>
                   <Th>Descrição</Th>
                   <Th>Pago?</Th>
                   <Th>Valor parcial?</Th>
@@ -119,7 +122,7 @@ export const IncomeList = () => {
                     <Td>{income.sessionNumber}</Td>
                     <Td>{income.person.name}</Td>
                     <Td>{new Date(income.date).toLocaleDateString('pt')}</Td>
-                    <Td>{toBRL(income.paymentType.value)}</Td>
+                    <Td isNumeric>{toBRL(income.paymentType.value)}</Td>
                     <Td>{income.description}</Td>
                     <Td>
                       <Badge
@@ -142,25 +145,25 @@ export const IncomeList = () => {
                       </Badge>
                     </Td>
                     <Td>
-                      <Box>
+                      <Stack direction="row">
                         <NextLink href="">
-                          <Button mr="4">Pago</Button>
+                          <Button size={size}>Pago</Button>
                         </NextLink>
                         <NextLink href={`payment/income/${income.id}`}>
-                          <Button leftIcon={<Icon as={IoPencil} />} mr="4">
-                            Editar
+                          <Button size={size}>
+                            <Icon as={IoPencil} />
                           </Button>
                         </NextLink>
                         <Button
-                          leftIcon={<Icon as={IoTrash} />}
+                          size={size}
                           onClick={() => {
                             setRemoveId(income.id!)
                             onOpen()
                           }}
                         >
-                          Remover
+                          <Icon as={IoTrash} />
                         </Button>
-                      </Box>
+                      </Stack>
                     </Td>
                   </Tr>
                 ))}

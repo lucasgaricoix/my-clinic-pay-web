@@ -1,11 +1,11 @@
 import {
   Button,
-  CircularProgress,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
+  Progress,
   Text,
   useToast,
 } from '@chakra-ui/react'
@@ -62,7 +62,7 @@ export const PatientFormComponent = () => {
   )
 
   useEffect(() => {
-    if (String(id) !== 'new') {
+    if (id && id !== 'new') {
       fetchPaymentType(id as string)
     }
   }, [id, fetchPaymentType])
@@ -72,6 +72,7 @@ export const PatientFormComponent = () => {
     action: FormikHelpers<Patient>
   ) => {
     try {
+      setLoading(true)
       const method = values.id ? 'update' : 'save'
       await PatientService.save(values, method)
       toast({
@@ -94,12 +95,14 @@ export const PatientFormComponent = () => {
         duration: 9000,
         isClosable: true,
       })
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <Flex direction="column" w="full" p="4" mb="4">
-      {loading && <CircularProgress />}
+      {loading && <Progress size="xs" isIndeterminate />}
       <Text fontWeight="600" fontSize="20" py="2">
         Cadastro de paciente
       </Text>

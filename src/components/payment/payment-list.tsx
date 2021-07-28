@@ -1,4 +1,5 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
+import { PaymentDashboard } from './all/dashboard'
 import { ExpenseList } from './expense/expense-list'
 import { IncomeList } from './income/income-list'
 
@@ -19,7 +20,7 @@ export const PaymentList = () => {
       </TabList>
       <TabPanels>
         <TabPanel id="all">
-          <p>TODO: todos</p>
+          <PaymentDashboard />
         </TabPanel>
         <TabPanel id="income">
           <IncomeList />

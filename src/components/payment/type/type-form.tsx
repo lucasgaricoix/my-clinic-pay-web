@@ -83,7 +83,6 @@ export const PaymentTypeFormComponent = () => {
   ) => {
     try {
       const method = values.id ? 'update' : 'save'
-      console.log(values.type)
       await PaymentTypeService.save(values, method)
       toast({
         title: 'Sucesso',
@@ -96,7 +95,6 @@ export const PaymentTypeFormComponent = () => {
       action.resetForm()
       route.back()
     } catch (error) {
-      console.log(error)
       toast({
         title: 'Erro ao salvar',
         description: 'Não foi possível salvar no servidor :(',

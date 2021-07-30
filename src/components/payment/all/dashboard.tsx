@@ -1,50 +1,37 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Flex, Text, useToast } from '@chakra-ui/react'
+import { useCallback, useEffect, useState } from 'react'
+import { PaymentService } from '../../../services/payment'
+import { PaymentOverMonthType } from '../../../types/payment/payment'
 import { MensalIncomeBarChart } from '../../custom/charts/bar/mensal-income'
-const mock = [
-  {
-    mes: 'junho',
-    receita: 2350,
-    despesa: 800,
-    total: 2350 - 800,
-  },
-  {
-    mes: 'julho',
-    receita: 3400,
-    despesa: 1000,
-    total: 3400 - 1000,
-  },
-  {
-    mes: 'agosto',
-    receita: 1809,
-    despesa: 750,
-    total: 1809 - 750,
-  },
 
-  {
-    mes: 'setembro',
-    receita: 1600,
-    despesa: 750,
-    total: 1600 - 750,
-  },
-
-  {
-    mes: 'outubro',
-    receita: 1809,
-    despesa: 750,
-    total: 1809 - 750,
-  },
-  {
-    mes: 'novembro',
-    receita: -1809,
-    despesa: 750,
-    total: 1005,
-  },
-]
 export const PaymentDashboard = () => {
+  const [data, setData] = useState<PaymentOverMonthType[]>([])
+  const toast = useToast()
+
+  const fetch = useCallback(async () => {
+    try {
+      const response = await PaymentService.findAllOverMonth()
+      setData(response.data)
+    } catch {
+      toast({
+        title: 'Erro ao buscar a despesa',
+        description: 'Não foi encontrado a despesa com o id informado :(',
+        status: 'warning',
+        position: 'top-right',
+        duration: 9000,
+        isClosable: true,
+      })
+    }
+  }, [toast])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
+
   return (
     <Flex w="full" h="full" direction="column" p="4">
       <Text>Receitas e Despesas</Text>
-      <MensalIncomeBarChart data={mock} />
+      <MensalIncomeBarChart data={data || []} />
     </Flex>
   )
 }

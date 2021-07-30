@@ -7,16 +7,10 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-
-type Data = {
-  mes: string
-  receita: number
-  despesa: number
-  total?: number
-}
+import { PaymentOverMonthType } from '../../../../types/payment/payment'
 
 type Props = {
-  data: Data[]
+  data: PaymentOverMonthType[]
 }
 
 export const MensalIncomeBarChart: React.FC<Props> = ({ data }) => {
@@ -34,11 +28,11 @@ export const MensalIncomeBarChart: React.FC<Props> = ({ data }) => {
     >
       <Legend />
       <CartesianGrid color="gray.300" strokeDasharray="3 3" />
-      <XAxis dataKey="mes" />
-      <YAxis dataKey="total" />
+      <XAxis dataKey="month" />
+      <YAxis dataKey="amount" />
       <ReferenceLine y={0} stroke="#000" />
-      <Bar dataKey="receita" stackId="1" barSize={30} fill="teal" />
-      <Bar dataKey="despesa" stackId="2" barSize={30} fill="#A16AE8" />
+      <Bar dataKey="income" stackId="1" barSize={30} fill="teal" />
+      <Bar dataKey="expense" stackId="2" barSize={30} fill="#A16AE8" />
     </BarChart>
   )
 }

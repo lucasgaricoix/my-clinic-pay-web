@@ -1,9 +1,9 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Stack, Text } from '@chakra-ui/react'
 
 export const HomeComponent = () => {
   return (
-    <Flex>
+    <Stack spacing={2}>
       <Text>Bem vindo ao my clinic pay!</Text>
-    </Flex>
+    </Stack>
   )
 }

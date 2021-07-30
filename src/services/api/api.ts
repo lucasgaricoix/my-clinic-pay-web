@@ -3,7 +3,7 @@ import axios from 'axios'
 let axiosInstance = null
 
 axiosInstance = axios.create({
-  baseURL: 'https://my-clinic-pay.herokuapp.com',
+  baseURL: 'http://localhost:8082',
 })
 
 const api = axiosInstance

@@ -4,12 +4,14 @@ import {
   Flex,
   Icon,
   Progress,
+  Stack,
   Table,
   Tbody,
   Td,
   Th,
   Thead,
   Tr,
+  useBreakpointValue,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
@@ -27,6 +29,7 @@ export const ExpenseList = () => {
   const [expenses, setExpenses] = useState<Expense[]>([])
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
 
   const fetch = useCallback(async () => {
     try {
@@ -81,7 +84,7 @@ export const ExpenseList = () => {
 
   return (
     <Flex w="full" h="full" direction="column" p="4">
-      <Flex justifyContent="flex-end">
+      <Flex justifyContent="flex-end" pb="4">
         <NextLink href="/payment/expense/new" shallow passHref>
           <Button
             leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
@@ -98,12 +101,12 @@ export const ExpenseList = () => {
       ) : (
         <>
           <Box>
-            <Table>
+            <Table size={size}>
               <Thead>
                 <Tr>
                   <Th>Data de vencimento</Th>
                   <Th>Data de pagamento</Th>
-                  <Th>Valor</Th>
+                  <Th isNumeric>Valor</Th>
                   <Th>Descrição</Th>
                   <Th>Opções</Th>
                 </Tr>
@@ -119,25 +122,25 @@ export const ExpenseList = () => {
                         ? new Date(expense.paymentDate).toLocaleDateString('pt')
                         : ''}
                     </Td>
-                    <Td>{toBRL(expense.paymentType.value)}</Td>
+                    <Td isNumeric>{toBRL(expense.paymentType.value)}</Td>
                     <Td>{expense.description}</Td>
                     <Td>
-                      <Box>
+                      <Stack direction="row">
                         <NextLink href={`payment/expense/${expense.id}`}>
-                          <Button leftIcon={<Icon as={IoPencil} />} mr="4">
-                            Editar
+                          <Button size={size}>
+                            <Icon as={IoPencil} />
                           </Button>
                         </NextLink>
                         <Button
-                          leftIcon={<Icon as={IoTrash} />}
+                          size={size}
                           onClick={() => {
                             setRemoveId(expense.id!)
                             onOpen()
                           }}
                         >
-                          Remover
+                          <Icon as={IoTrash} />
                         </Button>
-                      </Box>
+                      </Stack>
                     </Td>
                   </Tr>
                 ))}

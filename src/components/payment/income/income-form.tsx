@@ -1,8 +1,8 @@
 import {
   Box,
   Button,
-  CircularProgress,
   Flex,
+  Progress,
   Stack,
   Text,
   useToast,
@@ -201,56 +201,62 @@ export const IncomeFormComponent = () => {
 
   return (
     <Flex direction="column" w="full" p="4" mb="4">
-      {loading && <CircularProgress />}
-      <Text fontWeight="600" fontSize="20" py="2">
-        Cadastro de receita
-      </Text>
-      <Formik<Income>
-        initialValues={income}
-        onSubmit={handleSubmit}
-        validationSchema={schema}
-        enableReinitialize
-      >
-        {({ initialValues, values }) => (
-          <Form id="income-form">
-            {initialValues.id && (
-              <FormikInput name="id" label="Id" isDisabled />
-            )}
-            <FormikCheckbox name="isPaid" label="Já pagou?" />
-            <Stack direction="row" w={{ xl: 'sm' }}>
-              <FormikSwitch name="isPartial" label="Pagamento parcial?" />
-              {values.isPartial && (
-                <FormikCheckbox name="isAbsence" label="Ausência?" />
-              )}
-            </Stack>
-            <Box w={{ xl: '25%' }}>
-              <FormikInput name="date" label="Data" type="date" />
-            </Box>
-            <FormikCustomAutoComplete
-              name="paymentType.id"
-              label="Tipo de receita"
-              items={paymentTypesOptions}
-            />
-            <FormikCustomAutoComplete
-              name="person.id"
-              label="Paciente"
-              items={patientsOptions}
-            />
-            <FormikTextArea name="description" label="Descrição" />
+      {loading ? (
+        <Progress size="xs" isIndeterminate />
+      ) : (
+        <>
+          <Text fontWeight="600" fontSize="20" py="2">
+            Cadastro de receita
+          </Text>
+          <Formik<Income>
+            initialValues={income}
+            onSubmit={handleSubmit}
+            validationSchema={schema}
+            enableReinitialize
+          >
+            {({ initialValues, values }) => (
+              <Form id="income-form">
+                {initialValues.id && (
+                  <FormikInput name="id" label="Id" isDisabled />
+                )}
+                <FormikCheckbox name="isPaid" label="Já pagou?" />
+                <Stack direction="row" w={{ xl: 'sm' }}>
+                  <FormikSwitch name="isPartial" label="Pagamento parcial?" />
+                  {values.isPartial && (
+                    <FormikCheckbox name="isAbsence" label="Ausência?" />
+                  )}
+                </Stack>
+                <Box my="2" w={{ lg: '30%', xl: '25%' }}>
+                  <FormikInput name="date" label="Data" type="date" />
+                  <FormikInput name="sessionNumber" label="Número da sessão" />
+                </Box>
+                <FormikCustomAutoComplete
+                  name="paymentType.id"
+                  label="Tipo de receita"
+                  items={paymentTypesOptions}
+                />
+                <FormikCustomAutoComplete
+                  name="person.id"
+                  label="Paciente"
+                  items={patientsOptions}
+                />
+                <FormikTextArea name="description" label="Descrição" />
 
-            <Button
-              type="submit"
-              w="320px"
-              my="4"
-              bg="primary.purple"
-              textColor="white"
-              _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
-            >
-              Salvar
-            </Button>
-          </Form>
-        )}
-      </Formik>
+                <Button
+                  type="submit"
+                  w="320px"
+                  my="4"
+                  bg="primary.purple"
+                  textColor="white"
+                  _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+                >
+                  Salvar
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </>
+      )}
     </Flex>
   )
 }

@@ -11,6 +11,7 @@ import {
   Th,
   Thead,
   Tr,
+  useBreakpointValue,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
@@ -19,6 +20,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { IoAddCircleOutline, IoPencil, IoTrash } from 'react-icons/io5'
 import { PaymentTypeService } from '../../../services/payment'
 import { PaymentType } from '../../../types/payment/payment-type'
+import { toBRL } from '../../../utils/format'
 import { CustomAlertDialog } from '../../custom/alert/alert-dialog'
 
 const typeTranslation: Record<string, string> = {
@@ -32,6 +34,7 @@ export const PaymentTypeComponent = () => {
   const [paymentTypes, setPaymentTypes] = useState<PaymentType[]>([])
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
 
   const fetch = useCallback(async () => {
     try {
@@ -122,15 +125,20 @@ export const PaymentTypeComponent = () => {
                   <Tr key={paymentType.id}>
                     <Td>{typeTranslation[paymentType.type]}</Td>
                     <Td>{paymentType.description}</Td>
-                    <Td>{paymentType.value}</Td>
+                    <Td>{toBRL(paymentType.value)}</Td>
                     <Td>
                       <Box>
                         <NextLink href={`/payment/type/${paymentType.id}`}>
-                          <Button leftIcon={<Icon as={IoPencil} />} mr="4">
+                          <Button
+                            size={size}
+                            leftIcon={<Icon as={IoPencil} />}
+                            mr="4"
+                          >
                             Editar
                           </Button>
                         </NextLink>
                         <Button
+                          size={size}
                           leftIcon={<Icon as={IoTrash} />}
                           onClick={() => {
                             setRemoveId(paymentType.id!)

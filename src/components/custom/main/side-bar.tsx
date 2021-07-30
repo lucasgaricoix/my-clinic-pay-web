@@ -8,6 +8,7 @@ type Menu = {
   description: string
   icon: IconType
   link: string
+  subLink?: string[]
 }
 
 export const SideBar = () => {
@@ -17,23 +18,31 @@ export const SideBar = () => {
       description: 'Pagamentos',
       icon: IoWallet,
       link: '/payment',
+      subLink: ['/payment/income/[id]', '/payment/expense/[id]'],
     },
-    { description: 'Pacientes', icon: IoHappy, link: '/patient' },
+    {
+      description: 'Pacientes',
+      icon: IoHappy,
+      link: '/patient',
+      subLink: ['/patient/[id]'],
+    },
     {
       description: 'Tipos de pagamento',
       icon: IoOptions,
       link: '/payment/type',
+      subLink: ['/payment/type/[id]'],
     },
   ]
 
-  const route = useRouter()
-  const routeNames = route.pathname
+  const { asPath, pathname } = useRouter()
 
   return (
     <Flex w="160px" justifyContent="center">
       <List py={4} spacing={4}>
         {menus.map((menu) => {
-          const isActiveRoute = routeNames === menu.link
+          const isActiveSubLink = menu.subLink?.includes(pathname)
+          const isActiveLink = asPath === menu.link
+          const isActiveRoute = isActiveSubLink || isActiveLink
           return (
             <ListItem key={menu.description}>
               <NextLink href={menu.link} shallow passHref>
@@ -42,6 +51,7 @@ export const SideBar = () => {
                     direction="column"
                     justifyContent="center"
                     alignItems="center"
+                    wrap="wrap"
                   >
                     <Flex
                       justifyContent="center"

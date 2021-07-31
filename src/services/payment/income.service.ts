@@ -2,8 +2,8 @@ import { AxiosPromise } from 'axios'
 import { Income } from '../../types/payment/income'
 import { api } from '../api'
 
-export const findAll = (): AxiosPromise<Income[]> => {
-  return api.get('/incomes')
+export const findAll = (month: number): AxiosPromise<Income[]> => {
+  return api.get('/incomes/search', { params: { month } })
 }
 
 export const findById = (id: string): AxiosPromise<Income> => {

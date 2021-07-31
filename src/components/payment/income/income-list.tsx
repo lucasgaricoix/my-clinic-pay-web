@@ -5,6 +5,7 @@ import {
   Flex,
   Icon,
   Progress,
+  Select,
   Stack,
   Table,
   Tbody,
@@ -24,6 +25,23 @@ import { Income } from '../../../types/payment/income'
 import { toBRL } from '../../../utils/format'
 import { CustomAlertDialog } from '../../custom/alert/alert-dialog'
 
+const months = [
+  { name: 1, label: 'Janeiro' },
+  { name: 2, label: 'Fevereiro' },
+  { name: 3, label: 'Março' },
+  { name: 4, label: 'Abril' },
+  { name: 5, label: 'Maio' },
+  { name: 6, label: 'Junho' },
+  { name: 7, label: 'Julho' },
+  { name: 8, label: 'Agosto' },
+  { name: 9, label: 'Setembro' },
+  { name: 10, label: 'Outubro' },
+  { name: 11, label: 'Novembro' },
+  { name: 12, label: 'Dezember' },
+]
+
+const currentMonth = new Date().getMonth()
+
 export const IncomeList = () => {
   const [loading, setLoading] = useState(false)
   const [removeId, setRemoveId] = useState('')
@@ -31,11 +49,12 @@ export const IncomeList = () => {
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
+  const [search, setSearch] = useState<number>(currentMonth + 1)
 
   const fetch = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await IncomeService.findAll()
+      const response = await IncomeService.findAll(search)
       setIncomes(response.data)
     } catch (error) {
       toast({
@@ -49,7 +68,7 @@ export const IncomeList = () => {
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [search, toast])
 
   useEffect(() => {
     fetch()
@@ -85,23 +104,38 @@ export const IncomeList = () => {
 
   return (
     <Flex w="full" direction="column" p="4">
-      <Flex justifyContent="flex-end" pb="4">
-        <NextLink href="/payment/income/new" shallow passHref>
-          <Button
-            leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-            bg="primary.purple"
-            textColor="white"
-            _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
-          >
-            Adicionar
-          </Button>
-        </NextLink>
-      </Flex>
-
       {loading ? (
         <Progress size="xs" isIndeterminate />
       ) : (
         <>
+          <Flex justifyContent="space-between" pb="4">
+            <Box>
+              <Select
+                value={search}
+                onChange={(event) => setSearch(+event.target.value)}
+                w="sm"
+              >
+                {months.map((month) => (
+                  <option key={month.name} value={month.name}>
+                    {month.label}
+                  </option>
+                ))}
+              </Select>
+            </Box>
+            <Box>
+              <NextLink href="/payment/income/new" shallow passHref>
+                <Button
+                  leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
+                  bg="primary.purple"
+                  textColor="white"
+                  _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+                >
+                  Adicionar
+                </Button>
+              </NextLink>
+            </Box>
+          </Flex>
+
           <Box>
             <Table size={size}>
               <Thead>

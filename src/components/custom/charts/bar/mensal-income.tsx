@@ -8,17 +8,33 @@ import {
   YAxis,
 } from 'recharts'
 import { PaymentOverMonthType } from '../../../../types/payment/payment'
+import { toBRMonth } from '../../../../utils/format'
 
 type Props = {
   data: PaymentOverMonthType[]
 }
 
-export const MensalIncomeBarChart: React.FC<Props> = ({ data }) => {
+type TranslatedData = {
+  mes: string
+  receita: number
+  despesa: number
+  total: number
+}
+
+export const MensalIncomeExpenseBarChart: React.FC<Props> = ({ data }) => {
+  const adapter = (data: PaymentOverMonthType[]): TranslatedData[] => {
+    return data.map((item) => ({
+      mes: toBRMonth(item.month),
+      receita: item.income,
+      despesa: item.expense,
+      total: item.amount,
+    }))
+  }
   return (
     <BarChart
       width={800}
       height={300}
-      data={data}
+      data={adapter(data)}
       margin={{
         top: 5,
         right: 30,
@@ -28,11 +44,11 @@ export const MensalIncomeBarChart: React.FC<Props> = ({ data }) => {
     >
       <Legend />
       <CartesianGrid color="gray.300" strokeDasharray="3 3" />
-      <XAxis dataKey="month" />
-      <YAxis dataKey="amount" />
+      <XAxis dataKey="mes" />
+      <YAxis dataKey="total" />
       <ReferenceLine y={0} stroke="#000" />
-      <Bar dataKey="income" stackId="1" barSize={30} fill="teal" />
-      <Bar dataKey="expense" stackId="2" barSize={30} fill="#A16AE8" />
+      <Bar dataKey="receita" stackId="1" barSize={30} fill="teal" />
+      <Bar dataKey="despesa" stackId="2" barSize={30} fill="#A16AE8" />
     </BarChart>
   )
 }

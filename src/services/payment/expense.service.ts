@@ -1,8 +1,9 @@
+import { AxiosPromise } from 'axios'
 import { Expense } from '../../types/payment/expense'
 import { api } from '../api'
 
-export const findAll = () => {
-  return api.get('/expenses')
+export const findAll = (month: number): AxiosPromise<Expense[]> => {
+  return api.get('/expenses', { params: { month } })
 }
 
 export const findById = (id: string) => {

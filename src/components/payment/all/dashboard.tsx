@@ -1,15 +1,17 @@
-import { Flex, Text, useToast } from '@chakra-ui/react'
+import { Flex, Progress, Text, useToast } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { PaymentService } from '../../../services/payment'
 import { PaymentOverMonthType } from '../../../types/payment/payment'
-import { MensalIncomeBarChart } from '../../custom/charts/bar/mensal-income'
+import { MensalIncomeExpenseBarChart } from '../../custom/charts/bar/mensal-income'
 
 export const PaymentDashboard = () => {
+  const [loading, setLoading] = useState(false)
   const [data, setData] = useState<PaymentOverMonthType[]>([])
   const toast = useToast()
 
   const fetch = useCallback(async () => {
     try {
+      setLoading(true)
       const response = await PaymentService.findAllOverMonth()
       setData(response.data)
     } catch {
@@ -21,6 +23,8 @@ export const PaymentDashboard = () => {
         duration: 9000,
         isClosable: true,
       })
+    } finally {
+      setLoading(false)
     }
   }, [toast])
 
@@ -30,8 +34,14 @@ export const PaymentDashboard = () => {
 
   return (
     <Flex w="full" h="full" direction="column" p="4">
-      <Text>Receitas e Despesas</Text>
-      <MensalIncomeBarChart data={data || []} />
+      {loading ? (
+        <Progress size="xs" isIndeterminate />
+      ) : (
+        <>
+          <Text>Receitas e Despesas</Text>
+          <MensalIncomeExpenseBarChart data={data || []} />
+        </>
+      )}
     </Flex>
   )
 }

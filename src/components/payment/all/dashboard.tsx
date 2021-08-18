@@ -34,7 +34,7 @@ export const PaymentDashboard = () => {
 
   return (
     <Flex w="full" h="full" direction="column" p="4">
-      {loading ? (
+      {loading && data.length ? (
         <Progress size="xs" isIndeterminate />
       ) : (
         <>

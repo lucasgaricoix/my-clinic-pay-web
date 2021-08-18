@@ -159,7 +159,9 @@ export const PatientList = () => {
         onClose={onClose}
         onSubmit={handleRemove}
         title="Remover paciente"
+        label="Remover"
         description="Deseja remover o paciente?"
+        colorScheme="red"
       />
     </Flex>
   )

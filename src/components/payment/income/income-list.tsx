@@ -45,9 +45,11 @@ const currentMonth = new Date().getMonth()
 export const IncomeList = () => {
   const [loading, setLoading] = useState(false)
   const [removeId, setRemoveId] = useState('')
+  const [paymentId, setPaymentId] = useState('')
   const [incomes, setIncomes] = useState<Income[]>([])
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false)
   const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
   const [search, setSearch] = useState<number>(currentMonth + 1)
 
@@ -101,6 +103,29 @@ export const IncomeList = () => {
       setLoading(false)
     }
   }, [removeId, onClose, toast, fetch])
+
+  const handlePay = useCallback(async () => {
+    {
+      try {
+        setLoading(true)
+        await IncomeService.pay(paymentId)
+        setIsPaymentOpen(false)
+        setPaymentId('')
+      } catch (error) {
+        toast({
+          title: 'Erro ao pagar a receita',
+          description: 'Não funfou :(',
+          status: 'error',
+          position: 'top-right',
+          duration: 9000,
+          isClosable: true,
+        })
+      } finally {
+        fetch()
+        setLoading(false)
+      }
+    }
+  }, [paymentId, toast, fetch])
 
   return (
     <Flex w="full" direction="column" p="4">
@@ -161,19 +186,15 @@ export const IncomeList = () => {
                     <Td>
                       <Badge
                         variant="subtle"
-                        colorScheme={
-                          income.isPaid ? 'primary.neongreen' : 'red'
-                        }
+                        colorScheme={income.isPaid ? 'green' : 'red'}
                       >
-                        {income.isPartial ? 'Sim' : 'Não'}
+                        {income.isPaid ? 'Sim' : 'Não'}
                       </Badge>
                     </Td>
                     <Td>
                       <Badge
                         variant="subtle"
-                        colorScheme={
-                          income.isPartial ? 'primary.neongreen' : 'red'
-                        }
+                        colorScheme={income.isPartial ? 'green' : 'red'}
                       >
                         {income.isPartial ? 'Sim' : 'Não'}
                       </Badge>
@@ -181,7 +202,15 @@ export const IncomeList = () => {
                     <Td>
                       <Stack direction="row">
                         <NextLink href="">
-                          <Button size={size}>Pago</Button>
+                          <Button
+                            onClick={() => {
+                              setPaymentId(income.id!)
+                              setIsPaymentOpen(true)
+                            }}
+                            size={size}
+                          >
+                            Pagar
+                          </Button>
                         </NextLink>
                         <NextLink href={`payment/income/${income.id}`}>
                           <Button size={size}>
@@ -211,7 +240,18 @@ export const IncomeList = () => {
         onClose={onClose}
         onSubmit={handleRemove}
         title="Remover receita"
+        label="Remover"
         description="Deseja remover a receita?"
+        colorScheme="red"
+      />
+      <CustomAlertDialog
+        isOpen={isPaymentOpen}
+        onClose={() => setIsPaymentOpen(false)}
+        onSubmit={handlePay}
+        title="Confirmar pagamento"
+        label="Pagar"
+        description="Deseja confirmar o pagamento selecionado?"
+        colorScheme="green"
       />
     </Flex>
   )

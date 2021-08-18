@@ -1,9 +1,16 @@
 import { AxiosPromise } from 'axios'
 import { Income } from '../../types/payment/income'
+import { IncomeByPatient } from '../../types/payment/income-by-patient'
 import { api } from '../api'
 
 export const findAll = (month: number): AxiosPromise<Income[]> => {
   return api.get('/incomes/search', { params: { month } })
+}
+
+export const findAllByPatient = (
+  month: number
+): AxiosPromise<IncomeByPatient[]> => {
+  return api.get('/incomes/by-patients', { params: { month } })
 }
 
 export const findById = (id: string): AxiosPromise<Income> => {
@@ -23,4 +30,8 @@ export const save = (income: Income, method = 'save'): AxiosPromise<void> => {
 
 export const search = (description: string): AxiosPromise<Income> => {
   return api.get('/incomes/search', { params: { description } })
+}
+
+export const pay = (id: string) => {
+  return api.put(`/incomes/pay`, { id })
 }

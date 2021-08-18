@@ -27,7 +27,7 @@ export const MensalIncomeExpenseBarChart: React.FC<Props> = ({ data }) => {
       mes: toBRMonth(item.month),
       receita: item.income,
       despesa: item.expense,
-      total: item.amount,
+      total: item.income + item.expense,
     }))
   }
   return (

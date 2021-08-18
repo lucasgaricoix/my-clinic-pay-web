@@ -188,7 +188,9 @@ export const ExpenseList = () => {
         onClose={onClose}
         onSubmit={handleRemove}
         title="Remover despesa"
+        label="Remover"
         description="Deseja remover a despesa?"
+        colorScheme="red"
       />
     </Flex>
   )

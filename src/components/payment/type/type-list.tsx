@@ -161,7 +161,9 @@ export const PaymentTypeComponent = () => {
         onClose={onClose}
         onSubmit={handleRemove}
         title="Remover tipo de pagamento"
+        label="Remover"
         description="Deseja remover o tipo de pagamento?"
+        colorScheme="red"
       />
     </Flex>
   )

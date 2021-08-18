@@ -1,0 +1,219 @@
+import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Badge,
+  Box,
+  Button,
+  Flex,
+  Icon,
+  Progress,
+  Select,
+  Stat,
+  StatGroup,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+  Table,
+  Tbody,
+  Td,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
+  useBreakpointValue,
+  useToast,
+} from '@chakra-ui/react'
+import NextLink from 'next/link'
+import { useCallback, useEffect, useState } from 'react'
+import { IoAddCircleOutline } from 'react-icons/io5'
+import { IncomeService } from '../../../services/payment'
+import { IncomeByPatient } from '../../../types/payment/income-by-patient'
+import { toBRL } from '../../../utils/format'
+
+const months = [
+  { name: 1, label: 'Janeiro' },
+  { name: 2, label: 'Fevereiro' },
+  { name: 3, label: 'Março' },
+  { name: 4, label: 'Abril' },
+  { name: 5, label: 'Maio' },
+  { name: 6, label: 'Junho' },
+  { name: 7, label: 'Julho' },
+  { name: 8, label: 'Agosto' },
+  { name: 9, label: 'Setembro' },
+  { name: 10, label: 'Outubro' },
+  { name: 11, label: 'Novembro' },
+  { name: 12, label: 'Dezember' },
+]
+
+const currentMonth = new Date().getMonth()
+
+export const IncomeByPatientList = () => {
+  const [loading, setLoading] = useState(false)
+  const [incomes, setIncomes] = useState<IncomeByPatient[]>([])
+  const toast = useToast()
+  const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
+  const [search, setSearch] = useState<number>(currentMonth + 1)
+
+  const fetch = useCallback(async () => {
+    try {
+      setLoading(true)
+      const response = await IncomeService.findAllByPatient(search)
+      setIncomes(response.data)
+    } catch (error) {
+      console.log(error)
+      toast({
+        title: 'Erro ao carregar as receitas',
+        description: 'Não funfou :(',
+        status: 'error',
+        position: 'top-right',
+        duration: 9000,
+        isClosable: true,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [search, toast])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
+
+  const totalIncome = incomes
+    .flatMap((income) => income.values)
+    .map((value) => value.paymentType.value)
+    .reduce((acc, curr) => acc + curr, 0)
+
+  const totalPaid = incomes
+    .flatMap((income) => income.values)
+    .filter((f) => f.isPaid)
+    .map((value) => value.paymentType.value)
+    .reduce((acc, curr) => acc + curr, 0)
+
+  const variation = (totalPaid / totalIncome) * 100
+
+  return (
+    <Flex w="full" direction="column" p="4">
+      {loading ? (
+        <Progress size="xs" isIndeterminate />
+      ) : (
+        <>
+          <StatGroup pb={4}>
+            <Stat>
+              <StatLabel>Valor Bruto</StatLabel>
+              <StatNumber>{toBRL(totalIncome)}</StatNumber>
+              <StatHelpText></StatHelpText>
+            </Stat>
+
+            <Stat>
+              <StatLabel>Valor Líquido</StatLabel>
+              <StatNumber>{toBRL(totalPaid)}</StatNumber>
+              <StatHelpText>
+                {`Variação ${variation.toFixed(2)}%`}{' '}
+              </StatHelpText>
+            </Stat>
+          </StatGroup>
+          <Flex justifyContent="space-between" pb="4">
+            <Box>
+              <Select
+                value={search}
+                onChange={(event) => setSearch(+event.target.value)}
+                w="sm"
+              >
+                {months.map((month) => (
+                  <option key={month.name} value={month.name}>
+                    {month.label}
+                  </option>
+                ))}
+              </Select>
+            </Box>
+            <Box>
+              <NextLink href="/payment/income/new" shallow passHref>
+                <Button
+                  leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
+                  bg="primary.purple"
+                  textColor="white"
+                  _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+                >
+                  Adicionar
+                </Button>
+              </NextLink>
+            </Box>
+          </Flex>
+
+          <Box>
+            <Accordion allowMultiple>
+              {incomes.map((income) => (
+                <AccordionItem key={income.name}>
+                  <AccordionButton>
+                    <Box flex="1" textAlign="left">
+                      {income.name}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Table variant="simple" size={size}>
+                      <Thead>
+                        <Tr>
+                          <Th>Nº da sessão</Th>
+                          <Th>Data</Th>
+                          <Th>Pago?</Th>
+                          <Th>Parcial?</Th>
+                          <Th isNumeric>Valor</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {income.values.map((value) => (
+                          <Tr key={value.id}>
+                            <Td>{value.sessionNumber}</Td>
+                            <Td>
+                              {new Date(value.date).toLocaleDateString('pt')}
+                            </Td>
+                            <Td>
+                              <Badge
+                                variant="subtle"
+                                colorScheme={value.isPaid ? 'green' : 'red'}
+                              >
+                                {value.isPaid ? 'Sim' : 'Não'}
+                              </Badge>
+                            </Td>
+                            <Td>
+                              <Badge
+                                variant="subtle"
+                                colorScheme={value.isPartial ? 'green' : 'red'}
+                              >
+                                {value.isPartial ? 'Sim' : 'Não'}
+                              </Badge>
+                            </Td>
+                            <Td isNumeric>{toBRL(value.paymentType.value)}</Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                      <Tfoot>
+                        <Tr>
+                          <Th>Total</Th>
+                          <Th />
+                          <Th />
+                          <Th />
+                          <Th isNumeric>
+                            {toBRL(
+                              income.values
+                                .map((value) => value.paymentType.value)
+                                .reduce((acc, curr) => acc + curr, 0)
+                            )}
+                          </Th>
+                        </Tr>
+                      </Tfoot>
+                    </Table>
+                  </AccordionPanel>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Box>
+        </>
+      )}
+    </Flex>
+  )
+}

@@ -6,6 +6,7 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
+  ThemeTypings,
 } from '@chakra-ui/react'
 import { useRef } from 'react'
 
@@ -14,7 +15,9 @@ type Props = {
   onClose: () => void
   onSubmit: () => void
   title: string
+  label: string
   description: string
+  colorScheme: ThemeTypings['colorSchemes']
 }
 
 export const CustomAlertDialog: React.FC<Props> = ({
@@ -22,7 +25,9 @@ export const CustomAlertDialog: React.FC<Props> = ({
   onClose,
   onSubmit,
   title,
+  label,
   description,
+  colorScheme,
 }) => {
   const cancelRef = useRef<any>(undefined)
   return (
@@ -43,8 +48,8 @@ export const CustomAlertDialog: React.FC<Props> = ({
             <Button ref={cancelRef} onClick={onClose}>
               Cancelar
             </Button>
-            <Button colorScheme="red" onClick={onSubmit} ml={3}>
-              Remover
+            <Button colorScheme={colorScheme} onClick={onSubmit} ml={3}>
+              {label}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

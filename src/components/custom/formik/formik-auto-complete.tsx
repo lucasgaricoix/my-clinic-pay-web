@@ -53,9 +53,9 @@ export const FormikCustomAutoComplete: React.FC<Props> = ({
             )}
             <Box py="2">
               {visible && (
-                <Stack direction="row">
+                <Stack direction="row" wrap="wrap" alignItems="center">
                   {items.map((item) => (
-                    <Box mx={2} key={item.value}>
+                    <Box py={2} key={item.value}>
                       <Tag
                         size="md"
                         variant="solid"

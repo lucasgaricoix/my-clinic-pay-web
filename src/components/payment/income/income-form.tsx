@@ -52,7 +52,7 @@ const schema = yup.object().shape({
   paymentType: yup.object({
     id: yup.string().required(),
   }),
-  description: yup.string().min(3).required(),
+  description: yup.string().max(500),
   person: yup.object({
     id: yup.string().required(),
   }),

@@ -10,19 +10,21 @@ type Props = {
   name: string
   label: string
   isDisabled?: boolean
+  isRequired?: boolean
 }
 
 export const FormikTextArea: React.FC<Props> = ({
   name,
   label,
   isDisabled = false,
+  isRequired = false,
 }) => {
   return (
     <Field id={name} name={name}>
       {({ field, form }: FieldProps<string>) => {
         return (
           <FormControl
-            isRequired
+            isRequired={isRequired}
             isInvalid={!!form.errors[name] && !!form.touched[name]}
           >
             <FormLabel htmlFor={name}>{label}</FormLabel>

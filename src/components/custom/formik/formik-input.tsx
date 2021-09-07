@@ -20,7 +20,7 @@ export const FormikInput: React.FC<Props> = ({
   isDisabled = false,
 }) => {
   return (
-    <Field id={name} name={name}>
+    <Field id={name} name={name} timezone="America/Sao_Paulo">
       {({ field, form }: FieldProps<string>) => {
         return (
           <FormControl

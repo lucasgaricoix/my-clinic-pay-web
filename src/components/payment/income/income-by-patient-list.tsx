@@ -24,6 +24,7 @@ import {
   Thead,
   Tr,
   useBreakpointValue,
+  useDisclosure,
   useToast,
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
@@ -32,6 +33,7 @@ import { IoAddCircleOutline } from 'react-icons/io5'
 import { IncomeService } from '../../../services/payment'
 import { IncomeByPatient } from '../../../types/payment/income-by-patient'
 import { toBRL } from '../../../utils/format'
+import { CustomAlertDialog } from '../../custom/alert/alert-dialog'
 
 const months = [
   { name: 1, label: 'Janeiro' },
@@ -53,9 +55,11 @@ const currentMonth = new Date().getMonth()
 export const IncomeByPatientList = () => {
   const [loading, setLoading] = useState(false)
   const [incomes, setIncomes] = useState<IncomeByPatient[]>([])
+  const [paymentId, setPaymentId] = useState('')
   const toast = useToast()
   const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
   const [search, setSearch] = useState<number>(currentMonth + 1)
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const fetch = useCallback(async () => {
     try {
@@ -80,6 +84,29 @@ export const IncomeByPatientList = () => {
   useEffect(() => {
     fetch()
   }, [fetch])
+
+  const handlePay = useCallback(async () => {
+    {
+      try {
+        setLoading(true)
+        await IncomeService.pay(paymentId)
+      } catch (error) {
+        toast({
+          title: 'Erro ao pagar a receita',
+          description: 'Não funfou :(',
+          status: 'error',
+          position: 'top-right',
+          duration: 9000,
+          isClosable: true,
+        })
+      } finally {
+        onClose()
+        setPaymentId('')
+        fetch()
+        setLoading(false)
+      }
+    }
+  }, [paymentId, onClose, toast, fetch])
 
   const totalIncome = incomes
     .flatMap((income) => income.values)
@@ -161,6 +188,7 @@ export const IncomeByPatientList = () => {
                           <Th>Data</Th>
                           <Th>Pago?</Th>
                           <Th>Parcial?</Th>
+                          <Th></Th>
                           <Th isNumeric>Valor</Th>
                         </Tr>
                       </Thead>
@@ -187,6 +215,19 @@ export const IncomeByPatientList = () => {
                                 {value.isPartial ? 'Sim' : 'Não'}
                               </Badge>
                             </Td>
+                            <Td>
+                              {!value.isPaid && (
+                                <Button
+                                  onClick={() => {
+                                    setPaymentId(value.id!)
+                                    onOpen()
+                                  }}
+                                  size={size}
+                                >
+                                  Pagar
+                                </Button>
+                              )}
+                            </Td>
                             <Td isNumeric>{toBRL(value.paymentType.value)}</Td>
                           </Tr>
                         ))}
@@ -194,6 +235,7 @@ export const IncomeByPatientList = () => {
                       <Tfoot>
                         <Tr>
                           <Th>Total</Th>
+                          <Th />
                           <Th />
                           <Th />
                           <Th />
@@ -214,6 +256,15 @@ export const IncomeByPatientList = () => {
           </Box>
         </>
       )}
+      <CustomAlertDialog
+        isOpen={isOpen}
+        onClose={onClose}
+        onSubmit={handlePay}
+        title="Confirmar pagamento"
+        label="Pagar"
+        description="Deseja confirmar o pagamento selecionado?"
+        colorScheme="green"
+      />
     </Flex>
   )
 }

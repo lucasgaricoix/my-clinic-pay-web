@@ -5,13 +5,12 @@ import {
   Progress,
   Stack,
   Text,
-  useToast,
+  useToast
 } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
-import { PatientService } from '../../../services/patient'
 import { IncomeService, PaymentTypeService } from '../../../services/payment'
 import { Patient } from '../../../types/patient'
 import { Income, PaymentType } from '../../../types/payment'
@@ -21,8 +20,9 @@ import {
   FormikCustomAutoComplete,
   FormikInput,
   FormikSwitch,
-  FormikTextArea,
+  FormikTextArea
 } from '../../custom/formik'
+import { FormikCustomAutoCompleteDebounce } from '../../custom/formik/formik-auto-complete-debounce'
 
 const initialValues: Income = {
   id: '',
@@ -120,28 +120,6 @@ export const IncomeFormComponent = () => {
     }
   }, [toast])
 
-  const searchPatient = useCallback(async () => {
-    try {
-      setLoading(true)
-      const response = await PatientService.findAll()
-      const adapted = response.data.map((patient) => ({
-        value: patient.id ?? '',
-        label: patient.name,
-      }))
-      setPatientsOptions(adapted)
-      setPatients(response.data)
-    } catch {
-      toast({
-        title: 'Erro ao buscar os pacientes',
-        description: 'Se não conseguir encontrar, cadastre um novo :)',
-        status: 'warning',
-        position: 'top-right',
-        duration: 9000,
-        isClosable: true,
-      })
-    }
-  }, [toast])
-
   useEffect(() => {
     if (id && id !== 'new') {
       fetch(id as string)
@@ -150,8 +128,7 @@ export const IncomeFormComponent = () => {
 
   useEffect(() => {
     searchPaymentType()
-    searchPatient()
-  }, [searchPaymentType, searchPatient])
+  }, [searchPaymentType])
 
   const handleSubmit = async (
     values: Income,
@@ -235,10 +212,9 @@ export const IncomeFormComponent = () => {
                   label="Tipo de receita"
                   items={paymentTypesOptions}
                 />
-                <FormikCustomAutoComplete
+                <FormikCustomAutoCompleteDebounce
                   name="person.id"
                   label="Paciente"
-                  items={patientsOptions}
                 />
                 <FormikTextArea name="description" label="Descrição" />
 

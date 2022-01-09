@@ -20,3 +20,7 @@ export const save = (patient: Patient, method = 'save') => {
   }
   return api.post('/persons', patient)
 }
+
+export const search = (search: string) => {
+  return api.get('/persons/search', { params: { name: search } })
+}

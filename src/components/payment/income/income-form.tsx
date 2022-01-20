@@ -11,6 +11,7 @@ import { Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
+import { PatientService } from '../../../services/patient'
 import { IncomeService, PaymentTypeService } from '../../../services/payment'
 import { Patient } from '../../../types/patient'
 import { Income, PaymentType } from '../../../types/payment'
@@ -120,6 +121,33 @@ export const IncomeFormComponent = () => {
     }
   }, [toast])
 
+  const searchPatient = useCallback(
+    (param: string) => {
+      if (param.length > 2) {
+        PatientService.search(param)
+          .then((response) => {
+            setPatients(response.data)
+            const adapted = response.data.map((patient) => ({
+              value: patient.id ?? '',
+              label: patient.name,
+            }))
+            setPatientsOptions(adapted)
+          })
+          .catch(() => {
+            toast({
+              title: 'Erro ao buscar os pacientes',
+              description: 'Se não conseguir encontrar, cadastre um novo :)',
+              status: 'warning',
+              position: 'top-right',
+              duration: 9000,
+              isClosable: true,
+            })
+          })
+      }
+    },
+    [toast]
+  )
+
   useEffect(() => {
     if (id && id !== 'new') {
       fetch(id as string)
@@ -215,6 +243,8 @@ export const IncomeFormComponent = () => {
                 <FormikCustomAutoCompleteDebounce
                   name="person.id"
                   label="Paciente"
+                  items={patientsOptions}
+                  search={searchPatient}
                 />
                 <FormikTextArea name="description" label="Descrição" />
 

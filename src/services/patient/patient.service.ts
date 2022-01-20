@@ -21,6 +21,6 @@ export const save = (patient: Patient, method = 'save') => {
   return api.post('/persons', patient)
 }
 
-export const search = (search: string) => {
+export const search = (search: string): AxiosPromise<Patient[]> => {
   return api.get('/persons/search', { params: { name: search } })
 }

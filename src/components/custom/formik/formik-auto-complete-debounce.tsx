@@ -7,20 +7,21 @@ import {
   Stack,
   Tag,
   TagLabel,
-  TagLeftIcon,
-  useToast
+  TagLeftIcon
 } from '@chakra-ui/react'
-import { AxiosResponse } from 'axios'
 import { Field, FieldProps } from 'formik'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { IoAdd } from 'react-icons/io5'
-import { PatientService } from '../../../services/patient'
-import { Patient } from '../../../types/patient'
 
 interface Props {
   name: string
   label: string
   placeholder?: string
+  items: {
+    value: string
+    label: string
+  }[]
+  search: (param: string) => void
 }
 
 type PatientOptions = {
@@ -32,34 +33,11 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
   name,
   label,
   placeholder,
+  items,
+  search,
 }) => {
   const [visible, setVisible] = useState(true)
-  const toast = useToast()
-  const [items, setItems] = useState<PatientOptions[]>([])
-
-  const search = useCallback(
-    (param: string) => {
-      PatientService.search(param)
-        .then((response: AxiosResponse<Patient[]>) => {
-          const adapted = response.data.map((patient) => ({
-            value: patient.id ?? '',
-            label: patient.name,
-          }))
-          setItems(adapted)
-        })
-        .catch(() => {
-          toast({
-            title: 'Erro ao buscar os pacientes',
-            description: 'Se não conseguir encontrar, cadastre um novo :)',
-            status: 'warning',
-            position: 'top-right',
-            duration: 9000,
-            isClosable: true,
-          })
-        })
-    },
-    [toast]
-  )
+  const [itemLabel, setItemLabel] = useState('')
 
   return (
     <Field id={name} name={name}>
@@ -75,6 +53,7 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
               id={name}
               placeholder={placeholder}
               onChange={(event) => {
+                setItemLabel(event.target.value)
                 form.setFieldValue(name, event.target.value, true)
                 form.setFieldTouched(name, true)
                 if (event.target.value) {
@@ -82,6 +61,10 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
                 }
               }}
               onClick={() => setVisible(true)}
+              value={
+                items.filter((item) => item.value === field.value)[0]?.label ||
+                itemLabel
+              }
             />
             <Box py="2">
               {visible && (
@@ -93,7 +76,7 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
                         variant="solid"
                         colorScheme="teal"
                         onClick={() => {
-                          form.setFieldValue(name, item.label, true)
+                          form.setFieldValue(name, item.value, true)
                           form.setFieldTouched(name, true)
                           setVisible(false)
                         }}

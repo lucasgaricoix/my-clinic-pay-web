@@ -25,7 +25,7 @@ import {
   Tr,
   useBreakpointValue,
   useDisclosure,
-  useToast,
+  useToast
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -197,7 +197,9 @@ export const IncomeByPatientList = () => {
                           <Tr key={value.id}>
                             <Td>{value.sessionNumber}</Td>
                             <Td>
-                              {new Date(value.date).toLocaleDateString('pt')}
+                              {new Date(value.date).toLocaleDateString('pt', {
+                                timeZone: 'UTC',
+                              })}
                             </Td>
                             <Td>
                               <Badge

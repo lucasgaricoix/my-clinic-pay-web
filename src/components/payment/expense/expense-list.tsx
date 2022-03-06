@@ -14,7 +14,7 @@ import {
   Tr,
   useBreakpointValue,
   useDisclosure,
-  useToast,
+  useToast
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -149,11 +149,16 @@ export const ExpenseList = () => {
                 {expenses.map((expense) => (
                   <Tr key={expense.id}>
                     <Td>
-                      {new Date(expense.dueDate).toLocaleDateString('pt')}
+                      {new Date(expense.dueDate).toLocaleDateString('pt', {
+                        timeZone: 'UTC',
+                      })}
                     </Td>
                     <Td>
                       {expense.paymentDate
-                        ? new Date(expense.paymentDate).toLocaleDateString('pt')
+                        ? new Date(expense.paymentDate).toLocaleDateString(
+                            'pt',
+                            { timeZone: 'UTC' }
+                          )
                         : ''}
                     </Td>
                     <Td isNumeric>{toBRL(expense.paymentType.value)}</Td>

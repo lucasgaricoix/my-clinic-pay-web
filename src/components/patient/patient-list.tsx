@@ -12,7 +12,7 @@ import {
   Thead,
   Tr,
   useDisclosure,
-  useToast,
+  useToast
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -125,7 +125,9 @@ export const PatientList = () => {
                   <Tr key={patient.id}>
                     <Td>{patient.name}</Td>
                     <Td>
-                      {new Date(patient.birthDate).toLocaleDateString('pt')}
+                      {new Date(patient.birthDate).toLocaleDateString('pt', {
+                        timeZone: 'UTC',
+                      })}
                     </Td>
                     <Td>{getAge(patient.birthDate) || ''}</Td>
                     <Td>{patient.responsible.name}</Td>

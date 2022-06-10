@@ -33,7 +33,7 @@ export const PaymentDashboard = () => {
   }, [fetch])
 
   return (
-    <Flex w="full" h="full" direction="column" p="4">
+    <Flex w="full" h="full" direction="column">
       {loading && data.length ? (
         <Progress size="xs" isIndeterminate />
       ) : (

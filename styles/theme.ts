@@ -9,6 +9,10 @@ export const theme = extendTheme({
       purplehaze: '#FFF2FF',
       black: '#050505',
       gray: '#EBEBEB',
+      indigo: {
+        light: '#EEF2FF',
+        dark: '#4338CA'
+      }
     },
   },
 })

@@ -1,8 +1,8 @@
-import { Flex, Icon, Link, List, ListItem, Text } from '@chakra-ui/react'
+import { Flex, Icon, Link, List, ListItem } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import NextLink from 'next/link'
 import { IconType } from 'react-icons'
-import { IoApps, IoHappy, IoOptions, IoWallet } from 'react-icons/io5'
+import { IoHappy, IoHome, IoOptions, IoWallet } from 'react-icons/io5'
 
 type Menu = {
   description: string
@@ -13,7 +13,7 @@ type Menu = {
 
 export const SideBar = () => {
   const menus: Menu[] = [
-    { description: 'Home', icon: IoApps, link: '/' },
+    { description: 'Home', icon: IoHome, link: '/' },
     {
       description: 'Pagamentos',
       icon: IoWallet,
@@ -37,7 +37,7 @@ export const SideBar = () => {
   const { asPath, pathname } = useRouter()
 
   return (
-    <Flex w="160px" justifyContent="center">
+    <Flex w="auto" justifyContent="center" px="5">
       <List py={4} spacing={4}>
         {menus.map((menu) => {
           const isActiveSubLink = menu.subLink?.includes(pathname)
@@ -57,21 +57,14 @@ export const SideBar = () => {
                       justifyContent="center"
                       alignItems="center"
                       bgColor={
-                        isActiveRoute ? 'primary.purple' : 'primary.purplehaze'
+                        isActiveRoute ? 'primary.indigo.light' : 'white'
                       }
                       w="50px"
                       h="50px"
                       borderRadius="8px"
                     >
-                      <Icon w={5} h={5} as={menu.icon} color={'white'} />
+                      <Icon w={5} h={5} as={menu.icon} color={ isActiveRoute ? 'primary.indigo.dark' : 'gray.700'} />
                     </Flex>
-                    <Text
-                      color={isActiveRoute ? 'gray.800' : 'gray.400'}
-                      fontSize="xs"
-                      fontWeight={600}
-                    >
-                      {menu.description}
-                    </Text>
                   </Flex>
                 </Link>
               </NextLink>

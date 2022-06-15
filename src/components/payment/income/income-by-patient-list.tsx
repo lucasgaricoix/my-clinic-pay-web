@@ -119,7 +119,12 @@ export const IncomeByPatientList = () => {
     .map((value) => value.paymentType.value)
     .reduce((acc, curr) => acc + curr, 0)
 
-  const variation = (totalPaid / totalIncome) * 100
+  const getVariation = () => {
+    if (totalPaid >0 || totalIncome > 0) {
+      return (totalPaid / totalIncome) * 100
+    }
+    return 0
+  }
 
   return (
     <Flex w="full" direction="column" p="4">
@@ -138,7 +143,7 @@ export const IncomeByPatientList = () => {
               <StatLabel>Valor Líquido</StatLabel>
               <StatNumber>{toBRL(totalPaid)}</StatNumber>
               <StatHelpText>
-                {`Variação ${variation.toFixed(2)}%`}{' '}
+                {`Variação ${getVariation().toFixed(2)}%`}{' '}
               </StatHelpText>
             </Stat>
           </StatGroup>
@@ -160,9 +165,9 @@ export const IncomeByPatientList = () => {
               <NextLink href="/payment/income/new" shallow passHref>
                 <Button
                   leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-                  bg="primary.purple"
-                  textColor="white"
-                  _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+                  bg="primary.indigo.light"
+                  textColor="primary.indigo.dark"
+                  _hover={{ bg: 'primary.indigo.dark', textColor: 'primary.indigo.light' }}
                 >
                   Adicionar
                 </Button>

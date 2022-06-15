@@ -6,7 +6,7 @@ import { IncomeList } from './income/income-list'
 export const PaymentList = () => {
   return (
     <Tabs
-      colorScheme="purple"
+      colorScheme="blue"
       id="payment-list"
       isLazy
       w="full"

@@ -13,7 +13,7 @@ import {
   Tr,
   useBreakpointValue,
   useDisclosure,
-  useToast,
+  useToast
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -97,9 +97,9 @@ export const PaymentTypeComponent = () => {
           <NextLink href="/payment/type/new" shallow passHref>
             <Button
               leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-              bg="primary.purple"
-              textColor="white"
-              _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+              bg="primary.indigo.light"
+              textColor="primary.indigo.dark"
+              _hover={{ bg: 'primary.indigo.dark', textColor: 'primary.indigo.light' }}
             >
               Adicionar
             </Button>

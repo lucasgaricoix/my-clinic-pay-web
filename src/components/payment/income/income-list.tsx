@@ -151,9 +151,9 @@ export const IncomeList = () => {
               <NextLink href="/payment/income/new" shallow passHref>
                 <Button
                   leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-                  bg="primary.purple"
-                  textColor="white"
-                  _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+                  bg="primary.indigo.light"
+                  textColor="primary.indigo.dark"
+                  _hover={{ bg: 'primary.indigo.dark', textColor: 'primary.indigo.light' }}
                 >
                   Adicionar
                 </Button>

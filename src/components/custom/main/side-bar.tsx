@@ -1,4 +1,4 @@
-import { Flex, Icon, Link, List, ListItem } from '@chakra-ui/react'
+import { CloseButton, Flex, Grid, GridItem, Icon, Link } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import NextLink from 'next/link'
 import { IconType } from 'react-icons'
@@ -10,8 +10,12 @@ type Menu = {
   link: string
   subLink?: string[]
 }
+type Props = {
+  isMobile: boolean
+  onClose: () => void
+}
 
-export const SideBar = () => {
+export const SideBar: React.FC<Props> = ({ isMobile, onClose }) => {
   const menus: Menu[] = [
     { description: 'Home', icon: IoHome, link: '/' },
     {
@@ -37,14 +41,22 @@ export const SideBar = () => {
   const { asPath, pathname } = useRouter()
 
   return (
-    <Flex justifyContent="center" pl="4" pr="2">
-      <List py={4} spacing={4}>
+    <Flex
+      justifyContent={{ base: 'flex-start', xl: 'center' }}
+      pl={{ base: 0, xl: '4' }}
+      pr={{ base: 0, xl: '2' }}
+    >
+      <Grid
+        templateColumns={{ base: 'repeat(4, 1fr)', xl: 'repeat(1, 1fr)' }}
+        h={{ base: 'auto', xl: '250px' }}
+        gap={{ base: 4, xl: 1 }}
+      >
         {menus.map((menu) => {
           const isActiveSubLink = menu.subLink?.includes(pathname)
           const isActiveLink = asPath === menu.link
           const isActiveRoute = isActiveSubLink || isActiveLink
           return (
-            <ListItem key={menu.description}>
+            <GridItem key={menu.description}>
               <NextLink href={menu.link} shallow passHref>
                 <Link>
                   <Flex
@@ -56,22 +68,29 @@ export const SideBar = () => {
                     <Flex
                       justifyContent="center"
                       alignItems="center"
-                      bgColor={
-                        isActiveRoute ? 'primary.indigo.light' : 'white'
-                      }
+                      bgColor={isActiveRoute ? 'primary.indigo.light' : 'white'}
                       w="50px"
                       h="50px"
                       borderRadius="8px"
                     >
-                      <Icon w={5} h={5} as={menu.icon} color={ isActiveRoute ? 'primary.indigo.dark' : 'gray.700'} />
+                      <Icon
+                        w={5}
+                        h={5}
+                        as={menu.icon}
+                        color={
+                          isActiveRoute ? 'primary.indigo.dark' : 'gray.700'
+                        }
+                      />
                     </Flex>
                   </Flex>
                 </Link>
               </NextLink>
-            </ListItem>
+            </GridItem>
           )
         })}
-      </List>
+      </Grid>
+
+      {isMobile && <CloseButton onClick={onClose} />}
     </Flex>
   )
 }

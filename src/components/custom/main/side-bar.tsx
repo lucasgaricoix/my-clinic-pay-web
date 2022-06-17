@@ -11,11 +11,11 @@ type Menu = {
   subLink?: string[]
 }
 type Props = {
-  isMobile: boolean
+  isLargerThanMd: boolean
   onClose: () => void
 }
 
-export const SideBar: React.FC<Props> = ({ isMobile, onClose }) => {
+export const SideBar: React.FC<Props> = ({ isLargerThanMd = false, onClose }) => {
   const menus: Menu[] = [
     { description: 'Home', icon: IoHome, link: '/' },
     {
@@ -91,7 +91,7 @@ export const SideBar: React.FC<Props> = ({ isMobile, onClose }) => {
         })}
       </Grid>
 
-      {isMobile && <CloseButton onClick={onClose} ml={4} />}
+      {!isLargerThanMd && <CloseButton onClick={onClose} ml={4} />}
     </Flex>
   )
 }

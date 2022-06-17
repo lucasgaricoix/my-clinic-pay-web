@@ -13,11 +13,19 @@ import { SideBar } from './side-bar'
 
 export const MainLayout: React.FC = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [isMobile] = useMediaQuery('(max-width: 767px)')
+  const [isLargerThanMd] = useMediaQuery(['(min-width: 48em)'])
 
   return (
     <Flex minH="100vh" w="full" direction="row">
-      {isMobile ? (
+      {isLargerThanMd ? (
+        <Stack direction="row" w="full">
+          <SideBar isMobile={!isLargerThanMd} onClose={onClose} />
+          <Divider orientation="vertical" />
+          <Box w="full" bg="white" p="4">
+            {children}
+          </Box>
+        </Stack>
+      ) : (
         <VStack w="full" align="stretch">
           {!isOpen && (
             <Box p="2">
@@ -28,20 +36,12 @@ export const MainLayout: React.FC = ({ children }) => {
               />
             </Box>
           )}
-          {isOpen && <SideBar isMobile={isMobile} onClose={onClose} />}
+          {isOpen && <SideBar isMobile={!isLargerThanMd} onClose={onClose} />}
           <Divider orientation="horizontal" />
           <Box w="full" bg="white" p="4">
             {children}
           </Box>
         </VStack>
-      ) : (
-        <Stack direction="row" w="full">
-          <SideBar isMobile={isMobile} onClose={onClose} />
-          <Divider orientation="vertical" />
-          <Box w="full" bg="white" p="4">
-            {children}
-          </Box>
-        </Stack>
       )}
     </Flex>
   )

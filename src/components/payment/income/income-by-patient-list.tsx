@@ -120,18 +120,18 @@ export const IncomeByPatientList = () => {
     .reduce((acc, curr) => acc + curr, 0)
 
   const getVariation = () => {
-    if (totalPaid >0 || totalIncome > 0) {
+    if (totalPaid > 0 || totalIncome > 0) {
       return (totalPaid / totalIncome) * 100
     }
     return 0
   }
 
   return (
-    <Flex w="full" direction="column" >
+    <Box w="full">
       {loading ? (
-        <Progress size="xs" isIndeterminate />
+        <Progress w="full" size="xs" isIndeterminate />
       ) : (
-        <>
+        <Box w="full">
           <StatGroup pb={4}>
             <Stat>
               <StatLabel>Valor Bruto</StatLabel>
@@ -147,6 +147,7 @@ export const IncomeByPatientList = () => {
               </StatHelpText>
             </Stat>
           </StatGroup>
+
           <Flex justifyContent="space-between" pb="4">
             <Box>
               <Select
@@ -167,7 +168,10 @@ export const IncomeByPatientList = () => {
                   leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
                   bg="primary.indigo.light"
                   textColor="primary.indigo.dark"
-                  _hover={{ bg: 'primary.indigo.dark', textColor: 'primary.indigo.light' }}
+                  _hover={{
+                    bg: 'primary.indigo.dark',
+                    textColor: 'primary.indigo.light',
+                  }}
                 >
                   Adicionar
                 </Button>
@@ -261,7 +265,7 @@ export const IncomeByPatientList = () => {
               ))}
             </Accordion>
           </Box>
-        </>
+        </Box>
       )}
       <CustomAlertDialog
         isOpen={isOpen}
@@ -272,6 +276,6 @@ export const IncomeByPatientList = () => {
         description="Deseja confirmar o pagamento selecionado?"
         colorScheme="green"
       />
-    </Flex>
+    </Box>
   )
 }

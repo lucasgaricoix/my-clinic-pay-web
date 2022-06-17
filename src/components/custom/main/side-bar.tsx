@@ -43,9 +43,9 @@ export const SideBar: React.FC<Props> = ({ isMobile, onClose }) => {
   return (
     <Flex
       justifyContent={{ base: 'flex-start', md: 'center' }}
-      pl={{ base: 0, md: '4' }}
-      pr={{ base: 0, md: '2' }}
-      pt={{ base: 4, md: 0 }}
+      pl="4"
+      pr={{ base: "0px", md: '2px' }}
+      pt={{ base: '4px', md: 0 }}
     >
       <Grid
         templateColumns={{ base: 'repeat(4, 1fr)', md: 'repeat(1, 1fr)' }}

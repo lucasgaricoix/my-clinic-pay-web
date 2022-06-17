@@ -18,9 +18,9 @@ export const MainLayout: React.FC = ({ children }) => {
   return (
     <Flex minH="100vh" w="full" direction="row">
       {isMobile ? (
-        <VStack align="stretch">
+        <VStack w="full" align="stretch">
           {!isOpen && (
-            <Box p="2" w="50px" h="50px">
+            <Box p="2">
               <IconButton
                 aria-label="menu-button"
                 icon={<IoMenu />}

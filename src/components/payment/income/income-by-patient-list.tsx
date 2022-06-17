@@ -127,7 +127,7 @@ export const IncomeByPatientList = () => {
   }
 
   return (
-    <Flex w="full" direction="column" p="4">
+    <Flex w="full" direction="column" >
       {loading ? (
         <Progress size="xs" isIndeterminate />
       ) : (

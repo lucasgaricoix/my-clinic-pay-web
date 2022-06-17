@@ -37,7 +37,7 @@ export const SideBar = () => {
   const { asPath, pathname } = useRouter()
 
   return (
-    <Flex w="auto" justifyContent="center" px="5">
+    <Flex justifyContent="center" pl="4" pr="2">
       <List py={4} spacing={4}>
         {menus.map((menu) => {
           const isActiveSubLink = menu.subLink?.includes(pathname)

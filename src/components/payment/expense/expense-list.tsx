@@ -102,7 +102,7 @@ export const ExpenseList = () => {
   }, [removeId, onClose, toast, fetch])
 
   return (
-    <Flex w="full" h="full" direction="column" p="4">
+    <Flex w="full" h="full" direction="column">
       <Flex justifyContent="space-between" pb="4">
         <Box>
           <Select

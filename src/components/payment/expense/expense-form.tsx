@@ -4,11 +4,11 @@ import {
   HStack,
   Progress,
   Text,
-  useToast,
+  useToast
 } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { ExpenseService, PaymentTypeService } from '../../../services/payment'
 import { Expense, PaymentType } from '../../../types/payment/'
@@ -16,7 +16,7 @@ import { toBRL } from '../../../utils/format'
 import {
   FormikCustomAutoComplete,
   FormikInput,
-  FormikTextArea,
+  FormikTextArea
 } from '../../custom/formik/'
 
 const initialValues: Expense = {
@@ -153,7 +153,7 @@ export const ExpenseFormComponent = () => {
   }
 
   return (
-    <Flex direction="column" w="full" p="4" mb="4">
+    <Flex direction="column" w="full" mb="4">
       {loading && <Progress size="xs" isIndeterminate />}
       <Text fontWeight="600" fontSize="20" py="2">
         Cadastro de despesa

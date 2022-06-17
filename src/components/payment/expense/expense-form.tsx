@@ -187,7 +187,14 @@ export const ExpenseFormComponent = () => {
               items={paymentTypesOptions}
             />
             <FormikTextArea name="description" label="Descrição" />
-            <Button type="submit" w="320px" my="4">
+            <Button
+              type="submit"
+              w="320px"
+              my="4"
+              bg="primary.indigo.light"
+              textColor="primary.indigo.dark"
+              _hover={{ bg: 'primary.indigo.dark', textColor: 'white' }}
+            >
               Salvar
             </Button>
           </Form>

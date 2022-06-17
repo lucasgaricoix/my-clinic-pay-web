@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { PatientService } from '../../../services/patient'
 import { IncomeService, PaymentTypeService } from '../../../services/payment'
@@ -205,7 +205,7 @@ export const IncomeFormComponent = () => {
   }
 
   return (
-    <Flex direction="column" w="full" p="4" mb="4">
+    <Flex direction="column" w="full" mb="4">
       {loading ? (
         <Progress size="xs" isIndeterminate />
       ) : (
@@ -252,9 +252,9 @@ export const IncomeFormComponent = () => {
                   type="submit"
                   w="320px"
                   my="4"
-                  bg="primary.purple"
-                  textColor="white"
-                  _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+                  bg="primary.indigo.light"
+                  textColor="primary.indigo.dark"
+                  _hover={{ bg: 'primary.indigo.dark', textColor: 'white' }}
                 >
                   Salvar
                 </Button>

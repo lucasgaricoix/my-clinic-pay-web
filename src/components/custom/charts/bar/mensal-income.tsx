@@ -5,7 +5,7 @@ import {
   Legend,
   ReferenceLine,
   XAxis,
-  YAxis,
+  YAxis
 } from 'recharts'
 import { PaymentOverMonthType } from '../../../../types/payment/payment'
 import { toBRMonth } from '../../../../utils/format'
@@ -25,9 +25,9 @@ export const MensalIncomeExpenseBarChart: React.FC<Props> = ({ data }) => {
   const adapter = (data: PaymentOverMonthType[]): TranslatedData[] => {
     return data.map((item) => ({
       mes: toBRMonth(item.month),
-      receita: item.income,
-      despesa: item.expense,
-      total: item.income + item.expense,
+      receita: item.income ?? 0,
+      despesa: item.expense ?? 0,
+      total: item.income ?? 0 + item.expense ?? 0,
     }))
   }
   return (
@@ -47,8 +47,8 @@ export const MensalIncomeExpenseBarChart: React.FC<Props> = ({ data }) => {
       <XAxis dataKey="mes" />
       <YAxis dataKey="total" />
       <ReferenceLine y={0} stroke="#000" />
-      <Bar dataKey="receita" stackId="1" barSize={30} fill="teal" />
-      <Bar dataKey="despesa" stackId="2" barSize={30} fill="#A16AE8" />
+      <Bar dataKey="receita" stackId="1" barSize={30} fill="#4338CA" />
+      <Bar dataKey="despesa" stackId="2" barSize={30} fill="#93C5FD" />
     </BarChart>
   )
 }

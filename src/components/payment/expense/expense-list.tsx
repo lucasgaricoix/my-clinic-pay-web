@@ -102,7 +102,7 @@ export const ExpenseList = () => {
   }, [removeId, onClose, toast, fetch])
 
   return (
-    <Flex w="full" h="full" direction="column" p="4">
+    <Flex w="full" h="full" direction="column">
       <Flex justifyContent="space-between" pb="4">
         <Box>
           <Select
@@ -121,9 +121,9 @@ export const ExpenseList = () => {
           <NextLink href="/payment/expense/new" shallow passHref>
             <Button
               leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-              bg="primary.purple"
-              textColor="white"
-              _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+              bg="primary.indigo.light"
+              textColor="primary.indigo.dark"
+              _hover={{ bg: 'primary.indigo.dark', textColor: 'primary.indigo.light' }}
             >
               Adicionar
             </Button>

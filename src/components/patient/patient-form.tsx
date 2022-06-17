@@ -7,11 +7,11 @@ import {
   Input,
   Progress,
   Text,
-  useToast,
+  useToast
 } from '@chakra-ui/react'
 import { Field, FieldProps, Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { PatientService } from '../../services/patient'
 import { Patient } from '../../types/patient/patient-type'
@@ -189,9 +189,9 @@ export const PatientFormComponent = () => {
               type="submit"
               w="320px"
               my="4"
-              bg="primary.purple"
-              textColor="white"
-              _hover={{ bg: 'primary.darkpurple', textColor: 'white' }}
+              bg="primary.indigo.light"
+              textColor="primary.indigo.dark"
+              _hover={{ bg: 'primary.indigo.dark', textColor: 'white' }}
             >
               Salvar
             </Button>

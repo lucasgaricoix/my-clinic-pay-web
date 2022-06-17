@@ -42,14 +42,15 @@ export const SideBar: React.FC<Props> = ({ isMobile, onClose }) => {
 
   return (
     <Flex
-      justifyContent={{ base: 'flex-start', xl: 'center' }}
-      pl={{ base: 0, xl: '4' }}
-      pr={{ base: 0, xl: '2' }}
+      justifyContent={{ base: 'flex-start', md: 'center' }}
+      pl={{ base: 0, md: '4' }}
+      pr={{ base: 0, md: '2' }}
+      pt={{ base: 4, md: 0 }}
     >
       <Grid
-        templateColumns={{ base: 'repeat(4, 1fr)', xl: 'repeat(1, 1fr)' }}
-        h={{ base: 'auto', xl: '250px' }}
-        gap={{ base: 4, xl: 1 }}
+        templateColumns={{ base: 'repeat(4, 1fr)', md: 'repeat(1, 1fr)' }}
+        h={{ base: 'auto', md: '250px' }}
+        gap={{ base: 4, md: 1 }}
       >
         {menus.map((menu) => {
           const isActiveSubLink = menu.subLink?.includes(pathname)
@@ -90,7 +91,7 @@ export const SideBar: React.FC<Props> = ({ isMobile, onClose }) => {
         })}
       </Grid>
 
-      {isMobile && <CloseButton onClick={onClose} />}
+      {isMobile && <CloseButton onClick={onClose} ml={4} />}
     </Flex>
   )
 }

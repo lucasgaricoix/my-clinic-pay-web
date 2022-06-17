@@ -8,14 +8,12 @@ import {
   useMediaQuery,
   VStack
 } from '@chakra-ui/react'
-import { useRef } from 'react'
 import { IoMenu } from 'react-icons/io5'
 import { SideBar } from './side-bar'
 
 export const MainLayout: React.FC = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isMobile] = useMediaQuery('(max-width: 400px)')
-  const buttonRef = useRef()
 
   return (
     <Flex minH="100vh" w="full" direction="row">

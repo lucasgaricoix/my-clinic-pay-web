@@ -7,7 +7,7 @@ import {
   Stack,
   Tag,
   TagLabel,
-  TagLeftIcon,
+  TagLeftIcon
 } from '@chakra-ui/react'
 import { Field, FieldProps } from 'formik'
 import { useState } from 'react'
@@ -29,55 +29,57 @@ export const FormikCustomAutoComplete: React.FC<Props> = ({
   placeholder,
   items = [],
 }) => {
-  const [visible, setVisible] = useState(true)
+  const [isVisible, setIsVisible] = useState(false)
   return (
     <Field id={name} name={name}>
-      {({ field, form }: FieldProps) => (
-        <>
-          <FormControl
-            isRequired
-            isInvalid={!!form.errors[name] || !!form.errors[name]}
-          >
-            <FormLabel htmlFor={name}>{label}</FormLabel>
-            {!visible && (
-              <Input
-                {...field}
-                id={name}
-                placeholder={placeholder}
-                onClick={() => setVisible(true)}
-                value={
-                  items.filter((item) => item.value === field.value)[0]
-                    ?.label || ''
-                }
-              />
-            )}
-            <Box py="2">
-              {visible && (
-                <Stack direction="row" wrap="wrap" alignItems="center">
-                  {items.map((item) => (
-                    <Box py={2} key={item.value}>
-                      <Tag
-                        size="md"
-                        variant="solid"
-                        colorScheme="teal"
-                        onClick={() => {
-                          form.setFieldValue(name, item.value, true)
-                          form.setFieldTouched(name, true)
-                          setVisible(false)
-                        }}
-                      >
-                        <TagLeftIcon w={5} h={5} as={IoAdd} />
-                        <TagLabel>{item.label}</TagLabel>
-                      </Tag>
-                    </Box>
-                  ))}
-                </Stack>
+      {({ field, form }: FieldProps) => {
+        return (
+          <>
+            <FormControl
+              isRequired
+              isInvalid={!!form.errors[name] || !!form.errors[name]}
+            >
+              <FormLabel htmlFor={name}>{label}</FormLabel>
+              {!isVisible && (
+                <Input
+                  {...field}
+                  id={name}
+                  placeholder={placeholder}
+                  onClick={() => setIsVisible(!isVisible)}
+                  value={
+                    items.filter((item) => item.value === field.value)[0]
+                      ?.label || ''
+                  }
+                />
               )}
-            </Box>
-            <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
-          </FormControl>
-        </>
-      )}
+              <Box py="2">
+                {isVisible && (
+                  <Stack direction="row" wrap="wrap" alignItems="center">
+                    {items.map((item) => (
+                      <Box py={2} key={item.value}>
+                        <Tag
+                          size="md"
+                          variant="solid"
+                          colorScheme="teal"
+                          onClick={() => {
+                            form.setFieldValue(name, item.value, true)
+                            form.setFieldTouched(name, true)
+                            setIsVisible(false)
+                          }}
+                        >
+                          <TagLeftIcon w={5} h={5} as={IoAdd} />
+                          <TagLabel>{item.label}</TagLabel>
+                        </Tag>
+                      </Box>
+                    ))}
+                  </Stack>
+                )}
+              </Box>
+              <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
+            </FormControl>
+          </>
+        )
+      }}
     </Field>
   )
 }

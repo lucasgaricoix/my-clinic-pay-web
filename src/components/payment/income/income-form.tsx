@@ -121,7 +121,31 @@ export const IncomeFormComponent = () => {
     }
   }, [toast])
 
-  const searchPatient = useCallback(
+  const searchAllPatient = useCallback(async () => {
+    try {
+      setLoading(true)
+      const response = await PatientService.findAll()
+      const adapted = response.data.map((patient) => ({
+        value: patient.id!,
+        label: patient.name,
+      }))
+      setPatientsOptions(adapted)
+      setPatients(response.data)
+    } catch {
+      toast({
+        title: 'Erro ao buscar os pacientes',
+        description: 'Se não conseguir encontrar, cadastre um novo :)',
+        status: 'warning',
+        position: 'top-right',
+        duration: 9000,
+        isClosable: true,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [toast])
+
+  const searchPatientByName = useCallback(
     (param: string) => {
       if (param.length > 2) {
         PatientService.search(param)
@@ -156,7 +180,8 @@ export const IncomeFormComponent = () => {
 
   useEffect(() => {
     searchPaymentType()
-  }, [searchPaymentType])
+    searchAllPatient()
+  }, [searchPaymentType, searchAllPatient])
 
   const handleSubmit = async (
     values: Income,
@@ -244,7 +269,7 @@ export const IncomeFormComponent = () => {
                   name="person.id"
                   label="Paciente"
                   items={patientsOptions}
-                  search={searchPatient}
+                  search={searchPatientByName}
                 />
                 <FormikTextArea name="description" label="Descrição" />
 

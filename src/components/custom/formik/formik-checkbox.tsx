@@ -22,7 +22,6 @@ export const FormikCheckbox: React.FC<Props> = ({
   return (
     <Field id={name} name={name}>
       {({ field, form }: FieldProps<string>) => {
-        console.log(field)
         return (
           <FormControl
             isRequired={isRequired}

@@ -47,7 +47,7 @@ const months = [
   { name: 9, label: 'Setembro' },
   { name: 10, label: 'Outubro' },
   { name: 11, label: 'Novembro' },
-  { name: 12, label: 'Dezember' },
+  { name: 12, label: 'Dezembro' },
 ]
 
 const currentMonth = new Date().getMonth()
@@ -58,7 +58,7 @@ export const IncomeByPatientList = () => {
   const [paymentId, setPaymentId] = useState('')
   const toast = useToast()
   const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
-  const [search, setSearch] = useState<number>(currentMonth + 1)
+  const [search, setSearch] = useState<number>(currentMonth)
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const fetch = useCallback(async () => {
@@ -149,19 +149,18 @@ export const IncomeByPatientList = () => {
           </StatGroup>
 
           <Flex justifyContent="space-between" pb="4">
-            <Box>
-              <Select
-                value={search}
-                onChange={(event) => setSearch(+event.target.value)}
-                w="sm"
-              >
-                {months.map((month) => (
-                  <option key={month.name} value={month.name}>
-                    {month.label}
-                  </option>
-                ))}
-              </Select>
-            </Box>
+            <Select
+              value={search}
+              onChange={(event) => setSearch(+event.target.value)}
+              w="sm"
+              pr={2}
+            >
+              {months.map((month) => (
+                <option key={month.name} value={month.name}>
+                  {month.label}
+                </option>
+              ))}
+            </Select>
             <Box>
               <NextLink href="/payment/income/new" shallow passHref>
                 <Button

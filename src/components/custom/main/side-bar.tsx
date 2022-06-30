@@ -42,7 +42,7 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false, onClose }) =>
 
   return (
     <Flex
-      justifyContent={{ base: 'flex-start', md: 'center' }}
+      justifyContent="center"
       pl="4"
       pr={{ base: "0px", md: '2px' }}
       pt={{ base: '4px', md: 0 }}

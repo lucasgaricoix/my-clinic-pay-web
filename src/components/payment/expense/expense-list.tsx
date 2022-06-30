@@ -48,7 +48,7 @@ export const ExpenseList = () => {
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
-  const [search, setSearch] = useState<number>(currentMonth + 1)
+  const [search, setSearch] = useState<number>(currentMonth)
 
   const fetch = useCallback(async () => {
     try {
@@ -104,26 +104,27 @@ export const ExpenseList = () => {
   return (
     <Flex w="full" h="full" direction="column">
       <Flex justifyContent="space-between" pb="4">
-        <Box>
-          <Select
-            value={search}
-            onChange={(event) => setSearch(+event.target.value)}
-            w="sm"
-          >
-            {months.map((month) => (
-              <option key={month.name} value={month.name}>
-                {month.label}
-              </option>
-            ))}
-          </Select>
-        </Box>
+        <Select
+          value={search}
+          onChange={(event) => setSearch(+event.target.value)}
+          w="sm"
+        >
+          {months.map((month) => (
+            <option key={month.name} value={month.name}>
+              {month.label}
+            </option>
+          ))}
+        </Select>
         <Box>
           <NextLink href="/payment/expense/new" shallow passHref>
             <Button
               leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
               bg="primary.indigo.light"
               textColor="primary.indigo.dark"
-              _hover={{ bg: 'primary.indigo.dark', textColor: 'primary.indigo.light' }}
+              _hover={{
+                bg: 'primary.indigo.dark',
+                textColor: 'primary.indigo.light',
+              }}
             >
               Adicionar
             </Button>

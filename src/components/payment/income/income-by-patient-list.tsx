@@ -67,7 +67,6 @@ export const IncomeByPatientList = () => {
       const response = await IncomeService.findAllByPatient(search)
       setIncomes(response.data)
     } catch (error) {
-      console.log(error)
       toast({
         title: 'Erro ao carregar as receitas',
         description: 'Não funfou :(',

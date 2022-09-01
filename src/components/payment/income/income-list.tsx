@@ -40,7 +40,10 @@ const months = [
   { name: 12, label: 'Dezember' },
 ]
 
+const years = [2021, 2022, 2023]
+
 const currentMonth = new Date().getMonth()
+const currentYear = new Date().getFullYear()
 
 export const IncomeList = () => {
   const [loading, setLoading] = useState(false)
@@ -51,12 +54,13 @@ export const IncomeList = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isPaymentOpen, setIsPaymentOpen] = useState(false)
   const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
-  const [search, setSearch] = useState<number>(currentMonth)
+  const [month, setMonth] = useState<number>(currentMonth)
+  const [year, setYear] = useState<number>(currentYear)
 
   const fetch = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await IncomeService.findAll(search)
+      const response = await IncomeService.findAll(month, year)
       setIncomes(response.data)
     } catch (error) {
       toast({
@@ -70,7 +74,7 @@ export const IncomeList = () => {
     } finally {
       setLoading(false)
     }
-  }, [search, toast])
+  }, [month, year, toast])
 
   useEffect(() => {
     fetch()
@@ -134,17 +138,31 @@ export const IncomeList = () => {
       ) : (
         <>
           <Flex justifyContent="space-between" pb="4">
-            <Select
-              value={search}
-              onChange={(event) => setSearch(+event.target.value)}
-              w="sm"
-            >
-              {months.map((month) => (
-                <option key={month.name} value={month.name}>
-                  {month.label}
-                </option>
-              ))}
-            </Select>
+            <Flex>
+              <Select
+                value={month}
+                onChange={(event) => setMonth(+event.target.value)}
+                w="sm"
+                pr="1"
+              >
+                {months.map((month) => (
+                  <option key={month.name} value={month.name}>
+                    {month.label}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                value={year}
+                onChange={(event) => setYear(+event.target.value)}
+                w="xsm"
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </Select>
+            </Flex>
             <Box>
               <NextLink href="/payment/income/new" shallow passHref>
                 <Button

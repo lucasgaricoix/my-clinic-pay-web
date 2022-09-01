@@ -3,14 +3,15 @@ import { Income } from '../../types/payment/income'
 import { IncomeByPatient } from '../../types/payment/income-by-patient'
 import { api } from '../api'
 
-export const findAll = (month: number): AxiosPromise<Income[]> => {
-  return api.get('/incomes/search', { params: { month } })
+export const findAll = (month: number, year: number): AxiosPromise<Income[]> => {
+  return api.get('/incomes/search', { params: { month, year } })
 }
 
 export const findAllByPatient = (
-  month: number
+  month: number,
+  year: number
 ): AxiosPromise<IncomeByPatient[]> => {
-  return api.get('/incomes/by-patients', { params: { month } })
+  return api.get('/incomes/by-patients', { params: { month, year } })
 }
 
 export const findById = (id: string): AxiosPromise<Income> => {

@@ -1,8 +1,19 @@
-import { CloseButton, Flex, Grid, GridItem, Icon, Link } from '@chakra-ui/react'
+import {
+  Avatar,
+  Box,
+  CloseButton,
+  Flex,
+  Grid,
+  GridItem,
+  Icon,
+  Link,
+} from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import NextLink from 'next/link'
 import { IconType } from 'react-icons'
 import { IoHappy, IoHome, IoOptions, IoWallet } from 'react-icons/io5'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../store/store'
 
 type Menu = {
   description: string
@@ -15,7 +26,11 @@ type Props = {
   onClose: () => void
 }
 
-export const SideBar: React.FC<Props> = ({ isLargerThanMd = false, onClose }) => {
+export const SideBar: React.FC<Props> = ({
+  isLargerThanMd = false,
+  onClose,
+}) => {
+  const user = useSelector((state: RootState) => state.userSession)
   const menus: Menu[] = [
     { description: 'Home', icon: IoHome, link: '/' },
     {
@@ -43,15 +58,19 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false, onClose }) =>
   return (
     <Flex
       justifyContent="center"
-      pl="4"
-      pr={{ base: "0px", md: '2px' }}
-      pt={{ base: '4px', md: 0 }}
+      mx={2}
+      my={2}
     >
       <Grid
-        templateColumns={{ base: 'repeat(4, 1fr)', md: 'repeat(1, 1fr)' }}
+        templateColumns={{ base: 'repeat(5, 1fr)', md: 'repeat(1, 1fr)' }}
         h={{ base: 'auto', md: '250px' }}
-        gap={{ base: 4, md: 1 }}
+        gap={{ base: 5, md: 1 }}
       >
+        {user.name && (
+          <Box>
+            <Avatar size="md" name={user.name} src={user.picture}></Avatar>
+          </Box>
+        )}
         {menus.map((menu) => {
           const isActiveSubLink = menu.subLink?.includes(pathname)
           const isActiveLink = asPath === menu.link

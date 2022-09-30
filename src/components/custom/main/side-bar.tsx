@@ -22,12 +22,14 @@ type Menu = {
   subLink?: string[]
 }
 type Props = {
-  isLargerThanMd: boolean
+  isLargerThanMd?: boolean
+  isLargerThanSm?: boolean
   onClose: () => void
 }
 
 export const SideBar: React.FC<Props> = ({
   isLargerThanMd = false,
+  isLargerThanSm = false,
   onClose,
 }) => {
   const user = useSelector((state: RootState) => state.userSession)
@@ -89,13 +91,29 @@ export const SideBar: React.FC<Props> = ({
                       justifyContent="center"
                       alignItems="center"
                       bgColor={isActiveRoute ? 'primary.indigo.light' : 'white'}
-                      w="50px"
-                      h="50px"
+                      w={{
+                        base: "38px",
+                        md: "50px",
+                        lg: "50px"
+                      }}
+                      h={{
+                        base: "38px",
+                        md: "50px",
+                        lg: "50px"
+                      }}
                       borderRadius="8px"
                     >
                       <Icon
-                        w={5}
-                        h={5}
+                        w={{
+                          base: 4,
+                          md: 5,
+                          lg: 5
+                        }}
+                        h={{
+                          base: 4,
+                          md: 5,
+                          lg: 5
+                        }}
                         as={menu.icon}
                         color={
                           isActiveRoute ? 'primary.indigo.dark' : 'gray.700'
@@ -109,8 +127,6 @@ export const SideBar: React.FC<Props> = ({
           )
         })}
       </Grid>
-
-      {!isLargerThanMd && <CloseButton onClick={onClose} ml={4} />}
     </Flex>
   )
 }

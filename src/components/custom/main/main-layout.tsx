@@ -23,10 +23,10 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
     '(min-width: 30em)',
     '(min-width: 48em)',
   ])
-  const router = useRouter()
+  const { pathname } = useRouter()
   const notRenderRoutes = ['/login', '/signup']
 
-  if (notRenderRoutes.includes(router.pathname)) {
+  if (notRenderRoutes.includes(pathname)) {
     return (
       <Box w="full" h="100vh" bg="white" p="4">
         {children}
@@ -46,20 +46,17 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
         </Stack>
       )}
       {(isBase || isLargerThanSm) && !isLargerThanMd && (
-        <VStack w="full" align="stretch">
-          {!isOpen && (
-            <Box p="2">
-              <IconButton
-                aria-label="menu-button"
-                icon={<IoMenu />}
-                onClick={onOpen}
-              />
-            </Box>
-          )}
-          {isOpen && (
-            <SideBar isLargerThanMd={isLargerThanSm} onClose={onClose} />
-          )}
-          <Divider orientation="horizontal" />
+        <VStack
+          w="full"
+          align="stretch"
+          spacing={0}
+          divider={<Divider orientation="horizontal" />}
+        >
+          <SideBar
+            isLargerThanSm={isLargerThanSm}
+            isLargerThanMd={isLargerThanMd}
+            onClose={onClose}
+          />
           <Box w="full" bg="white" p="4">
             {children}
           </Box>

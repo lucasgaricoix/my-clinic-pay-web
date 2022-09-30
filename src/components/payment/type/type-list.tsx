@@ -13,7 +13,7 @@ import {
   Tr,
   useBreakpointValue,
   useDisclosure,
-  useToast
+  useToast,
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -99,7 +99,10 @@ export const PaymentTypeComponent = () => {
               leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
               bg="primary.indigo.light"
               textColor="primary.indigo.dark"
-              _hover={{ bg: 'primary.indigo.dark', textColor: 'primary.indigo.light' }}
+              _hover={{
+                bg: 'primary.indigo.dark',
+                textColor: 'primary.indigo.light',
+              }}
             >
               Adicionar
             </Button>
@@ -129,23 +132,18 @@ export const PaymentTypeComponent = () => {
                     <Td>
                       <Box>
                         <NextLink href={`/payment/type/${paymentType.id}`}>
-                          <Button
-                            size={size}
-                            leftIcon={<Icon as={IoPencil} />}
-                            mr="4"
-                          >
-                            Editar
+                          <Button size={size} mr="4">
+                            <Icon as={IoPencil} />
                           </Button>
                         </NextLink>
                         <Button
                           size={size}
-                          leftIcon={<Icon as={IoTrash} />}
                           onClick={() => {
                             setRemoveId(paymentType.id!)
                             onOpen()
                           }}
                         >
-                          Remover
+                          <Icon as={IoTrash} />
                         </Button>
                       </Box>
                     </Td>

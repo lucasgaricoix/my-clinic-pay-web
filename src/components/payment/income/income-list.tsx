@@ -1,11 +1,9 @@
 import {
   Badge,
-  Box,
   Button,
   Flex,
   Icon,
   Progress,
-  Select,
   Stack,
   Table,
   Tbody,
@@ -19,28 +17,12 @@ import {
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-import { IoAddCircleOutline, IoPencil, IoTrash } from 'react-icons/io5'
+import { IoPencil, IoTrash } from 'react-icons/io5'
 import { IncomeService } from '../../../services/payment'
 import { Income } from '../../../types/payment/income'
 import { toBRL } from '../../../utils/format'
 import { CustomAlertDialog } from '../../custom/alert/alert-dialog'
-
-const months = [
-  { name: 1, label: 'Janeiro' },
-  { name: 2, label: 'Fevereiro' },
-  { name: 3, label: 'Março' },
-  { name: 4, label: 'Abril' },
-  { name: 5, label: 'Maio' },
-  { name: 6, label: 'Junho' },
-  { name: 7, label: 'Julho' },
-  { name: 8, label: 'Agosto' },
-  { name: 9, label: 'Setembro' },
-  { name: 10, label: 'Outubro' },
-  { name: 11, label: 'Novembro' },
-  { name: 12, label: 'Dezember' },
-]
-
-const years = [2021, 2022, 2023]
+import { IncomeSelectGroup } from '../select-group'
 
 const currentMonth = new Date().getMonth()
 const currentYear = new Date().getFullYear()
@@ -137,48 +119,13 @@ export const IncomeList = () => {
         <Progress size="xs" isIndeterminate />
       ) : (
         <>
-          <Flex justifyContent="space-between" pb="4">
-            <Flex>
-              <Select
-                value={month}
-                onChange={(event) => setMonth(+event.target.value)}
-                w="sm"
-                pr="1"
-              >
-                {months.map((month) => (
-                  <option key={month.name} value={month.name}>
-                    {month.label}
-                  </option>
-                ))}
-              </Select>
-              <Select
-                value={year}
-                onChange={(event) => setYear(+event.target.value)}
-                w="xsm"
-              >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </Select>
-            </Flex>
-            <Box>
-              <NextLink href="/payment/income/new" shallow passHref>
-                <Button
-                  leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-                  bg="primary.indigo.light"
-                  textColor="primary.indigo.dark"
-                  _hover={{
-                    bg: 'primary.indigo.dark',
-                    textColor: 'primary.indigo.light',
-                  }}
-                >
-                  Adicionar
-                </Button>
-              </NextLink>
-            </Box>
-          </Flex>
+          <IncomeSelectGroup
+            currentYear={currentYear}
+            month={month}
+            setMonth={setMonth}
+            year={year}
+            setYear={setYear}
+          />
 
           <Table size={size}>
             <Thead>

@@ -10,9 +10,11 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
+  useBreakpointValue,
   useDisclosure,
-  useToast
+  useToast,
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -27,6 +29,7 @@ export const PatientList = () => {
   const [patients, setPatients] = useState<Patient[]>([])
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
 
   const fetch = useCallback(async () => {
     try {
@@ -98,7 +101,10 @@ export const PatientList = () => {
               leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
               bg="primary.indigo.light"
               textColor="primary.indigo.dark"
-              _hover={{ bg: 'primary.indigo.dark', textColor: 'primary.indigo.light' }}
+              _hover={{
+                bg: 'primary.indigo.dark',
+                textColor: 'primary.indigo.light',
+              }}
             >
               Adicionar
             </Button>
@@ -132,22 +138,43 @@ export const PatientList = () => {
                     <Td>{getAge(patient.birthDate) || ''}</Td>
                     <Td>{patient.responsible.name}</Td>
                     <Td>
-                      <Box>
+                      <Flex>
                         <NextLink href={`patient/${patient.id}`}>
-                          <Button leftIcon={<Icon as={IoPencil} />} mr="4">
-                            Editar
+                          <Button
+                            size={size}
+                            bg="transparent"
+                            mr={2}
+                            _hover={{
+                              bg: 'primary.indigo.light',
+                              color: 'primary.indigo.dark',
+                            }}
+                          >
+                            <Tooltip label="Editar">
+                              <span>
+                                <Icon as={IoPencil} />
+                              </span>
+                            </Tooltip>
                           </Button>
                         </NextLink>
                         <Button
-                          leftIcon={<Icon as={IoTrash} />}
+                          size={size}
+                          bg="transparent"
                           onClick={() => {
                             setRemoveId(patient.id!)
                             onOpen()
                           }}
+                          _hover={{
+                            bg: 'red',
+                            color: 'gray.100',
+                          }}
                         >
-                          Remover
+                          <Tooltip label="Remover">
+                            <span>
+                              <Icon as={IoTrash} />
+                            </span>
+                          </Tooltip>
                         </Button>
-                      </Box>
+                      </Flex>
                     </Td>
                   </Tr>
                 ))}

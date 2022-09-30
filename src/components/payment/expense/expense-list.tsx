@@ -14,7 +14,7 @@ import {
   Tr,
   useBreakpointValue,
   useDisclosure,
-  useToast
+  useToast,
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -103,38 +103,50 @@ export const ExpenseList = () => {
 
   return (
     <Flex w="full" h="full" direction="column">
-      <Flex justifyContent="space-between" pb="4">
-        <Select
-          value={search}
-          onChange={(event) => setSearch(+event.target.value)}
-          w="sm"
-        >
-          {months.map((month) => (
-            <option key={month.name} value={month.name}>
-              {month.label}
-            </option>
-          ))}
-        </Select>
-        <Box>
-          <NextLink href="/payment/expense/new" shallow passHref>
-            <Button
-              leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-              bg="primary.indigo.light"
-              textColor="primary.indigo.dark"
-              _hover={{
-                bg: 'primary.indigo.dark',
-                textColor: 'primary.indigo.light',
-              }}
-            >
-              Adicionar
-            </Button>
-          </NextLink>
-        </Box>
-      </Flex>
       {loading ? (
         <Progress size="xs" isIndeterminate />
       ) : (
         <>
+          <Flex justifyContent="space-between" pb="4">
+            <Select
+              size={{
+                base: 'sm',
+                lg: 'md',
+                sm: 'sm',
+              }}
+              mr={1}
+              value={search}
+              borderRadius={4}
+              onChange={(event) => setSearch(+event.target.value)}
+            >
+              {months.map((month) => (
+                <option key={month.name} value={month.name}>
+                  {month.label}
+                </option>
+              ))}
+            </Select>
+            <Box>
+              <NextLink href="/payment/expense/new" shallow passHref>
+                <Button
+                  size={{
+                    base: 'sm',
+                    lg: 'md',
+                    sm: 'sm',
+                  }}
+                  leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
+                  bg="primary.indigo.light"
+                  textColor="primary.indigo.dark"
+                  _hover={{
+                    bg: 'primary.indigo.dark',
+                    textColor: 'primary.indigo.light',
+                  }}
+                >
+                  Adicionar
+                </Button>
+              </NextLink>
+            </Box>
+          </Flex>
+
           <Box>
             <Table size={size}>
               <Thead>

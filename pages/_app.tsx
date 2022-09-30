@@ -6,6 +6,8 @@ import '../styles/globals.css'
 import { theme } from '../styles/theme'
 import { wrapper } from '../src/store/store'
 import { Provider } from 'react-redux'
+import SessionWrapper from '../src/providers/session-provider'
+
 
 function MyApp({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest)
@@ -15,9 +17,11 @@ function MyApp({ Component, ...rest }: AppProps) {
     <Provider store={store}>
       <ChakraProvider theme={theme}>
         <GoogleScript />
+        <SessionWrapper>
         <MainLayout>
           <Component {...pageProps} />
         </MainLayout>
+        </SessionWrapper>
       </ChakraProvider>
     </Provider>
   )

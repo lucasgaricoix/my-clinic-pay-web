@@ -60,8 +60,7 @@ export const SideBar: React.FC<Props> = ({
   return (
     <Flex
       justifyContent="center"
-      mx={2}
-      my={2}
+      m={2}
     >
       <Grid
         templateColumns={{ base: 'repeat(5, 1fr)', md: 'repeat(1, 1fr)' }}
@@ -69,9 +68,9 @@ export const SideBar: React.FC<Props> = ({
         gap={{ base: 5, md: 1 }}
       >
         {user.name && (
-          <Box>
-            <Avatar size="md" name={user.name} src={user.picture}></Avatar>
-          </Box>
+          <Flex justifySelf="center">
+            <Avatar size="sm" name={user.name} src={user.picture}></Avatar>
+          </Flex>
         )}
         {menus.map((menu) => {
           const isActiveSubLink = menu.subLink?.includes(pathname)

@@ -36,8 +36,10 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
 
   useEffect(() => {
     const { name, email, picture, iat, exp }: any = jwt.decode(sessionToken)
-    dispatch(setUserSession({ name, email, picture, iat, exp, token: sessionToken }))
-    router.push('/')
+    const dispatched = dispatch(setUserSession({ name, email, picture, iat, exp, token: sessionToken }))
+    if (dispatched.payload) {
+      router.push('/')
+    }
   }, [dispatch, sessionToken, router])
 
   return (

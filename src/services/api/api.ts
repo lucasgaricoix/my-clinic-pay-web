@@ -7,7 +7,7 @@ axiosInstance = axios.create({
   // baseURL: 'http://localhost:8082',
 })
 
-function setTenantId(tenantId: string) {
+function setTenantId(tenantId?: string) {
   axiosInstance?.interceptors.request.use(function (config) {
     config.headers['X-tenant-id'] = tenantId
     return config

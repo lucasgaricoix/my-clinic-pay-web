@@ -8,7 +8,8 @@ const initialState: UserSession = {
   picture: '',
   iat: 0,
   exp: 0,
-  token: ''
+  token: '',
+  tenantId: ''
 }
 
 const userSessionSlice = createSlice({
@@ -22,6 +23,7 @@ const userSessionSlice = createSlice({
       state.iat = action.payload.iat
       state.exp = action.payload.exp
       state.token = action.payload.token
+      state.tenantId = action.payload.tenantId
     },
   },
   extraReducers: {

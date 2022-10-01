@@ -12,6 +12,7 @@ import { useRouter } from 'next/dist/client/router'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { FormikInput } from '../../src/components/custom/formik'
+import GoogleScript from '../../src/components/signup/google-script'
 import { RootState } from '../../src/store/store'
 
 const initialValues = {}
@@ -32,6 +33,7 @@ const Login = () => {
 
   return (
     <Flex minH="100%">
+    <GoogleScript />
       <Flex
         p={10}
         direction="column"

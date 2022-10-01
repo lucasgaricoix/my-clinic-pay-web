@@ -11,9 +11,10 @@ type Props = {
 export default function SessionWrapper({ children }: Props) {
   const state = useSelector((state: RootState) => state.userSession)
   const { push, pathname } = useRouter()
-
+  
   useEffect(() => {
-    if (!state?.token && pathname != '/login') {
+    const routes = ['/login', '/signup']
+    if (!state?.token && !routes.includes(pathname)) {
       push('/login')
     }
   }, [state, pathname, push])

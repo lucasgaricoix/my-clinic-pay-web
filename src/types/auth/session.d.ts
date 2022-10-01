@@ -4,5 +4,14 @@ export type UserSession = {
   picture: string
   iat: number
   exp: number,
-  token: string
+  token: string,
+  tenantId?: string
+}
+
+export type UserPayload = {
+  name: string
+  email: string
+  picture: string,
+  role: string,
+  tenantId?: string
 }

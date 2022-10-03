@@ -42,7 +42,7 @@ export const FormikSelect: React.FC<Props> = ({
               ))}
             </Select>
             {form.errors[name] && (
-              <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
+              <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>
             )}
           </FormControl>
         )

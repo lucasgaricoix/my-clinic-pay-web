@@ -39,7 +39,7 @@ export const FormikCheckbox: React.FC<Props> = ({
               isRequired={isRequired}
             />
             {form.errors[name] && (
-              <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
+              <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>
             )}
           </FormControl>
         )

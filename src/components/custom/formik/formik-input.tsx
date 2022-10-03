@@ -41,7 +41,7 @@ export const FormikInput: React.FC<Props> = ({
               isDisabled={isDisabled}
             />
             {form.errors[name] && (
-              <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
+              <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>
             )}
           </FormControl>
         )

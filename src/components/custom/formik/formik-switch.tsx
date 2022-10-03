@@ -26,7 +26,7 @@ export const FormikSwitch: React.FC<Props> = ({ name, label, isRequired = false 
             </FormLabel>
             <Switch colorScheme="teal" id={name} {...field} isRequired={isRequired} isChecked={!!field.value} />
             {form.errors[name] && (
-              <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
+              <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>
             )}
           </FormControl>
         )

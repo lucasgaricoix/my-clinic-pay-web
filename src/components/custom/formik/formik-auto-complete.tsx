@@ -7,7 +7,7 @@ import {
   Stack,
   Tag,
   TagLabel,
-  TagLeftIcon
+  TagLeftIcon,
 } from '@chakra-ui/react'
 import { Field, FieldProps } from 'formik'
 import { useState } from 'react'
@@ -75,7 +75,11 @@ export const FormikCustomAutoComplete: React.FC<Props> = ({
                   </Stack>
                 )}
               </Box>
-              <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
+              {form.errors[name] && (
+                <FormErrorMessage>
+                  {form.errors[name] as string}
+                </FormErrorMessage>
+              )}
             </FormControl>
           </>
         )

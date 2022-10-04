@@ -18,22 +18,26 @@ import { RootState } from '../../src/store/store'
 const initialValues = {}
 
 const Login = () => {
-  const router = useRouter()
+  const { push } = useRouter()
   const state = useSelector((state: RootState) => state.userSession)
 
   useEffect(() => {
-    if (state.name) {
-      router.push('/')
+    if (state.token) {
+      push('/')
     }
-  }, [state, router])
+  })
 
   const onSubmit = () => {
-    router.push('/')
+    push('/')
+  }
+
+  if (state.token) {
+    return null
   }
 
   return (
-    <Flex minH="100%">
-    <GoogleScript />
+    <Flex minH="100%" id="login-container">
+      <GoogleScript />
       <Flex
         p={10}
         direction="column"

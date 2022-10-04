@@ -1,12 +1,21 @@
 import { Box, Divider, Stack, Text } from '@chakra-ui/react'
-import { useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
+import { useContext } from 'react'
+import { AuthContext } from '../../providers/auth-provider'
 import { PaymentDashboard } from '../payment/all/dashboard'
 
 export const HomeComponent = () => {
-  const state = useSelector((state: RootState) => state.userSession)
+  const { isUserAuthenticated } = useContext(AuthContext)
+  const { push } = useRouter()
 
-  if (!state.token) {
+  useEffect(() => {
+    if (!isUserAuthenticated) {
+      push('/login')
+    }
+  })
+
+  if (!isUserAuthenticated) {
     return (
       <Box>
         <Text>Redirecting...</Text>
@@ -16,9 +25,8 @@ export const HomeComponent = () => {
 
   return (
     <Stack spacing={2} p="2">
-      <Text>Bem vindo ao my clinic pay!</Text>
       <Divider orientation="vertical" />
-      <PaymentDashboard/>
+      <PaymentDashboard />
     </Stack>
   )
 }

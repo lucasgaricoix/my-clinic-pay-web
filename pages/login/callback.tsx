@@ -1,4 +1,4 @@
-import { Box, Progress, Text } from '@chakra-ui/react'
+import { Flex, Spinner, Text } from '@chakra-ui/react'
 import formidable from 'formidable'
 import { useDispatch } from 'react-redux'
 import { useCallback, useEffect, useState } from 'react'
@@ -56,7 +56,7 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
         setTenantId(response.data.tenantId)
         dispatch(setUserSession({ ...user, tenantId: response.data.tenantId }))
         if (response.data) {
-          push('/')
+          push('/login')
         }
       } catch (error) {
         console.error(error)
@@ -77,10 +77,12 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
       exp,
       token: sessionToken,
     })
-  }, [handleCreateUser, sessionToken, push])
+  }, [handleCreateUser, sessionToken])
 
   return (
-    <Box>{loading ? <Text>Loading...</Text> : <Text>Redirecting...</Text>}</Box>
+    <Flex justifyContent="center" alignItems="center">
+      {loading ? <Spinner>Loading...</Spinner> : <Text>Redirecting...</Text>}
+    </Flex>
   )
 }
 

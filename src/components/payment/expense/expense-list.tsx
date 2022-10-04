@@ -109,6 +109,7 @@ export const ExpenseList = () => {
         <>
           <Flex justifyContent="space-between" pb="4">
             <Select
+              w="sm"
               size={{
                 base: 'sm',
                 lg: 'md',

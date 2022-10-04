@@ -1,20 +1,8 @@
-import {
-  Avatar,
-  Box,
-  CloseButton,
-  Flex,
-  Grid,
-  GridItem,
-  Icon,
-  Link,
-} from '@chakra-ui/react'
+import { Flex, Grid, GridItem, Icon, Link } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import NextLink from 'next/link'
 import { IconType } from 'react-icons'
 import { IoHappy, IoHome, IoOptions, IoWallet } from 'react-icons/io5'
-import { useSelector } from 'react-redux'
-import { RootState } from '../../../store/store'
-
 type Menu = {
   description: string
   icon: IconType
@@ -32,7 +20,6 @@ export const SideBar: React.FC<Props> = ({
   isLargerThanSm = false,
   onClose,
 }) => {
-  const user = useSelector((state: RootState) => state.userSession)
   const menus: Menu[] = [
     { description: 'Home', icon: IoHome, link: '/' },
     {
@@ -56,22 +43,13 @@ export const SideBar: React.FC<Props> = ({
   ]
 
   const { asPath, pathname } = useRouter()
-
   return (
-    <Flex
-      justifyContent="center"
-      m={2}
-    >
+    <Flex justifyContent="center" m={2}>
       <Grid
         templateColumns={{ base: 'repeat(5, 1fr)', md: 'repeat(1, 1fr)' }}
         h={{ base: 'auto', md: '250px' }}
         gap={{ base: 5, md: 1 }}
       >
-        {user.name && (
-          <Flex justifySelf="center">
-            <Avatar size="sm" name={user.name} src={user.picture}></Avatar>
-          </Flex>
-        )}
         {menus.map((menu) => {
           const isActiveSubLink = menu.subLink?.includes(pathname)
           const isActiveLink = asPath === menu.link
@@ -91,14 +69,14 @@ export const SideBar: React.FC<Props> = ({
                       alignItems="center"
                       bgColor={isActiveRoute ? 'primary.indigo.light' : 'white'}
                       w={{
-                        base: "38px",
-                        md: "50px",
-                        lg: "50px"
+                        base: '38px',
+                        md: '50px',
+                        lg: '50px',
                       }}
                       h={{
-                        base: "38px",
-                        md: "50px",
-                        lg: "50px"
+                        base: '38px',
+                        md: '50px',
+                        lg: '50px',
                       }}
                       borderRadius="8px"
                     >
@@ -106,12 +84,12 @@ export const SideBar: React.FC<Props> = ({
                         w={{
                           base: 4,
                           md: 5,
-                          lg: 5
+                          lg: 5,
                         }}
                         h={{
                           base: 4,
                           md: 5,
-                          lg: 5
+                          lg: 5,
                         }}
                         as={menu.icon}
                         color={

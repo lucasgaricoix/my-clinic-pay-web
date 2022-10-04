@@ -5,8 +5,7 @@ import '../styles/globals.css'
 import { theme } from '../styles/theme'
 import { wrapper } from '../src/store/store'
 import { Provider } from 'react-redux'
-import SessionWrapper from '../src/providers/session-wrapper'
-
+import { AuthProvider } from '../src/providers/auth-provider'
 
 function MyApp({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest)
@@ -14,12 +13,14 @@ function MyApp({ Component, ...rest }: AppProps) {
 
   return (
     <Provider store={store}>
-      <ChakraProvider theme={theme}>        
-        <SessionWrapper>
-        <MainLayout>
-          <Component {...pageProps} />
-        </MainLayout>
-        </SessionWrapper>
+      <ChakraProvider theme={theme}>
+        <AuthProvider
+          isUserAuthenticated={store.getState().userSession.token !== ''}
+        >
+          <MainLayout>
+            <Component {...pageProps} />
+          </MainLayout>
+        </AuthProvider>
       </ChakraProvider>
     </Provider>
   )

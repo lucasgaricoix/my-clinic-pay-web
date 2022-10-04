@@ -2,14 +2,13 @@ import {
   Box,
   Divider,
   Flex,
-  IconButton,
   Stack,
   useDisclosure,
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
-import { IoMenu } from 'react-icons/io5'
+import NavBar from './nav-bar'
 import { SideBar } from './side-bar'
 
 type Props = {
@@ -24,7 +23,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
     '(min-width: 48em)',
   ])
   const { pathname } = useRouter()
-  const notRenderRoutes = ['/login', '/signup']
+  const notRenderRoutes = ['/login', '/signup', '/login/callback']
 
   if (notRenderRoutes.includes(pathname)) {
     return (
@@ -40,9 +39,10 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
         <Stack direction="row" w="full" spacing={0}>
           <SideBar isLargerThanMd={isLargerThanSm} onClose={onClose} />
           <Divider orientation="vertical" />
-          <Box w="full" bg="white" p="4">
-            {children}
-          </Box>
+          <VStack w="full" bg="white" divider={<Divider />}>
+            <NavBar />
+            <Box w="full">{children}</Box>
+          </VStack>
         </Stack>
       )}
       {(isBase || isLargerThanSm) && !isLargerThanMd && (

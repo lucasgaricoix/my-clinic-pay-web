@@ -85,11 +85,10 @@ export const IncomeSelectGroup: React.FC<Props> = ({
         <NextLink href="/payment/income/new" shallow passHref>
           <Button
             leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="auto" />}
-            bg="primary.indigo.light"
-            textColor="primary.indigo.dark"
+            bg="primary.blue.pure"
+            textColor="white"
             _hover={{
-              bg: 'primary.indigo.dark',
-              textColor: 'primary.indigo.light',
+              bg: 'primary.blue.pure'
             }}
             size={selectAndButtonSizes}
           >

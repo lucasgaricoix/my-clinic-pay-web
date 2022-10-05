@@ -70,7 +70,7 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
                         <Tag
                           size="md"
                           variant="solid"
-                          colorScheme="teal"
+                          bgColor="primary.blue.pure"
                           onClick={() => {
                             form.setFieldValue(name, item.value, true)
                             form.setFieldTouched(name, true)

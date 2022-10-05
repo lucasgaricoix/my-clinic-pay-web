@@ -33,7 +33,7 @@ export const FormikCheckbox: React.FC<Props> = ({
             <Checkbox
               {...field}
               id={name}
-              colorScheme="teal"
+              colorScheme="blue"
               isChecked={!!field.value}
               defaultChecked={defaultIsChecked}
               isRequired={isRequired}

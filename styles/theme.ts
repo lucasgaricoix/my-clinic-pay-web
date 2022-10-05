@@ -12,6 +12,9 @@ export const theme = extendTheme({
       indigo: {
         light: '#EEF2FF',
         dark: '#4338CA'
+      },
+      blue: {
+        pure: '#0069ff'
       }
     },
   },

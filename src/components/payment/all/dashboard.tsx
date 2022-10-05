@@ -4,7 +4,7 @@ import { PaymentService } from '../../../services/payment'
 import { PaymentOverMonthType } from '../../../types/payment/payment'
 import { MensalIncomeExpenseBarChart } from '../../custom/charts/bar/mensal-income'
 
-export const PaymentDashboard = () => {
+export const PaymentDashboard = () => {  
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<PaymentOverMonthType[]>([])
   const toast = useToast()

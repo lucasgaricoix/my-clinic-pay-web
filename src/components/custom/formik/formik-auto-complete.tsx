@@ -52,15 +52,15 @@ export const FormikCustomAutoComplete: React.FC<Props> = ({
                   }
                 />
               )}
-              <Box py="2">
+              <Box>
                 {isVisible && (
-                  <Stack direction="row" wrap="wrap" alignItems="center">
+                  <Stack direction="row" wrap="wrap" alignItems="flex-start" spacing={1}>
                     {items.map((item) => (
                       <Box py={2} key={item.value}>
                         <Tag
                           size="md"
                           variant="solid"
-                          colorScheme="teal"
+                          bgColor="primary.blue.pure"
                           onClick={() => {
                             form.setFieldValue(name, item.value, true)
                             form.setFieldTouched(name, true)

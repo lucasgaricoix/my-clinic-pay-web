@@ -29,10 +29,10 @@ export default function NavBar() {
 
   return (
     <Flex px={4} w="full" justifyContent="flex-end" alignItems="center">
-      <HStack>
-        <Icon as={IoNotificationsOutline} w="20px" h="20px" />
-        <Icon as={IoSettingsOutline} w="20px" h="20px" />
-        {user.name && (
+      {user.name && (
+        <HStack>
+          <Icon as={IoNotificationsOutline} w="20px" h="20px" />
+          <Icon as={IoSettingsOutline} w="20px" h="20px" />
           <Flex justifySelf="center">
             <Popover
               initialFocusRef={initialFocusRef}
@@ -51,8 +51,8 @@ export default function NavBar() {
               <AccountPopover logout={logout} />
             </Popover>
           </Flex>
-        )}
-      </HStack>
+        </HStack>
+      )}
     </Flex>
   )
 }

@@ -27,7 +27,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
 
   if (notRenderRoutes.includes(pathname)) {
     return (
-      <Box w="full" h="100vh" bg="white" p="4">
+      <Box w="full" h="100vh" bg="white">
         {children}
       </Box>
     )
@@ -39,7 +39,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
         <Stack direction="row" w="full" spacing={0}>
           <SideBar isLargerThanMd={isLargerThanSm} onClose={onClose} />
           <Divider orientation="vertical" />
-          <VStack w="full" bg="white" divider={<Divider />}>
+          <VStack w="full" bg="white" divider={<Divider />} spacing={0}>
             <NavBar />
             <Box w="full">{children}</Box>
           </VStack>
@@ -48,7 +48,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
       {(isBase || isLargerThanSm) && !isLargerThanMd && (
         <VStack
           w="full"
-          align="stretch"
+          minH="100vh"
           spacing={0}
           divider={<Divider orientation="horizontal" />}
         >
@@ -57,7 +57,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
             isLargerThanMd={isLargerThanMd}
             onClose={onClose}
           />
-          <Box w="full" bg="white" p="4">
+          <Box w="full" bg="white">
             {children}
           </Box>
         </VStack>

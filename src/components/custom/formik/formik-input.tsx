@@ -2,13 +2,14 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Input
+  Input,
 } from '@chakra-ui/react'
 import { Field, FieldProps } from 'formik'
 
 type Props = {
   name: string
   label: string
+  placeholder?: string
   type?: string
   isRequired?: boolean
   isDisabled?: boolean
@@ -17,6 +18,7 @@ type Props = {
 export const FormikInput: React.FC<Props> = ({
   name,
   label,
+  placeholder,
   type,
   isRequired = false,
   isDisabled = false,
@@ -37,8 +39,10 @@ export const FormikInput: React.FC<Props> = ({
               id={name}
               name={name}
               type={type}
+              placeholder={placeholder}
               isRequired={isRequired}
               isDisabled={isDisabled}
+              focusBorderColor="primary.blue.pure"
             />
             {form.errors[name] && (
               <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>

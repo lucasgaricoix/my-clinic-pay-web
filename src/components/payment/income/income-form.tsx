@@ -5,7 +5,7 @@ import {
   Progress,
   Stack,
   Text,
-  useToast
+  useToast,
 } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
@@ -21,7 +21,7 @@ import {
   FormikCustomAutoComplete,
   FormikInput,
   FormikSwitch,
-  FormikTextArea
+  FormikTextArea,
 } from '../../custom/formik'
 import { FormikCustomAutoCompleteDebounce } from '../../custom/formik/formik-auto-complete-debounce'
 
@@ -230,11 +230,28 @@ export const IncomeFormComponent = () => {
   }
 
   return (
-    <Flex direction="column" w="full" mb="4">
+    <Flex
+      direction="column"
+      justifyContent={{
+        base: 'center',
+        lg: 'center',
+      }}
+      alignItems={{
+        base: 'center',
+        lg: 'center',
+      }}
+      px={4}
+    >
       {loading ? (
         <Progress size="xs" isIndeterminate />
       ) : (
-        <>
+        <Flex
+          direction="column"
+          w={{
+            base: 'xs',
+            lg: 'md',
+          }}
+        >
           <Text fontWeight="600" fontSize="20" py="2">
             Cadastro de receita
           </Text>
@@ -256,10 +273,8 @@ export const IncomeFormComponent = () => {
                     <FormikCheckbox name="isAbsence" label="Ausência?" />
                   )}
                 </Stack>
-                <Box my="2" w={{ lg: '30%', xl: '25%' }}>
-                  <FormikInput name="date" label="Data" type="date" />
-                  <FormikInput name="sessionNumber" label="Número da sessão" />
-                </Box>
+                <FormikInput name="date" label="Data" type="date" isRequired />
+                <FormikInput name="sessionNumber" label="Número da sessão" />
                 <FormikCustomAutoComplete
                   name="paymentType.id"
                   label="Tipo de receita"
@@ -272,21 +287,25 @@ export const IncomeFormComponent = () => {
                   search={searchPatientByName}
                 />
                 <FormikTextArea name="description" label="Descrição" />
-
                 <Button
                   type="submit"
-                  w="320px"
+                  alignSelf="center"
+                  w={{
+                    base: 'xs',
+                    md: 'sm',
+                    lg: 'md'
+                  }}
                   my="4"
-                  bg="primary.indigo.light"
-                  textColor="primary.indigo.dark"
-                  _hover={{ bg: 'primary.indigo.dark', textColor: 'white' }}
+                  bg="primary.blue.pure"
+                  textColor="white"
+                  _hover={{ bg: 'primary.blue.pure', textColor: 'white' }}
                 >
                   Salvar
                 </Button>
               </Form>
             )}
           </Formik>
-        </>
+        </Flex>
       )}
     </Flex>
   )

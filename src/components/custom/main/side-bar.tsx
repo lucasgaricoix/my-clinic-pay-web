@@ -43,6 +43,8 @@ export const SideBar: React.FC<Props> = ({
   ]
 
   const { asPath, pathname } = useRouter()
+  const iconSize = { base: 4, md: 5, lg: 5 }
+  const containerSize = { base: '38px', md: '50px', lg: '50px' }
   return (
     <Flex justifyContent="center" m={2}>
       <Grid
@@ -68,32 +70,16 @@ export const SideBar: React.FC<Props> = ({
                       justifyContent="center"
                       alignItems="center"
                       bgColor={isActiveRoute ? 'primary.indigo.light' : 'white'}
-                      w={{
-                        base: '38px',
-                        md: '50px',
-                        lg: '50px',
-                      }}
-                      h={{
-                        base: '38px',
-                        md: '50px',
-                        lg: '50px',
-                      }}
+                      w={containerSize}
+                      h={containerSize}
                       borderRadius="8px"
                     >
                       <Icon
-                        w={{
-                          base: 4,
-                          md: 5,
-                          lg: 5,
-                        }}
-                        h={{
-                          base: 4,
-                          md: 5,
-                          lg: 5,
-                        }}
+                        w={iconSize}
+                        h={iconSize}
                         as={menu.icon}
                         color={
-                          isActiveRoute ? 'primary.indigo.dark' : 'gray.700'
+                          isActiveRoute ? 'primary.blue.pure' : 'gray.500'
                         }
                       />
                     </Flex>

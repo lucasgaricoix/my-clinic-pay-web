@@ -6,6 +6,7 @@ import { theme } from '../styles/theme'
 import { wrapper } from '../src/store/store'
 import { Provider } from 'react-redux'
 import { AuthProvider } from '../src/providers/auth-provider'
+import MediaProvider from '../src/providers/media-provider'
 
 function MyApp({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest)
@@ -17,9 +18,11 @@ function MyApp({ Component, ...rest }: AppProps) {
         <AuthProvider
           isUserAuthenticated={store.getState().userSession.token !== ''}
         >
-          <MainLayout>
-            <Component {...pageProps} />
-          </MainLayout>
+          <MediaProvider>
+            <MainLayout>
+              <Component {...pageProps} />
+            </MainLayout>
+          </MediaProvider>
         </AuthProvider>
       </ChakraProvider>
     </Provider>

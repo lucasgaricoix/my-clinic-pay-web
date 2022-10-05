@@ -50,7 +50,7 @@ export const MensalIncomeExpenseBarChart: React.FC<Props> = ({ data }) => {
       <XAxis dataKey="mes" />
       <YAxis dataKey="total" />
       <ReferenceLine y={0} stroke="#000" />
-      <Bar dataKey="receita" stackId="1" barSize={30} fill="#4338CA" />
+      <Bar dataKey="receita" stackId="1" barSize={30} fill="#0069ff" />
       <Bar dataKey="despesa" stackId="2" barSize={30} fill="#93C5FD" />
     </BarChart>
   )

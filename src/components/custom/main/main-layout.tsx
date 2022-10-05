@@ -41,7 +41,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
           <Divider orientation="vertical" />
           <VStack w="full" bg="white" divider={<Divider />} spacing={0}>
             <NavBar />
-            <Box w="full">{children}</Box>
+            <Box w="full" minH="100vh" >{children}</Box>
           </VStack>
         </Stack>
       )}

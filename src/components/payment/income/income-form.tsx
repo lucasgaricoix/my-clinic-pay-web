@@ -229,40 +229,45 @@ export const IncomeFormComponent = () => {
     }
   }
 
+  if (loading) {
+    return <Progress size="xs" isIndeterminate />
+  }
+
   return (
     <Flex
+      w="full"
+      minH="100vh"
       direction="column"
-      justifyContent={{
-        base: 'center',
-        lg: 'center',
-      }}
-      alignItems={{
-        base: 'center',
-        lg: 'center',
-      }}
+      justifyContent="center"
+      alignItems="center"
       px={4}
+      bg="#fbfcfd"
     >
-      {loading ? (
-        <Progress size="xs" isIndeterminate />
-      ) : (
-        <Flex
-          direction="column"
-          w={{
-            base: 'xs',
-            lg: 'md',
-          }}
+      <Flex
+        borderWidth={1}
+        borderColor="gray.200"
+        borderRadius="md"
+        direction="column"
+        shadow="md"
+        p={8}
+        bg="white"
+        w={{
+          base: 'xs',
+          lg: 'lg',
+        }}
+      >
+        <Text alignSelf="center" fontWeight="600" fontSize="20" py="2">
+          Cadastro de receita
+        </Text>
+        <Formik<Income>
+          initialValues={income}
+          onSubmit={handleSubmit}
+          validationSchema={schema}
+          enableReinitialize
         >
-          <Text fontWeight="600" fontSize="20" py="2">
-            Cadastro de receita
-          </Text>
-          <Formik<Income>
-            initialValues={income}
-            onSubmit={handleSubmit}
-            validationSchema={schema}
-            enableReinitialize
-          >
-            {({ initialValues, values }) => (
-              <Form id="income-form">
+          {({ initialValues, values }) => (
+            <Form id="income-form">
+              <Stack spacing={2}>
                 {initialValues.id && (
                   <FormikInput name="id" label="Id" isDisabled />
                 )}
@@ -293,7 +298,7 @@ export const IncomeFormComponent = () => {
                   w={{
                     base: 'xs',
                     md: 'sm',
-                    lg: 'md'
+                    lg: 'md',
                   }}
                   my="4"
                   bg="primary.blue.pure"
@@ -302,11 +307,11 @@ export const IncomeFormComponent = () => {
                 >
                   Salvar
                 </Button>
-              </Form>
-            )}
-          </Formik>
-        </Flex>
-      )}
+              </Stack>
+            </Form>
+          )}
+        </Formik>
+      </Flex>
     </Flex>
   )
 }

@@ -17,11 +17,14 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { IoAddCircleOutline, IoPencil, IoTrash } from 'react-icons/io5'
+import { MediaContext } from '../../providers/media-provider'
 import { PatientService } from '../../services/patient'
 import { Patient } from '../../types/patient/patient-type'
 import { CustomAlertDialog } from '../custom/alert/alert-dialog'
+import PatientListCard from './patient-list-card'
+import PatientListTable from './patient-list-table'
 
 export const PatientList = () => {
   const [loading, setLoading] = useState(false)
@@ -29,7 +32,7 @@ export const PatientList = () => {
   const [patients, setPatients] = useState<Patient[]>([])
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
+  const { isLargerThanMd } = useContext(MediaContext)
 
   const fetch = useCallback(async () => {
     try {
@@ -82,107 +85,54 @@ export const PatientList = () => {
     }
   }, [removeId, onClose, toast, fetch])
 
-  const getAge = (birthday: string) => {
-    const date = new Date(birthday)
-    var ageDifMs = Date.now() - date.getTime()
-    var ageDate = new Date(ageDifMs)
-    return Math.abs(ageDate.getUTCFullYear() - 1970)
+  const handlePaymentButton = (patientId: string) => {
+    setRemoveId(patientId)
+    onOpen()
   }
 
   return (
     <Flex direction="column">
-      <Flex direction="column" p="4">
-        <Flex justifyContent="space-between">
+      <Flex
+        direction="column"
+        bg="white"
+        justifyContent="space-between"
+        borderWidth={1}
+        p={4}
+      >
+        {loading && <Progress size="xs" isIndeterminate />}
+        <Flex justifyContent="space-between" py={4}>
           <Text fontWeight="600" fontSize="lg">
             Pacientes
           </Text>
           <NextLink href="/patient/new" shallow passHref>
             <Button
+              size={{
+                base: 'sm',
+                lg: 'md',
+              }}
               leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-              bg="primary.indigo.light"
-              textColor="primary.indigo.dark"
+              bg="primary.blue.pure"
+              textColor="white"
               _hover={{
-                bg: 'primary.indigo.dark',
-                textColor: 'primary.indigo.light',
+                bg: 'primary.blue.pure',
               }}
             >
               Adicionar
             </Button>
           </NextLink>
         </Flex>
+        {isLargerThanMd ? (
+          <PatientListTable
+            patients={patients}
+            handlePaymentButton={handlePaymentButton}
+          />
+        ) : (
+          <PatientListCard
+            patients={patients}
+            handlePaymentButton={handlePaymentButton}
+          />
+        )}
       </Flex>
-      {loading ? (
-        <Progress size="xs" isIndeterminate />
-      ) : (
-        <>
-          <Box>
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Nome</Th>
-                  <Th>Data de nascimento</Th>
-                  <Th>Idade</Th>
-                  <Th>Responsável</Th>
-                  <Th>Opçoes</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {patients.map((patient) => (
-                  <Tr key={patient.id}>
-                    <Td>{patient.name}</Td>
-                    <Td>
-                      {new Date(patient.birthDate).toLocaleDateString('pt', {
-                        timeZone: 'UTC',
-                      })}
-                    </Td>
-                    <Td>{getAge(patient.birthDate) || ''}</Td>
-                    <Td>{patient.responsible.name}</Td>
-                    <Td>
-                      <Flex>
-                        <NextLink href={`patient/${patient.id}`}>
-                          <Button
-                            size={size}
-                            bg="transparent"
-                            mr={2}
-                            _hover={{
-                              bg: 'primary.indigo.light',
-                              color: 'primary.indigo.dark',
-                            }}
-                          >
-                            <Tooltip label="Editar">
-                              <span>
-                                <Icon as={IoPencil} />
-                              </span>
-                            </Tooltip>
-                          </Button>
-                        </NextLink>
-                        <Button
-                          size={size}
-                          bg="transparent"
-                          onClick={() => {
-                            setRemoveId(patient.id!)
-                            onOpen()
-                          }}
-                          _hover={{
-                            bg: 'red',
-                            color: 'gray.100',
-                          }}
-                        >
-                          <Tooltip label="Remover">
-                            <span>
-                              <Icon as={IoTrash} />
-                            </span>
-                          </Tooltip>
-                        </Button>
-                      </Flex>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </Box>
-        </>
-      )}
       <CustomAlertDialog
         isOpen={isOpen}
         onClose={onClose}

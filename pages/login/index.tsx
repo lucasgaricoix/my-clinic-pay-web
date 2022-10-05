@@ -2,9 +2,11 @@ import {
   Avatar,
   Box,
   Button,
+  Divider,
   Flex,
   Heading,
   Link,
+  Stack,
   Text,
 } from '@chakra-ui/react'
 import { Form, Formik } from 'formik'
@@ -12,6 +14,7 @@ import { useRouter } from 'next/dist/client/router'
 import { useContext, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { FormikInput } from '../../src/components/custom/formik'
+import GoogleScript from '../../src/components/signup/google-script'
 import { MediaContext } from '../../src/providers/media-provider'
 import { RootState } from '../../src/store/store'
 
@@ -43,6 +46,7 @@ const Login = () => {
       id="login-container"
       p={{ base: 0, md: 4, lg: 4 }}
     >
+      <GoogleScript />
       {isLargerThanMd && <WhatIsNewLarger />}
       <Flex
         justifyContent={{
@@ -119,21 +123,38 @@ const Login = () => {
             </Link>
           </Box>
 
-          <Button
-            w="xs"
-            alignSelf="center"
-            bgColor="primary.blue.pure"
-            color="white"
-            my={6}
-            _hover={{
-              bg: 'primary.indigo.light',
-              textColor: 'primary.blue.pure',
-            }}
-            borderRadius="3xl"
-            type="submit"
-          >
-            Entrar
-          </Button>
+          <Stack my={6} spacing={4}>
+            <Button
+              w="xs"
+              alignSelf="center"
+              bgColor="primary.blue.pure"
+              color="white"
+              _hover={{
+                bg: 'primary.indigo.light',
+                textColor: 'primary.blue.pure',
+              }}
+              borderRadius="3xl"
+              type="submit"
+            >
+              Entrar
+            </Button>
+            <Flex w="full" justifyContent="space-between" alignItems="center">
+              <Divider borderColor="gray.300" w="44%" />
+              <Text fontSize="xs">OU</Text>
+              <Divider borderColor="gray.300" w="44%" />
+            </Flex>
+            <Box
+              alignSelf="center"
+              className="g_id_signin"
+              data-type="standard"
+              data-shape="pill"
+              data-theme="outline"
+              data-text="signin_with"
+              data-size="large"
+              data-logo_alignment="left"
+              data-width={isLargerThanMd ? '384' : '320'}
+            />
+          </Stack>
         </Flex>
 
         <Flex direction="row">

@@ -1,28 +1,12 @@
-import {
-  Badge,
-  Button,
-  Flex,
-  Icon,
-  Progress,
-  Stack,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  useBreakpointValue,
-  useDisclosure,
-  useToast
-} from '@chakra-ui/react'
-import NextLink from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
-import { IoPencil, IoTrash } from 'react-icons/io5'
+import { Flex, Progress, useDisclosure, useToast } from '@chakra-ui/react'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { MediaContext } from '../../../providers/media-provider'
 import { IncomeService } from '../../../services/payment'
 import { Income } from '../../../types/payment/income'
-import { toBRL } from '../../../utils/format'
 import { CustomAlertDialog } from '../../custom/alert/alert-dialog'
 import { IncomeSelectGroup } from '../select-group'
+import IncomeListTable from './income-list-table'
+import IncomeListCard from './income-list-card'
 
 const currentMonth = new Date().getMonth()
 const currentYear = new Date().getFullYear()
@@ -35,9 +19,9 @@ export const IncomeList = () => {
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isPaymentOpen, setIsPaymentOpen] = useState(false)
-  const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
   const [month, setMonth] = useState<number>(currentMonth)
   const [year, setYear] = useState<number>(currentYear)
+  const { isLargerThanMd } = useContext(MediaContext)
 
   const fetch = useCallback(async () => {
     try {
@@ -113,95 +97,39 @@ export const IncomeList = () => {
     }
   }, [paymentId, toast, fetch])
 
+  const handlePaymentButton = (id: string) => {
+    setPaymentId(id)
+    setIsPaymentOpen(true)
+  }
+
+  const handleRemoveButton = (id: string) => {
+    setRemoveId(id)
+    onOpen()
+  }
+
   return (
     <Flex w="full" direction="column">
-      {loading ? (
-        <Progress size="xs" isIndeterminate />
-      ) : (
-        <>
-          <IncomeSelectGroup
-            currentYear={currentYear}
-            month={month}
-            setMonth={setMonth}
-            year={year}
-            setYear={setYear}
-          />
+      {loading && <Progress size="xs" isIndeterminate />}
 
-          <Table size={size}>
-            <Thead>
-              <Tr>
-                <Th>Nº da sessão</Th>
-                <Th>Nome</Th>
-                <Th>Data</Th>
-                <Th isNumeric>Valor</Th>
-                <Th>Descrição</Th>
-                <Th>Pago?</Th>
-                <Th>Valor parcial?</Th>
-                <Th>Opções</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {incomes.map((income) => (
-                <Tr key={income.id}>
-                  <Td>{income.sessionNumber}</Td>
-                  <Td>{income.person.name}</Td>
-                  <Td>
-                    {new Date(income.date).toLocaleDateString('pt', {
-                      timeZone: 'UTC',
-                    })}
-                  </Td>
-                  <Td isNumeric>{toBRL(income.paymentType.value)}</Td>
-                  <Td>{income.description}</Td>
-                  <Td>
-                    <Badge
-                      variant="subtle"
-                      colorScheme={income.isPaid ? 'green' : 'red'}
-                    >
-                      {income.isPaid ? 'Sim' : 'Não'}
-                    </Badge>
-                  </Td>
-                  <Td>
-                    <Badge
-                      variant="subtle"
-                      colorScheme={income.isPartial ? 'green' : 'red'}
-                    >
-                      {income.isPartial ? 'Sim' : 'Não'}
-                    </Badge>
-                  </Td>
-                  <Td>
-                    <Stack direction="row">
-                      <NextLink href="">
-                        <Button
-                          onClick={() => {
-                            setPaymentId(income.id!)
-                            setIsPaymentOpen(true)
-                          }}
-                          size={size}
-                        >
-                          Pagar
-                        </Button>
-                      </NextLink>
-                      <NextLink href={`payment/income/${income.id}`}>
-                        <Button size={size}>
-                          <Icon as={IoPencil} />
-                        </Button>
-                      </NextLink>
-                      <Button
-                        size={size}
-                        onClick={() => {
-                          setRemoveId(income.id!)
-                          onOpen()
-                        }}
-                      >
-                        <Icon as={IoTrash} />
-                      </Button>
-                    </Stack>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </>
+      <IncomeSelectGroup
+        currentYear={currentYear}
+        month={month}
+        setMonth={setMonth}
+        year={year}
+        setYear={setYear}
+      />
+      {isLargerThanMd ? (
+        <IncomeListTable
+          incomes={incomes}
+          handlePaymentButton={handlePaymentButton}
+          handleRemoveButton={handleRemoveButton}
+        />
+      ) : (
+        <IncomeListCard
+          incomes={incomes}
+          handlePaymentButton={handlePaymentButton}
+          handleRemoveButton={handleRemoveButton}
+        />
       )}
       <CustomAlertDialog
         isOpen={isOpen}

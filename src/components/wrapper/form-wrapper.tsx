@@ -28,7 +28,7 @@ function Mobile({ children }: Props) {
     </Flex>
 }
 
-export default function PatientFormWrapper({ children }: Props) {
+export default function FormWrapper({ children }: Props) {
   const { isLargerThanMd } = useContext(MediaContext)
 
   if (isLargerThanMd) {

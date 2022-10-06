@@ -7,6 +7,7 @@ import {
   Select,
   Stack,
   Table,
+  TableContainer,
   Tbody,
   Td,
   Th,
@@ -102,106 +103,99 @@ export const ExpenseList = () => {
   }, [removeId, onClose, toast, fetch])
 
   return (
-    <Flex w="full" h="full" direction="column">
-      {loading ? (
-        <Progress size="xs" isIndeterminate />
-      ) : (
-        <>
-          <Flex justifyContent="space-between" pb="4">
-            <Select
-              w="sm"
+    <Flex w="full" h="full" direction="column" overflow="auto">
+      {loading && <Progress size="xs" isIndeterminate />}
+      <Flex justifyContent="space-between" pb="4">
+        <Select
+          w="sm"
+          size={{
+            base: 'sm',
+            lg: 'md',
+            sm: 'sm',
+          }}
+          mr={1}
+          value={search}
+          borderRadius={4}
+          onChange={(event) => setSearch(+event.target.value)}
+        >
+          {months.map((month) => (
+            <option key={month.name} value={month.name}>
+              {month.label}
+            </option>
+          ))}
+        </Select>
+        <Box>
+          <NextLink href="/payment/expense/new" shallow passHref>
+            <Button
               size={{
                 base: 'sm',
                 lg: 'md',
                 sm: 'sm',
               }}
-              mr={1}
-              value={search}
-              borderRadius={4}
-              onChange={(event) => setSearch(+event.target.value)}
+              leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
+              bg="primary.blue.pure"
+              textColor="white"
+              _hover={{
+                bg: 'primary.blue.pure',
+              }}
             >
-              {months.map((month) => (
-                <option key={month.name} value={month.name}>
-                  {month.label}
-                </option>
-              ))}
-            </Select>
-            <Box>
-              <NextLink href="/payment/expense/new" shallow passHref>
-                <Button
-                  size={{
-                    base: 'sm',
-                    lg: 'md',
-                    sm: 'sm',
-                  }}
-                  leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-                  bg="primary.indigo.light"
-                  textColor="primary.indigo.dark"
-                  _hover={{
-                    bg: 'primary.indigo.dark',
-                    textColor: 'primary.indigo.light',
-                  }}
-                >
-                  Adicionar
-                </Button>
-              </NextLink>
-            </Box>
-          </Flex>
+              Adicionar
+            </Button>
+          </NextLink>
+        </Box>
+      </Flex>
 
-          <Box>
-            <Table size={size}>
-              <Thead>
-                <Tr>
-                  <Th>Data de vencimento</Th>
-                  <Th>Data de pagamento</Th>
-                  <Th isNumeric>Valor</Th>
-                  <Th>Descrição</Th>
-                  <Th>Opções</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {expenses.map((expense) => (
-                  <Tr key={expense.id}>
-                    <Td>
-                      {new Date(expense.dueDate).toLocaleDateString('pt', {
+      <TableContainer>
+        <Table size={size}>
+          <Thead>
+            <Tr>
+              <Th>Data de vencimento</Th>
+              <Th>Data de pagamento</Th>
+              <Th isNumeric>Valor</Th>
+              <Th>Descrição</Th>
+              <Th>Opções</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {expenses.map((expense) => (
+              <Tr key={expense.id}>
+                <Td>
+                  {new Date(expense.dueDate).toLocaleDateString('pt', {
+                    timeZone: 'UTC',
+                  })}
+                </Td>
+                <Td>
+                  {expense.paymentDate
+                    ? new Date(expense.paymentDate).toLocaleDateString('pt', {
                         timeZone: 'UTC',
-                      })}
-                    </Td>
-                    <Td>
-                      {expense.paymentDate
-                        ? new Date(expense.paymentDate).toLocaleDateString(
-                            'pt',
-                            { timeZone: 'UTC' }
-                          )
-                        : ''}
-                    </Td>
-                    <Td isNumeric>{toBRL(expense.paymentType.value)}</Td>
-                    <Td>{expense.description}</Td>
-                    <Td>
-                      <Stack direction="row">
-                        <NextLink href={`payment/expense/${expense.id}`}>
-                          <Button size={size}>
-                            <Icon as={IoPencil} />
-                          </Button>
-                        </NextLink>
-                        <Button
-                          size={size}
-                          onClick={() => {
-                            setRemoveId(expense.id!)
-                            onOpen()
-                          }}
-                        >
-                          <Icon as={IoTrash} />
-                        </Button>
-                      </Stack>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </Box>
-        </>
-      )}
+                      })
+                    : ''}
+                </Td>
+                <Td isNumeric>{toBRL(expense.paymentType.value)}</Td>
+                <Td>{expense.description}</Td>
+                <Td>
+                  <Stack direction="row">
+                    <NextLink href={`payment/expense/${expense.id}`}>
+                      <Button size={size}>
+                        <Icon as={IoPencil} />
+                      </Button>
+                    </NextLink>
+                    <Button
+                      size={size}
+                      onClick={() => {
+                        setRemoveId(expense.id!)
+                        onOpen()
+                      }}
+                    >
+                      <Icon as={IoTrash} />
+                    </Button>
+                  </Stack>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
       <CustomAlertDialog
         isOpen={isOpen}
         onClose={onClose}

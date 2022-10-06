@@ -24,6 +24,7 @@ import {
   FormikTextArea,
 } from '../../custom/formik'
 import { FormikCustomAutoCompleteDebounce } from '../../custom/formik/formik-auto-complete-debounce'
+import FormWrapper from '../../wrapper/form-wrapper'
 
 const initialValues: Income = {
   id: '',
@@ -229,33 +230,16 @@ export const IncomeFormComponent = () => {
     }
   }
 
-  if (loading) {
-    return <Progress size="xs" isIndeterminate />
-  }
-
   return (
     <Flex
+      bg="primary.gray.background"
+      direction="column"
       w="full"
       minH="100vh"
-      direction="column"
-      justifyContent="center"
+      justifyContent={{ base: 'flex-start', lg: 'center' }}
       alignItems="center"
-      px={4}
-      bg="#fbfcfd"
     >
-      <Flex
-        borderWidth={1}
-        borderColor="gray.200"
-        borderRadius="md"
-        direction="column"
-        shadow="md"
-        p={8}
-        bg="white"
-        w={{
-          base: 'xs',
-          lg: 'lg',
-        }}
-      >
+      <FormWrapper>
         <Text alignSelf="center" fontWeight="600" fontSize="20" py="2">
           Cadastro de receita
         </Text>
@@ -311,7 +295,7 @@ export const IncomeFormComponent = () => {
             </Form>
           )}
         </Formik>
-      </Flex>
+      </FormWrapper>
     </Flex>
   )
 }

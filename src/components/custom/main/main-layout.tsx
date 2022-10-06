@@ -45,7 +45,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
           </VStack>
         </Stack>
       )}
-      {(isBase || isLargerThanSm) && !isLargerThanMd && (
+      {!isLargerThanMd && (
         <VStack
           w="full"
           minH="100vh"

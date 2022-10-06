@@ -1,4 +1,4 @@
-import { Button, Divider, Flex, Stack, Text } from '@chakra-ui/react'
+import { Button, Divider, Flex,  Stack, Text } from '@chakra-ui/react'
 import { Patient } from '../../types/patient'
 import NextLink from 'next/link'
 

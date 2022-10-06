@@ -8,7 +8,7 @@ import {
   Progress,
   Select,
   Text,
-  useToast
+  useToast,
 } from '@chakra-ui/react'
 import { Field, FieldProps, Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
@@ -199,9 +199,9 @@ export const PaymentTypeFormComponent = () => {
               type="submit"
               w="320px"
               my="4"
-              bg="primary.indigo.light"
-              textColor="primary.indigo.dark"
-              _hover={{ bg: 'primary.indigo.dark', textColor: 'white' }}
+              bg="primary.blue.pure"
+              textColor="white"
+              _hover={{ bg: 'primary.blue.pure' }}
             >
               Salvar
             </Button>

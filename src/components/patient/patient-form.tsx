@@ -16,7 +16,7 @@ import { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { PatientService } from '../../services/patient'
 import { Patient } from '../../types/patient/patient-type'
-import PatientFormWrapper from './patient-form-wrapper'
+import FormWrapper from '../wrapper/form-wrapper'
 
 const initialValues: Patient = {
   id: '',
@@ -112,7 +112,7 @@ export const PatientFormComponent = () => {
       alignItems="center"
     >
       {loading && <Progress size="xs" isIndeterminate />}
-      <PatientFormWrapper>
+      <FormWrapper>
         <Text alignSelf="center" fontWeight="600" fontSize="20" py="2">
           Cadastro de paciente
         </Text>
@@ -229,7 +229,7 @@ export const PatientFormComponent = () => {
             </Form>
           )}
         </Formik>
-      </PatientFormWrapper>
+      </FormWrapper>
     </Flex>
   )
 }

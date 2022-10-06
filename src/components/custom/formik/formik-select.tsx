@@ -33,8 +33,8 @@ export const FormikSelect: React.FC<Props> = ({
             isRequired={isRequired}
             isInvalid={!!form.errors[name] && !!form.touched[name]}
           >
-            <FormLabel htmlFor={name}>{label}</FormLabel>
-            <Select {...field} onSelect={onSelect} id={name} isRequired={isRequired}>
+            <FormLabel fontWeight="bold" htmlFor={name}>{label}</FormLabel>
+            <Select variant="filled" {...field} onSelect={onSelect} id={name} isRequired={isRequired}>
               {options.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}

@@ -92,13 +92,7 @@ export const PatientList = () => {
 
   return (
     <Flex direction="column">
-      <Flex
-        direction="column"
-        bg="white"
-        justifyContent="space-between"
-        borderWidth={1}
-        p={4}
-      >
+      <Flex direction="column" justifyContent="space-between" p={4}>
         {loading && <Progress size="xs" isIndeterminate />}
         <Flex justifyContent="space-between" py={4}>
           <Text fontWeight="600" fontSize="lg">

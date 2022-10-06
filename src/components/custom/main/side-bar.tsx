@@ -1,4 +1,4 @@
-import { Avatar, Box, Flex, Grid, GridItem, Icon, Link } from '@chakra-ui/react'
+import { Avatar, Flex, Grid, GridItem, Icon, Link } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import NextLink from 'next/link'
 import { IconType } from 'react-icons'

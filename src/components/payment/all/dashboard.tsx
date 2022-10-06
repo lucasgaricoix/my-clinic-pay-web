@@ -4,7 +4,7 @@ import { PaymentService } from '../../../services/payment'
 import { PaymentOverMonthType } from '../../../types/payment/payment'
 import { MensalIncomeExpenseBarChart } from '../../custom/charts/bar/mensal-income'
 
-export const PaymentDashboard = () => {  
+export const PaymentDashboard = () => {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<PaymentOverMonthType[]>([])
   const toast = useToast()
@@ -33,12 +33,18 @@ export const PaymentDashboard = () => {
   }, [fetch])
 
   return (
-    <Flex w="full" h="full" direction="column">
+    <Flex
+      w="full"
+      h="full"
+      direction="column"
+      justifyContent="center"
+      alignItems="center"
+    >
       {loading && data.length ? (
         <Progress size="xs" isIndeterminate />
       ) : (
         <>
-          <Text>Receitas e Despesas</Text>
+          <Text>Dashboard</Text>
           <MensalIncomeExpenseBarChart data={data || []} />
         </>
       )}

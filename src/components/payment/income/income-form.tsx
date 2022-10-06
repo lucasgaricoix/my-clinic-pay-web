@@ -1,9 +1,12 @@
 import {
   Box,
   Button,
+  Divider,
   Flex,
+  HStack,
   Progress,
   Stack,
+  StackDivider,
   Text,
   useToast,
 } from '@chakra-ui/react'
@@ -240,61 +243,76 @@ export const IncomeFormComponent = () => {
       alignItems="center"
     >
       <FormWrapper>
-        <Text alignSelf="center" fontWeight="600" fontSize="20" py="2">
-          Cadastro de receita
-        </Text>
-        <Formik<Income>
-          initialValues={income}
-          onSubmit={handleSubmit}
-          validationSchema={schema}
-          enableReinitialize
-        >
-          {({ initialValues, values }) => (
-            <Form id="income-form">
-              <Stack spacing={2}>
-                {initialValues.id && (
-                  <FormikInput name="id" label="Id" isDisabled />
-                )}
-                <FormikCheckbox name="isPaid" label="Já pagou?" />
-                <Stack direction="row" w={{ xl: 'sm' }}>
-                  <FormikSwitch name="isPartial" label="Pagamento parcial?" />
-                  {values.isPartial && (
-                    <FormikCheckbox name="isAbsence" label="Ausência?" />
+        <Stack divider={<StackDivider />} spacing={4}>
+          <Text alignSelf="center" fontWeight="600" fontSize="20">
+            Cadastro de receita
+          </Text>
+          <Formik<Income>
+            initialValues={income}
+            onSubmit={handleSubmit}
+            validationSchema={schema}
+            enableReinitialize
+          >
+            {({ initialValues, values }) => (
+              <Form id="income-form">
+                <Stack spacing={2}>
+                  {initialValues.id && (
+                    <FormikInput name="id" label="Id" isDisabled />
                   )}
+                  <FormikCheckbox name="isPaid" label="Já pagou?" />
+                  <Stack direction="row" w={{ xl: 'sm' }}>
+                    <FormikSwitch name="isPartial" label="Pagamento parcial?" />
+                    {values.isPartial && (
+                      <FormikCheckbox name="isAbsence" label="Ausência?" />
+                    )}
+                  </Stack>
+                  <FormikInput
+                    name="date"
+                    label="Data"
+                    type="date"
+                    isRequired
+                  />
+                  <FormikInput
+                    name="sessionNumber"
+                    label="Número da sessão"
+                    type="number"
+                    placeholder="Adicione o número da sessão"
+                  />
+                  <FormikCustomAutoComplete
+                    name="paymentType.id"
+                    label="Tipo de receita"
+                    placeholder='Clique para procurar a receita'
+                    items={paymentTypesOptions}
+                  />
+                  <FormikCustomAutoCompleteDebounce
+                    name="person.id"
+                    label="Paciente"
+                    placeholder="Clique para procurar o paciente"
+                    items={patientsOptions}
+                    search={searchPatientByName}
+                  />
+                  <FormikTextArea name="description" label="Descrição" placeholder="(Opcional) Adicione uma descrição" />
+                  <Button
+                    type="submit"
+                    alignSelf="center"
+                    w={{
+                      base: 'xs',
+                      md: 'sm',
+                      lg: 'md',
+                    }}
+                    my="4"
+                    bg="primary.blue.pure"
+                    textColor="white"
+                    _hover={{ bg: 'primary.blue.pure', textColor: 'white' }}
+                    borderRadius="3xl"
+                  >
+                    Salvar
+                  </Button>
                 </Stack>
-                <FormikInput name="date" label="Data" type="date" isRequired />
-                <FormikInput name="sessionNumber" label="Número da sessão" />
-                <FormikCustomAutoComplete
-                  name="paymentType.id"
-                  label="Tipo de receita"
-                  items={paymentTypesOptions}
-                />
-                <FormikCustomAutoCompleteDebounce
-                  name="person.id"
-                  label="Paciente"
-                  items={patientsOptions}
-                  search={searchPatientByName}
-                />
-                <FormikTextArea name="description" label="Descrição" />
-                <Button
-                  type="submit"
-                  alignSelf="center"
-                  w={{
-                    base: 'xs',
-                    md: 'sm',
-                    lg: 'md',
-                  }}
-                  my="4"
-                  bg="primary.blue.pure"
-                  textColor="white"
-                  _hover={{ bg: 'primary.blue.pure', textColor: 'white' }}
-                >
-                  Salvar
-                </Button>
-              </Stack>
-            </Form>
-          )}
-        </Formik>
+              </Form>
+            )}
+          </Formik>
+        </Stack>
       </FormWrapper>
     </Flex>
   )

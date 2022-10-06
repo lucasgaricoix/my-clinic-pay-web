@@ -31,10 +31,11 @@ export const FormikInput: React.FC<Props> = ({
             isRequired={isRequired}
             isInvalid={!!form.errors[name] && !!form.touched[name]}
           >
-            <FormLabel id={name} htmlFor={name}>
+            <FormLabel fontWeight="bold" id={name} htmlFor={name}>
               {label}
             </FormLabel>
             <Input
+              variant="filled"
               {...field}
               id={name}
               name={name}

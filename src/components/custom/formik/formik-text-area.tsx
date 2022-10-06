@@ -9,6 +9,7 @@ import { Field, FieldProps } from 'formik'
 type Props = {
   name: string
   label: string
+  placeholder?: string
   isDisabled?: boolean
   isRequired?: boolean
 }
@@ -16,6 +17,7 @@ type Props = {
 export const FormikTextArea: React.FC<Props> = ({
   name,
   label,
+  placeholder,
   isDisabled = false,
   isRequired = false,
 }) => {
@@ -27,11 +29,15 @@ export const FormikTextArea: React.FC<Props> = ({
             isRequired={isRequired}
             isInvalid={!!form.errors[name] && !!form.touched[name]}
           >
-            <FormLabel htmlFor={name}>{label}</FormLabel>
+            <FormLabel fontWeight="bold" htmlFor={name}>
+              {label}
+            </FormLabel>
             <Textarea
               {...field}
+              variant="filled"
               id={name}
               name={name}
+              placeholder={placeholder}
               isDisabled={isDisabled}
             />
             {form.errors[name] && (

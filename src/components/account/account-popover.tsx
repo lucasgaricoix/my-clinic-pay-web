@@ -16,7 +16,7 @@ type Props = {
 
 export default function AccountPopover({ logout }: Props) {
   return (
-    <PopoverContent color="primary.indigo.dark" >
+    <PopoverContent >
       <PopoverHeader pt={4} fontWeight="bold" border="0">
         Gerencie sua conta
       </PopoverHeader>

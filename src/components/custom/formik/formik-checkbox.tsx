@@ -2,7 +2,7 @@ import {
   Checkbox,
   FormControl,
   FormErrorMessage,
-  FormLabel
+  FormLabel,
 } from '@chakra-ui/react'
 import { Field, FieldProps } from 'formik'
 
@@ -17,7 +17,7 @@ export const FormikCheckbox: React.FC<Props> = ({
   name,
   label,
   defaultIsChecked = false,
-  isRequired = false
+  isRequired = false,
 }) => {
   return (
     <Field id={name} name={name}>
@@ -27,7 +27,7 @@ export const FormikCheckbox: React.FC<Props> = ({
             isRequired={isRequired}
             isInvalid={!!form.errors[name] && !!form.touched[name]}
           >
-            <FormLabel id={name} htmlFor={name}>
+            <FormLabel fontWeight="bold" id={name} htmlFor={name}>
               {label}
             </FormLabel>
             <Checkbox

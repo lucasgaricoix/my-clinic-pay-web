@@ -7,6 +7,8 @@ import {
   Input,
   Progress,
   Select,
+  Stack,
+  StackDivider,
   Text,
   useToast,
 } from '@chakra-ui/react'
@@ -16,6 +18,8 @@ import { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { PaymentTypeService } from '../../../services/payment'
 import { PaymentType } from '../../../types/payment/payment-type'
+import { FormikInput, FormikSelect } from '../../custom/formik'
+import FormWrapper from '../../wrapper/form-wrapper'
 
 const initialValues: PaymentType = {
   id: '',
@@ -32,12 +36,12 @@ const schema = yup.object().shape({
 
 const types = [
   {
-    name: 'INCOME',
-    description: 'Receita',
+    label: 'Receita',
+    value: 'INCOME',
   },
   {
-    name: 'EXPENSE',
-    description: 'Despesa',
+    label: 'Despesa',
+    value: 'EXPENSE',
   },
 ]
 
@@ -107,107 +111,65 @@ export const PaymentTypeFormComponent = () => {
   }
 
   return (
-    <Flex direction="column" w="full" p="4" mb="4">
-      <Text fontWeight="600" fontSize="20" py="2">
-        Tipos de pagamentos
-      </Text>
-      {loading && <Progress size="xs" isIndeterminate />}
-      <Formik<PaymentType>
-        initialValues={paymentType}
-        onSubmit={handleSubmit}
-        validationSchema={schema}
-        enableReinitialize
-      >
-        {({ initialValues, errors, touched }) => (
-          <Form>
-            {initialValues.id && (
-              <Field name="id">
-                {({ field }: FieldProps<string>) => (
-                  <FormControl
-                    isDisabled
-                    isInvalid={!!errors.id && !!touched.id}
-                  >
-                    <FormLabel htmlFor="id">Id</FormLabel>
-                    <Input
-                      id="id"
-                      placeholder="id"
-                      contentEditable={false}
-                      {...field}
-                    />
-                    {errors.id && (
-                      <FormErrorMessage>{errors.id}</FormErrorMessage>
-                    )}
-                  </FormControl>
-                )}
-              </Field>
-            )}
-            <Field as="select" name="type">
-              {({ field }: FieldProps<string>) => {
-                return (
-                  <FormControl
-                    w="50%"
-                    isRequired
-                    isInvalid={!!errors.type && !!touched.type}
-                  >
-                    <FormLabel htmlFor="type">Tipo</FormLabel>
-                    <Select {...field} id="type">
-                      {types.map((type) => (
-                        <option key={type.name} value={type.name}>
-                          {type.description}
-                        </option>
-                      ))}
-                    </Select>
-                    {errors.type && (
-                      <FormErrorMessage>{errors.type}</FormErrorMessage>
-                    )}
-                  </FormControl>
-                )
-              }}
-            </Field>
-            <Field name="description">
-              {({ field }: FieldProps<string>) => {
-                return (
-                  <FormControl
-                    isRequired
-                    isInvalid={!!errors.description && !!touched.description}
-                  >
-                    <FormLabel htmlFor="description">Descrição</FormLabel>
-                    <Input {...field} id="description" />
-                    {errors.description && (
-                      <FormErrorMessage>{errors.description}</FormErrorMessage>
-                    )}
-                  </FormControl>
-                )
-              }}
-            </Field>
-            <Field name="value">
-              {({ field }: FieldProps<number>) => (
-                <FormControl
-                  id="value"
-                  isRequired
-                  isInvalid={!!errors.value && !!touched.value}
-                >
-                  <FormLabel htmlFor="value">Valor</FormLabel>
-                  <Input {...field} id="value" type="currency" />
-                  {errors.value && (
-                    <FormErrorMessage>{errors.value}</FormErrorMessage>
+    <Flex
+      bg="primary.gray.background"
+      direction="column"
+      w="full"
+      minH="100vh"
+      justifyContent={{ base: 'flex-start', lg: 'center' }}
+      alignItems="center"
+    >
+      <FormWrapper>
+        <Stack divider={<StackDivider />} spacing={4}>
+          <Text alignSelf="center" fontWeight="600" fontSize="20">
+            Tipos de pagamentos
+          </Text>
+          {loading && <Progress size="xs" isIndeterminate />}
+          <Formik<PaymentType>
+            initialValues={paymentType}
+            onSubmit={handleSubmit}
+            validationSchema={schema}
+            enableReinitialize
+          >
+            {({ initialValues, errors, touched }) => (
+              <Form>
+                <Stack w={{ base: 'xs', md: 'md', lg: 'md' }} spacing={4}>
+                  {initialValues.id && (
+                    <FormikInput name="id" label="Id" isDisabled />
                   )}
-                </FormControl>
-              )}
-            </Field>
-            <Button
-              type="submit"
-              w="320px"
-              my="4"
-              bg="primary.blue.pure"
-              textColor="white"
-              _hover={{ bg: 'primary.blue.pure' }}
-            >
-              Salvar
-            </Button>
-          </Form>
-        )}
-      </Formik>
+                  <FormikSelect name="type" label="Tipo" options={types} />
+                  <FormikInput
+                    name="description"
+                    label="Descrição"
+                    placeholder="Adicione uma descrição"
+                  />
+                  <FormikInput
+                    name="value"
+                    label="Valor"
+                    type="number"
+                    placeholder="Adicione um valor"
+                  />
+                  <Button
+                    type="submit"
+                    w={{
+                      base: 'xs',
+                      md: 'md',
+                      lg: 'md'
+                    }}
+                    my="4"
+                    bg="primary.blue.pure"
+                    textColor="white"
+                    _hover={{ bg: 'primary.blue.pure' }}
+                    borderRadius="3xl"
+                  >
+                    Salvar
+                  </Button>
+                </Stack>
+              </Form>
+            )}
+          </Formik>
+        </Stack>
+      </FormWrapper>
     </Flex>
   )
 }

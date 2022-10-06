@@ -16,6 +16,7 @@ function Web({ children }: Props) {
       borderColor="gray.200"
       borderRadius="md"
       shadow="md"
+      w="lg"
     >
       {children}
     </Flex> 

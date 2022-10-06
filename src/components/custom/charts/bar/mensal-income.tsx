@@ -46,7 +46,6 @@ export const MensalIncomeExpenseBarChart: React.FC<Props> = ({ data }) => {
       }}
     >
       <Legend />
-      <CartesianGrid color="gray.300" strokeDasharray="1 1" />
       <XAxis dataKey="mes" />
       <YAxis dataKey="total" />
       <ReferenceLine y={0} stroke="#000" />

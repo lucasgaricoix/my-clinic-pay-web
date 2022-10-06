@@ -43,9 +43,11 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
               isRequired
               isInvalid={!!form.errors[name] || !!form.errors[name]}
             >
-              <FormLabel htmlFor={name}>{label}</FormLabel>
+              <FormLabel fontWeight="bold" htmlFor={name}>{label}</FormLabel>
               <Input
                 {...field}
+                variant="filled"
+                focusBorderColor="primary.blue.pure"
                 id={name}
                 placeholder={placeholder}
                 onChange={(event) => {

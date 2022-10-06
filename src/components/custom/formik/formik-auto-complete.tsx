@@ -39,10 +39,11 @@ export const FormikCustomAutoComplete: React.FC<Props> = ({
               isRequired
               isInvalid={!!form.errors[name] || !!form.errors[name]}
             >
-              <FormLabel htmlFor={name}>{label}</FormLabel>
+              <FormLabel fontWeight="bold" htmlFor={name}>{label}</FormLabel>
               {!isVisible && (
                 <Input
                   {...field}
+                  variant="filled"
                   id={name}
                   placeholder={placeholder}
                   onClick={() => setIsVisible(!isVisible)}

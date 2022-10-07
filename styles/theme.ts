@@ -8,11 +8,16 @@ export const theme = extendTheme({
       neongreen: '#1DC690',
       purplehaze: '#FFF2FF',
       black: '#050505',
-      gray: '#EBEBEB',
+      gray: {
+        background: '#fbfcfd',
+      },
       indigo: {
         light: '#EEF2FF',
-        dark: '#4338CA'
-      }
+        dark: '#4338CA',
+      },
+      blue: {
+        pure: '#0069ff',
+      },
     },
   },
 })

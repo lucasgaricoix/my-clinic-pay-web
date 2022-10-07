@@ -3,14 +3,30 @@ import type { AppProps } from 'next/app'
 import { MainLayout } from '../src/components/custom/main/main-layout'
 import '../styles/globals.css'
 import { theme } from '../styles/theme'
+import { wrapper } from '../src/store/store'
+import { Provider } from 'react-redux'
+import { AuthProvider } from '../src/providers/auth-provider'
+import MediaProvider from '../src/providers/media-provider'
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, ...rest }: AppProps) {
+  const { store, props } = wrapper.useWrappedStore(rest)
+  const { pageProps } = props
+
   return (
-    <ChakraProvider theme={theme}>
-      <MainLayout>
-        <Component {...pageProps} />
-      </MainLayout>
-    </ChakraProvider>
+    <Provider store={store}>
+      <ChakraProvider theme={theme}>
+        <AuthProvider
+          isUserAuthenticated={store.getState().userSession.token !== ''}
+        >
+          <MediaProvider>
+            <MainLayout>
+              <Component {...pageProps} />
+            </MainLayout>
+          </MediaProvider>
+        </AuthProvider>
+      </ChakraProvider>
+    </Provider>
   )
 }
+
 export default MyApp

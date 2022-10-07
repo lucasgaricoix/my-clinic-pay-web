@@ -2,7 +2,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Switch
+  Switch,
 } from '@chakra-ui/react'
 import { Field, FieldProps } from 'formik'
 
@@ -12,7 +12,11 @@ type Props = {
   isRequired?: boolean
 }
 
-export const FormikSwitch: React.FC<Props> = ({ name, label, isRequired = false }) => {
+export const FormikSwitch: React.FC<Props> = ({
+  name,
+  label,
+  isRequired = false,
+}) => {
   return (
     <Field id={name} name={name}>
       {({ field, form }: FieldProps<string>) => {
@@ -21,12 +25,18 @@ export const FormikSwitch: React.FC<Props> = ({ name, label, isRequired = false 
             isRequired={isRequired}
             isInvalid={!!form.errors[name] && !!form.touched[name]}
           >
-            <FormLabel id={name} htmlFor={name}>
+            <FormLabel fontWeight="bold" id={name} htmlFor={name}>
               {label}
             </FormLabel>
-            <Switch colorScheme="teal" id={name} {...field} isRequired={isRequired} isChecked={!!field.value} />
+            <Switch
+              colorScheme="blue"
+              id={name}
+              {...field}
+              isRequired={isRequired}
+              isChecked={!!field.value}
+            />
             {form.errors[name] && (
-              <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
+              <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>
             )}
           </FormControl>
         )

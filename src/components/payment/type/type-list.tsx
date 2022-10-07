@@ -5,6 +5,7 @@ import {
   Icon,
   Progress,
   Table,
+  TableContainer,
   Tbody,
   Td,
   Text,
@@ -13,7 +14,7 @@ import {
   Tr,
   useBreakpointValue,
   useDisclosure,
-  useToast
+  useToast,
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -88,7 +89,7 @@ export const PaymentTypeComponent = () => {
   }, [removeId, onClose, toast, fetch])
 
   return (
-    <Flex w="full" h="full" direction="column" p="4">
+    <Flex w="full" h="full" direction="column" p="4" overflow="auto">
       <Flex direction="column" p="4">
         <Flex justifyContent="space-between">
           <Text fontWeight="600" fontSize="lg">
@@ -96,10 +97,13 @@ export const PaymentTypeComponent = () => {
           </Text>
           <NextLink href="/payment/type/new" shallow passHref>
             <Button
+              size={{base: 'sm', lg: 'md'}}
               leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-              bg="primary.indigo.light"
-              textColor="primary.indigo.dark"
-              _hover={{ bg: 'primary.indigo.dark', textColor: 'primary.indigo.light' }}
+              bg="primary.blue.pure"
+              textColor="white"
+              _hover={{
+                bg: 'primary.blue.pure',
+              }}
             >
               Adicionar
             </Button>
@@ -110,8 +114,8 @@ export const PaymentTypeComponent = () => {
         <Progress size="xs" isIndeterminate />
       ) : (
         <>
-          <Box>
-            <Table>
+          <TableContainer>
+            <Table size={{base: 'sm', md: 'md', lg: 'md'}}>
               <Thead>
                 <Tr>
                   <Th>Tipo</Th>
@@ -129,23 +133,18 @@ export const PaymentTypeComponent = () => {
                     <Td>
                       <Box>
                         <NextLink href={`/payment/type/${paymentType.id}`}>
-                          <Button
-                            size={size}
-                            leftIcon={<Icon as={IoPencil} />}
-                            mr="4"
-                          >
-                            Editar
+                          <Button size={size} mr="4">
+                            <Icon as={IoPencil} />
                           </Button>
                         </NextLink>
                         <Button
                           size={size}
-                          leftIcon={<Icon as={IoTrash} />}
                           onClick={() => {
                             setRemoveId(paymentType.id!)
                             onOpen()
                           }}
                         >
-                          Remover
+                          <Icon as={IoTrash} />
                         </Button>
                       </Box>
                     </Td>
@@ -153,7 +152,7 @@ export const PaymentTypeComponent = () => {
                 ))}
               </Tbody>
             </Table>
-          </Box>
+          </TableContainer>
         </>
       )}
       <CustomAlertDialog

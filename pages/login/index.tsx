@@ -87,15 +87,16 @@ const Login = () => {
         <Flex direction="column">
           <Formik initialValues={initialValues} onSubmit={onSubmit}>
             {() => (
-              <Flex
-                direction="column"
-                w={{
-                  base: 'xs',
-                  md: 'xl',
-                  lg: 'xl',
-                }}
-              >
-                <Form>
+              <Form>
+                <Stack
+                  spacing={4}
+                  direction="column"
+                  w={{
+                    base: 'xs',
+                    md: 'xl',
+                    lg: 'xl',
+                  }}
+                >
                   <FormikInput
                     name="user"
                     label="Email"
@@ -110,8 +111,8 @@ const Login = () => {
                     placeholder="senha"
                     isRequired
                   />
-                </Form>
-              </Flex>
+                </Stack>
+              </Form>
             )}
           </Formik>
 
@@ -125,13 +126,19 @@ const Login = () => {
 
           <Stack my={6} spacing={4}>
             <Button
-              w="xs"
+              w={{
+                base: 'xs',
+                md: 'sm',
+                lg: 'sm',
+              }}
               alignSelf="center"
               bgColor="primary.blue.pure"
               color="white"
               _hover={{
-                bg: 'primary.indigo.light',
+                bg: 'white',
                 textColor: 'primary.blue.pure',
+                borderWidth: 1,
+                borderColor: 'primary.blue.pure',
               }}
               borderRadius="3xl"
               type="submit"
@@ -182,8 +189,8 @@ const WhatIsNewLarger = () => (
     mr={24}
     shadow="md"
   >
-    <Text textColor="white" mb={24}>
-      My clinic
+    <Text fontWeight="bold" textColor="white" mb={24}>
+      MyClinic
     </Text>
     <Heading textColor="white" mb={8}>
       Comece a administrar sua clinica com nós

@@ -16,14 +16,18 @@ type Props = {
 
 export default function AccountPopover({ logout }: Props) {
   return (
-    <PopoverContent >
+    <PopoverContent>
       <PopoverHeader pt={4} fontWeight="bold" border="0">
         Gerencie sua conta
       </PopoverHeader>
       <PopoverArrow />
       <PopoverCloseButton />
       <PopoverBody>
-        <Button size="sm" leftIcon={<Icon as={IoLogOutOutline} h="20px" w="20px" />}>
+        <Button
+          onClick={logout}
+          size="sm"
+          leftIcon={<Icon as={IoLogOutOutline} h="20px" w="20px" />}
+        >
           Sair
         </Button>
       </PopoverBody>

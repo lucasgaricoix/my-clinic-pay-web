@@ -48,6 +48,10 @@ export const SideBar: React.FC<Props> = ({
   const containerSize = { base: '38px', md: '50px', lg: '50px' }
   const userSession = useSelector((state: RootState) => state.userSession)
 
+  if (!userSession.token) {
+    return null
+  }
+
   return (
     <Flex justifyContent="center" p={2}>
       <Grid

@@ -6,8 +6,10 @@ import {
   FormLabel,
   Input,
   Progress,
+  Stack,
+  StackDivider,
   Text,
-  useToast
+  useToast,
 } from '@chakra-ui/react'
 import { Field, FieldProps, Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
@@ -15,6 +17,8 @@ import { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { PatientService } from '../../services/patient'
 import { Patient } from '../../types/patient/patient-type'
+import { FormikInput } from '../custom/formik'
+import FormWrapper from '../wrapper/form-wrapper'
 
 const initialValues: Patient = {
   id: '',
@@ -101,103 +105,70 @@ export const PatientFormComponent = () => {
   }
 
   return (
-    <Flex direction="column" w="full" p="4" mb="4">
+    <Flex
+      bg="primary.gray.background"
+      direction="column"
+      w="full"
+      minH="100vh"
+      justifyContent={{ base: 'flex-start', lg: 'center' }}
+      alignItems="center"
+    >
       {loading && <Progress size="xs" isIndeterminate />}
-      <Text fontWeight="600" fontSize="20" py="2">
-        Cadastro de paciente
-      </Text>
-      <Formik<Patient>
-        initialValues={paymentType}
-        onSubmit={handleSubmit}
-        validationSchema={schema}
-        enableReinitialize
-      >
-        {({ initialValues, errors, touched }) => (
-          <Form>
-            {initialValues.id && (
-              <Field name="id">
-                {({ field }: FieldProps<string>) => (
-                  <FormControl
-                    isDisabled
-                    isInvalid={!!errors.id && !!touched.id}
-                  >
-                    <FormLabel htmlFor="id">Id</FormLabel>
-                    <Input
-                      id="id"
-                      placeholder="id"
-                      contentEditable={false}
-                      {...field}
-                    />
-                    {errors.id && (
-                      <FormErrorMessage>{errors.id}</FormErrorMessage>
-                    )}
-                  </FormControl>
-                )}
-              </Field>
-            )}
-            <Field name="name">
-              {({ field }: FieldProps<string>) => {
-                return (
-                  <FormControl
+      <FormWrapper>
+        <Stack divider={<StackDivider />} spacing={4}>
+          <Text alignSelf="center" fontWeight="600" fontSize="20">
+            Cadastro de paciente
+          </Text>
+          <Formik<Patient>
+            initialValues={paymentType}
+            onSubmit={handleSubmit}
+            validationSchema={schema}
+            enableReinitialize
+          >
+            {({ initialValues, errors, touched }) => (
+              <Form>
+                <Stack w={{ base: 'xs', md: 'md', lg: 'md' }} spacing={4}>
+                  {initialValues.id && (
+                    <FormikInput name="id" label="Id" isDisabled />
+                  )}
+                  <FormikInput
+                    name="name"
+                    label="Nome"
+                    placeholder="Adicione o nome do paciente"
                     isRequired
-                    isInvalid={!!errors.name && !!touched.name}
+                  />
+                  <FormikInput
+                    name="birthDate"
+                    label="Data de nascimento"
+                    type="date"
+                    isRequired
+                  />
+                  <FormikInput
+                    name="responsible.name"
+                    label="Responsável"
+                    placeholder="Adicione o nome do responsável"
+                  />
+                  <Button
+                    type="submit"
+                    w={{
+                      base: 'xs',
+                      md: 'md',
+                      lg: 'md',
+                    }}
+                    my="4"
+                    bg="primary.blue.pure"
+                    textColor="white"
+                    _hover={{ bg: 'primary.blue.pure', textColor: 'white' }}
+                    borderRadius="3xl"
                   >
-                    <FormLabel htmlFor="name">Nome</FormLabel>
-                    <Input {...field} id="name" />
-                    {errors.name && (
-                      <FormErrorMessage>{errors.name}</FormErrorMessage>
-                    )}
-                  </FormControl>
-                )
-              }}
-            </Field>
-            <Field name="birthDate">
-              {({ field }: FieldProps<number>) => (
-                <FormControl
-                  id="birthDate"
-                  isRequired
-                  isInvalid={!!errors.birthDate && !!touched.birthDate}
-                >
-                  <FormLabel htmlFor="birthDate">Data de nascimento</FormLabel>
-                  <Input {...field} id="birthDate" type="date" />
-                  {errors.birthDate && (
-                    <FormErrorMessage>{errors.birthDate}</FormErrorMessage>
-                  )}
-                </FormControl>
-              )}
-            </Field>
-            <Field name="responsible.name">
-              {({ field }: FieldProps<number>) => (
-                <FormControl
-                  id="responsible.name"
-                  isRequired
-                  isInvalid={
-                    !!errors.responsible?.name && !!touched.responsible?.name
-                  }
-                >
-                  <FormLabel htmlFor="responsible.name">Responsável</FormLabel>
-                  <Input {...field} id="responsible.name" />
-                  {errors.responsible?.name && (
-                    <FormErrorMessage>
-                      {errors.responsible.name}
-                    </FormErrorMessage>
-                  )}
-                </FormControl>
-              )}
-            </Field>
-            <Button
-              type="submit"
-              w="320px"
-              my="4"
-              bg="primary.indigo.light"
-              textColor="primary.indigo.dark"
-              _hover={{ bg: 'primary.indigo.dark', textColor: 'white' }}
-            >
-              Salvar
-            </Button>
-          </Form>
-        )}
-      </Formik>
+                    Salvar
+                  </Button>
+                </Stack>
+              </Form>
+            )}
+          </Formik>
+        </Stack>
+      </FormWrapper>
     </Flex>
   )
 }

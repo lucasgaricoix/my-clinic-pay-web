@@ -1,9 +1,10 @@
-import { CloseButton, Flex, Grid, GridItem, Icon, Link } from '@chakra-ui/react'
+import { Avatar, Flex, Grid, GridItem, Icon, Link } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import NextLink from 'next/link'
 import { IconType } from 'react-icons'
 import { IoHappy, IoHome, IoOptions, IoWallet } from 'react-icons/io5'
-
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../store/store'
 type Menu = {
   description: string
   icon: IconType
@@ -11,11 +12,16 @@ type Menu = {
   subLink?: string[]
 }
 type Props = {
-  isLargerThanMd: boolean
+  isLargerThanMd?: boolean
+  isLargerThanSm?: boolean
   onClose: () => void
 }
 
-export const SideBar: React.FC<Props> = ({ isLargerThanMd = false, onClose }) => {
+export const SideBar: React.FC<Props> = ({
+  isLargerThanMd = false,
+  isLargerThanSm = false,
+  onClose,
+}) => {
   const menus: Menu[] = [
     { description: 'Home', icon: IoHome, link: '/' },
     {
@@ -37,18 +43,19 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false, onClose }) =>
       subLink: ['/payment/type/[id]'],
     },
   ]
-
   const { asPath, pathname } = useRouter()
+  const iconSize = { base: 4, md: 5, lg: 5 }
+  const containerSize = { base: '38px', md: '50px', lg: '50px' }
+  const userSession = useSelector((state: RootState) => state.userSession)
+
+  if (!userSession.token) {
+    return null
+  }
 
   return (
-    <Flex
-      justifyContent="center"
-      pl="4"
-      pr={{ base: "0px", md: '2px' }}
-      pt={{ base: '4px', md: 0 }}
-    >
+    <Flex justifyContent="center" p={2}>
       <Grid
-        templateColumns={{ base: 'repeat(4, 1fr)', md: 'repeat(1, 1fr)' }}
+        templateColumns={{ base: 'repeat(5, 1fr)', md: 'repeat(1, 1fr)' }}
         h={{ base: 'auto', md: '250px' }}
         gap={{ base: 4, md: 1 }}
       >
@@ -70,17 +77,15 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false, onClose }) =>
                       justifyContent="center"
                       alignItems="center"
                       bgColor={isActiveRoute ? 'primary.indigo.light' : 'white'}
-                      w="50px"
-                      h="50px"
+                      w={containerSize}
+                      h={containerSize}
                       borderRadius="8px"
                     >
                       <Icon
-                        w={5}
-                        h={5}
+                        w={iconSize}
+                        h={iconSize}
                         as={menu.icon}
-                        color={
-                          isActiveRoute ? 'primary.indigo.dark' : 'gray.700'
-                        }
+                        color={isActiveRoute ? 'primary.blue.pure' : 'gray.500'}
                       />
                     </Flex>
                   </Flex>
@@ -89,9 +94,15 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false, onClose }) =>
             </GridItem>
           )
         })}
+        {!isLargerThanMd && userSession.token && (
+          <Avatar
+            alignSelf="center"
+            size="sm"
+            name={userSession.name}
+            src={userSession.picture}
+          />
+        )}
       </Grid>
-
-      {!isLargerThanMd && <CloseButton onClick={onClose} ml={4} />}
     </Flex>
   )
 }

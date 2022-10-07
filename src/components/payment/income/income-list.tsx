@@ -1,46 +1,12 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Flex,
-  Icon,
-  Progress,
-  Select,
-  Stack,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  useBreakpointValue,
-  useDisclosure,
-  useToast
-} from '@chakra-ui/react'
-import NextLink from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
-import { IoAddCircleOutline, IoPencil, IoTrash } from 'react-icons/io5'
+import { Flex, Progress, useDisclosure, useToast } from '@chakra-ui/react'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { MediaContext } from '../../../providers/media-provider'
 import { IncomeService } from '../../../services/payment'
 import { Income } from '../../../types/payment/income'
-import { toBRL } from '../../../utils/format'
 import { CustomAlertDialog } from '../../custom/alert/alert-dialog'
-
-const months = [
-  { name: 1, label: 'Janeiro' },
-  { name: 2, label: 'Fevereiro' },
-  { name: 3, label: 'Março' },
-  { name: 4, label: 'Abril' },
-  { name: 5, label: 'Maio' },
-  { name: 6, label: 'Junho' },
-  { name: 7, label: 'Julho' },
-  { name: 8, label: 'Agosto' },
-  { name: 9, label: 'Setembro' },
-  { name: 10, label: 'Outubro' },
-  { name: 11, label: 'Novembro' },
-  { name: 12, label: 'Dezember' },
-]
-
-const years = [2021, 2022, 2023]
+import { IncomeSelectGroup } from '../select-group'
+import IncomeListTable from './income-list-table'
+import IncomeListCard from './income-list-card'
 
 const currentMonth = new Date().getMonth()
 const currentYear = new Date().getFullYear()
@@ -53,9 +19,9 @@ export const IncomeList = () => {
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isPaymentOpen, setIsPaymentOpen] = useState(false)
-  const size = useBreakpointValue({ base: 'sm', '2xl': 'md' })
   const [month, setMonth] = useState<number>(currentMonth)
   const [year, setYear] = useState<number>(currentYear)
+  const { isLargerThanMd } = useContext(MediaContext)
 
   const fetch = useCallback(async () => {
     try {
@@ -131,130 +97,39 @@ export const IncomeList = () => {
     }
   }, [paymentId, toast, fetch])
 
+  const handlePaymentButton = (id: string) => {
+    setPaymentId(id)
+    setIsPaymentOpen(true)
+  }
+
+  const handleRemoveButton = (id: string) => {
+    setRemoveId(id)
+    onOpen()
+  }
+
   return (
     <Flex w="full" direction="column">
-      {loading ? (
-        <Progress size="xs" isIndeterminate />
-      ) : (
-        <>
-          <Flex justifyContent="space-between" pb="4">
-            <Flex>
-              <Select
-                value={month}
-                onChange={(event) => setMonth(+event.target.value)}
-                w="sm"
-                pr="1"
-              >
-                {months.map((month) => (
-                  <option key={month.name} value={month.name}>
-                    {month.label}
-                  </option>
-                ))}
-              </Select>
-              <Select
-                value={year}
-                onChange={(event) => setYear(+event.target.value)}
-                w="xsm"
-              >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </Select>
-            </Flex>
-            <Box>
-              <NextLink href="/payment/income/new" shallow passHref>
-                <Button
-                  leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
-                  bg="primary.indigo.light"
-                  textColor="primary.indigo.dark"
-                  _hover={{
-                    bg: 'primary.indigo.dark',
-                    textColor: 'primary.indigo.light',
-                  }}
-                >
-                  Adicionar
-                </Button>
-              </NextLink>
-            </Box>
-          </Flex>
+      {loading && <Progress size="xs" isIndeterminate />}
 
-          <Table size={size}>
-            <Thead>
-              <Tr>
-                <Th>Nº da sessão</Th>
-                <Th>Nome</Th>
-                <Th>Data</Th>
-                <Th isNumeric>Valor</Th>
-                <Th>Descrição</Th>
-                <Th>Pago?</Th>
-                <Th>Valor parcial?</Th>
-                <Th>Opções</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {incomes.map((income) => (
-                <Tr key={income.id}>
-                  <Td>{income.sessionNumber}</Td>
-                  <Td>{income.person.name}</Td>
-                  <Td>
-                    {new Date(income.date).toLocaleDateString('pt', {
-                      timeZone: 'UTC',
-                    })}
-                  </Td>
-                  <Td isNumeric>{toBRL(income.paymentType.value)}</Td>
-                  <Td>{income.description}</Td>
-                  <Td>
-                    <Badge
-                      variant="subtle"
-                      colorScheme={income.isPaid ? 'green' : 'red'}
-                    >
-                      {income.isPaid ? 'Sim' : 'Não'}
-                    </Badge>
-                  </Td>
-                  <Td>
-                    <Badge
-                      variant="subtle"
-                      colorScheme={income.isPartial ? 'green' : 'red'}
-                    >
-                      {income.isPartial ? 'Sim' : 'Não'}
-                    </Badge>
-                  </Td>
-                  <Td>
-                    <Stack direction="row">
-                      <NextLink href="">
-                        <Button
-                          onClick={() => {
-                            setPaymentId(income.id!)
-                            setIsPaymentOpen(true)
-                          }}
-                          size={size}
-                        >
-                          Pagar
-                        </Button>
-                      </NextLink>
-                      <NextLink href={`payment/income/${income.id}`}>
-                        <Button size={size}>
-                          <Icon as={IoPencil} />
-                        </Button>
-                      </NextLink>
-                      <Button
-                        size={size}
-                        onClick={() => {
-                          setRemoveId(income.id!)
-                          onOpen()
-                        }}
-                      >
-                        <Icon as={IoTrash} />
-                      </Button>
-                    </Stack>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </>
+      <IncomeSelectGroup
+        currentYear={currentYear}
+        month={month}
+        setMonth={setMonth}
+        year={year}
+        setYear={setYear}
+      />
+      {isLargerThanMd ? (
+        <IncomeListTable
+          incomes={incomes}
+          handlePaymentButton={handlePaymentButton}
+          handleRemoveButton={handleRemoveButton}
+        />
+      ) : (
+        <IncomeListCard
+          incomes={incomes}
+          handlePaymentButton={handlePaymentButton}
+          handleRemoveButton={handleRemoveButton}
+        />
       )}
       <CustomAlertDialog
         isOpen={isOpen}

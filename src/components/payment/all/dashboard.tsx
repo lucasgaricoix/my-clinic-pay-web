@@ -33,12 +33,18 @@ export const PaymentDashboard = () => {
   }, [fetch])
 
   return (
-    <Flex w="full" h="full" direction="column">
+    <Flex
+      w="full"
+      h="full"
+      direction="column"
+      justifyContent="center"
+      alignItems="center"
+    >
       {loading && data.length ? (
         <Progress size="xs" isIndeterminate />
       ) : (
         <>
-          <Text>Receitas e Despesas</Text>
+          <Text>Dashboard</Text>
           <MensalIncomeExpenseBarChart data={data || []} />
         </>
       )}

@@ -16,7 +16,7 @@ import { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { PatientService } from '../../../services/patient'
 import { IncomeService, PaymentTypeService } from '../../../services/payment'
-import { Patient } from '../../../types/patient'
+import { Option, Patient } from '../../../types/patient'
 import { Income, PaymentType } from '../../../types/payment'
 import { toBRL } from '../../../utils/format'
 import {
@@ -63,10 +63,6 @@ const schema = yup.object().shape({
   }),
 })
 
-type Option = {
-  value: string
-  label: string
-}
 
 export const IncomeFormComponent = () => {
   const [loading, setLoading] = useState(false)

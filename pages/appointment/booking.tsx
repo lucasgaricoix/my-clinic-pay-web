@@ -1,5 +1,5 @@
-import { Box } from '@chakra-ui/react'
+import AppointmentComponent from '../../src/components/appointment/appointment-component'
 
 export default function AppointmentBooking() {
-  return <Box></Box>
+  return <AppointmentComponent />
 }

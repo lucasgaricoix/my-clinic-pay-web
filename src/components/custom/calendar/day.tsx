@@ -1,19 +1,21 @@
 import {
-  Box,
   Button,
   Fade,
   Flex,
   HStack,
   Icon,
-  ScaleFade,
   Stack,
   StackDivider,
   Text,
   useDisclosure,
+  useToast,
   VStack,
 } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { useCallback, useState } from 'react'
 import { IoArrowBack } from 'react-icons/io5'
+import appointmentService from '../../../services/appointment/appointment.service'
+import { Appointment } from '../../../types/appointment/appointment'
 import { weekDaysNames } from '../../../utils/date'
 import { formatMonthNames } from '../../../utils/format'
 
@@ -30,10 +32,12 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
   const day = date.getDate()
   const { isOpen, onOpen, onClose: onCloseTime } = useDisclosure()
   const [indexSelected, setIndexSelected] = useState<number | null>(null)
+  const [time, setTime] = useState<Date>(new Date())
+  const { push } = useRouter()
+  const toast = useToast()
 
   function getAvailableTimesInterval() {
     const times = []
-    const interval = []
     const startOfDay = 8
     const endOfDay = 24
     const isInterval = duration === 30
@@ -49,19 +53,33 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
 
   const handleTimeSelect = useCallback(
     (time: string, index: number) => {
-      const split = time.split(':')
-      console.log({
-        split,
-        date: new Date(year, month, day, +split[0], +split[1]),
-      })
+      const [hour, minutes] = time.split(':')
       onOpen()
       setIndexSelected(index)
-      return new Date(year, month, day, +split[0], +split[1])
+      setTime(new Date(year, month, day, +hour, +minutes))
     },
-    [day, month, onOpen, year]
+    [day, month, year, onOpen]
   )
 
-  const fetchAppointment = () => {}
+  const fetchAppointment = async () => {
+    try {
+      const data: Appointment = {
+        dateTime: time.toISOString(),
+        duration,
+      }
+      await appointmentService.create(data)
+      push('/appointment')
+    } catch (error) {
+      toast({
+        title: 'Erro',
+        description: 'Erro ao tentar cadastrar o agendamento :(',
+        status: 'error',
+        position: 'top-right',
+        duration: 5000,
+        isClosable: true,
+      })
+    }
+  }
 
   return (
     <Stack direction={['column', 'row']} w="full" divider={<StackDivider />}>
@@ -130,6 +148,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
                       {time}
                     </Button>
                     <Button
+                      onClick={fetchAppointment}
                       w="48%"
                       h="50px"
                       bg="primary.blue.pure"

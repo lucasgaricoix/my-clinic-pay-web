@@ -10,7 +10,8 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react'
-import { Form, Formik } from 'formik'
+import { Form, Formik, FormikHelpers } from 'formik'
+import { useRouter } from 'next/router'
 import { useCallback, useState } from 'react'
 import { ImCheckmark } from 'react-icons/im'
 import { PatientService } from '../../services/patient'
@@ -19,23 +20,21 @@ import { FormikSelect } from '../custom/formik'
 import { FormikCustomAutoCompleteDebounce } from '../custom/formik/formik-auto-complete-debounce'
 
 const appointmentTypeColorPicker = [
-  { name: 'Vermelho', color: 'rgb(255, 79, 0)' },
-  { name: 'Rosa', color: 'rgb(255, 117, 142)' },
-  { name: 'Magenta', color: 'rgb(229, 92, 255)' },
-  { name: 'Violeta', color: 'rgb(130, 71, 245)' },
-  { name: 'Azul', color: 'rgb(0, 153, 255)' },
-  { name: 'Ciano', color: 'rgb(10, 232, 240)' },
-  { name: 'Verde Limão', color: 'rgb(23, 232, 133)' },
-  { name: 'Verde', color: 'rgb(204, 240, 0)' },
-  { name: 'Amarelo', color: 'rgb(248, 228, 54)' },
-  { name: 'Laranja', color: 'rgb(255, 166, 0)' },
-]
-const initialValues = {
-  patient: {
-    id: '',
+  { name: 'Falta', nameName: 'Vermelho', color: 'rgb(255, 79, 0)' },
+  { name: 'Cancelou', nameName: 'Rosa', color: 'rgb(255, 117, 142)' },
+  { name: 'Não avisou', nameName: 'Magenta', color: 'rgb(229, 92, 255)' },
+  {
+    name: 'Sessão devolutiva',
+    nameName: 'Violeta',
+    color: 'rgb(130, 71, 245)',
   },
-  duration: 30,
-}
+  { name: 'Atrasado', nameName: 'Azul', color: 'rgb(0, 153, 255)' },
+  { name: 'Atendido', nameName: 'Ciano', color: 'rgb(10, 232, 240)' },
+  { name: 'Agendamento', nameName: 'Verde Limão', color: 'rgb(23, 232, 133)' },
+  { name: 'Confirmado', nameName: 'Verde', color: 'rgb(204, 240, 0)' },
+  { name: 'Social', nameName: 'Amarelo', color: 'rgb(248, 228, 54)' },
+  { name: 'Não atendido', nameName: 'Laranja', color: 'rgb(255, 166, 0)' },
+]
 
 const selectOptions = [
   { label: '30 min', value: '30' },
@@ -47,12 +46,37 @@ type AppointmentType = {
   color: string
 }
 
-export default function AppointmentNamePicker() {
+type AppointmentPatientPicker = {
+  person: Patient
+  duration: number
+}
+
+const initialValues: AppointmentPatientPicker = {
+  person: {
+    id: '',
+    name: '',
+    birthDate: '',
+    responsible: {
+      name: '',
+    },
+  },
+  duration: 30,
+}
+
+const initialAppointmentTypeValues = {
+  name: appointmentTypeColorPicker[0].name,
+  color: appointmentTypeColorPicker[0].color,
+}
+
+export default function AppointmentPatientPicker() {
   const [loading, setLoading] = useState(false)
   const [patientsOptions, setPatientsOptions] = useState<Option[]>([])
   const [patients, setPatients] = useState<Patient[]>([])
-  const [appointmentType, setAppointmentType] = useState<AppointmentType>()
+  const [appointmentType, setAppointmentType] = useState<AppointmentType>(
+    initialAppointmentTypeValues
+  )
   const toast = useToast()
+  const { push } = useRouter()
 
   const handleColorPicker = useCallback((name: string, color: string) => {
     setAppointmentType({ name, color })
@@ -89,7 +113,16 @@ export default function AppointmentNamePicker() {
     [toast]
   )
 
-  const onSubmit = () => {}
+  const onSubmit = (
+    values: AppointmentPatientPicker,
+    actions: FormikHelpers<AppointmentPatientPicker>
+  ) => {
+    const patient = patients.find((patient) => patient.id === values.person.id)
+    push(
+      `/appointment/booking?type=${appointmentType.name}&color=${appointmentType.color}&patient=${patient?.name}&duration=${values.duration}`
+    )
+    actions.resetForm()
+  }
 
   return (
     <Stack
@@ -97,9 +130,13 @@ export default function AppointmentNamePicker() {
       w="full"
       minH="100vh"
       bg="primary.gray.background"
-      spacing={6}
+      spacing={{
+        base: 6,
+        md: 12
+      }}
     >
       <Stack
+        bg="white"
         direction="column"
         py={4}
         borderBottomWidth={1}
@@ -122,7 +159,29 @@ export default function AppointmentNamePicker() {
           </HStack>
         )}
       </Stack>
-      <Stack direction="column" bg="white" px={4}>
+      <Stack
+        w={{
+          base: 'full',
+          md: 'xl',
+          lg: '2xl',
+        }}
+        h={{
+          base: 'auto',
+          md: 'lg',
+        }}
+        borderColor="gray.300"
+        borderWidth={1}
+        shadow="lg"
+        alignSelf="center"
+        // borderTopWidth={1}
+        // borderTopColor="gray.100"
+        direction="column"
+        bg="white"
+        p={{
+          base: 4,
+          md: 16,
+        }}
+      >
         <Text fontWeight="bold">Qual o tipo da agenda</Text>
         <Flex
           flexWrap="wrap"
@@ -150,7 +209,10 @@ export default function AppointmentNamePicker() {
             </Flex>
           ))}
         </Flex>
-        <Formik initialValues={initialValues} onSubmit={onSubmit}>
+        <Formik<AppointmentPatientPicker>
+          initialValues={initialValues}
+          onSubmit={onSubmit}
+        >
           {({}) => (
             <Form>
               <FormikCustomAutoCompleteDebounce
@@ -166,21 +228,24 @@ export default function AppointmentNamePicker() {
                 label="Duração"
                 options={selectOptions}
               />
+              <Flex py={8} w="full">
+                <Button
+                  type="submit"
+                  w="full"
+                  bg="primary.blue.pure"
+                  color="white"
+                  borderRadius="3xl"
+                  _hover={{
+                    bg: 'primary.blue.pure',
+                  }}
+                >
+                  Próximo
+                </Button>
+              </Flex>
             </Form>
           )}
         </Formik>
       </Stack>
-      <Flex p={4} w="full">
-        <Button
-          w="full"
-          bg="primary.blue.pure"
-          color="white"
-          borderRadius="3xl"
-          justifySelf="flex-end"
-        >
-          Próximo
-        </Button>
-      </Flex>
     </Stack>
   )
 }

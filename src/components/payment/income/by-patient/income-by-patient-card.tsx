@@ -11,10 +11,11 @@ import { IncomeByPatient } from '../../../../types/payment/income-by-patient'
 import { toBRL } from '../../../../utils/format'
 
 type Props = {
+  handlePaymentButton: (value: string) => void
   incomeByPatient?: IncomeByPatient
 }
 
-export default function IncomeByPatientCard({ incomeByPatient }: Props) {
+export default function IncomeByPatientCard({ handlePaymentButton, incomeByPatient }: Props) {
   return (
     <Flex overflow="auto">
       {incomeByPatient?.values.map((income) => (
@@ -81,6 +82,7 @@ export default function IncomeByPatientCard({ incomeByPatient }: Props) {
           </Flex>
           <Flex alignSelf="flex-end">
             <Button
+              onClick={() => handlePaymentButton(income.id!)}
               bg="primary.blue.pure"
               color="white"
               _hover={{ bg: 'primary.blue.pure' }}

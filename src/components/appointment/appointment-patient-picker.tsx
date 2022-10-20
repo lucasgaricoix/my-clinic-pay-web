@@ -127,7 +127,7 @@ export default function AppointmentPatientPicker() {
   return (
     <Stack
       direction="column"
-      w="full"
+      w='full'
       minH="100vh"
       bg="primary.gray.background"
       spacing={{
@@ -173,8 +173,6 @@ export default function AppointmentPatientPicker() {
         borderWidth={1}
         shadow="lg"
         alignSelf="center"
-        // borderTopWidth={1}
-        // borderTopColor="gray.100"
         direction="column"
         bg="white"
         p={{
@@ -214,7 +212,7 @@ export default function AppointmentPatientPicker() {
           onSubmit={onSubmit}
         >
           {({}) => (
-            <Form>
+            <Form autoComplete='off'>
               <FormikCustomAutoCompleteDebounce
                 name="person.id"
                 label="Paciente"

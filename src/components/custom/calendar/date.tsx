@@ -6,6 +6,7 @@ type Props = {
   firstDayOfWeek: number
   daysInCurrentMonth: number
   currentDay: number
+  selectedDate: Date
   isWorkingDays: (day: string) => boolean
   handleSelectDay: (day: string) => void
 }
@@ -13,7 +14,7 @@ type Props = {
 export default function CalendarDate({
   firstDayOfWeek,
   daysInCurrentMonth,
-  currentDay,
+  selectedDate,
   isWorkingDays,
   handleSelectDay,
 }: Props) {
@@ -42,7 +43,22 @@ export default function CalendarDate({
       </Text>
       {getCalendarDays(firstDayOfWeek, daysInCurrentMonth).map((day) => (
         <GridItem justifyContent="center" alignItems="center" key={day}>
-          {day.startsWith('0-') ? null : (
+          {day.startsWith('0-') ? null : selectedDate.getDate() === +day ? (
+            <Button
+              onClick={() => handleSelectDay(day)}
+              borderRadius="50%"
+              w="40px"
+              h="40px"
+              fontWeight="bold"
+              color="white"
+              bg="primary.blue.pure"
+              _hover={{
+                bg: 'primary.blue.pure',
+              }}
+            >
+              <Flex direction="column">{day}</Flex>
+            </Button>
+          ) : (
             <Button
               onClick={() => handleSelectDay(day)}
               borderRadius="50%"
@@ -52,10 +68,7 @@ export default function CalendarDate({
               color={isWorkingDays(day) ? 'primary.blue.pure' : 'gray.500'}
               bg={isWorkingDays(day) ? 'primary.indigo.light' : 'transparent'}
             >
-              <Flex direction="column" >
-                {day}
-                {/* {+day === currentDay && <Icon as={BsDot}></Icon>} */}
-              </Flex>
+              <Flex direction="column">{day}</Flex>
             </Button>
           )}
         </GridItem>

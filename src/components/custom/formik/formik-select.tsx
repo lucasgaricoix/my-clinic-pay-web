@@ -2,7 +2,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Select
+  Select,
 } from '@chakra-ui/react'
 import { Field, FieldProps } from 'formik'
 import { ReactEventHandler } from 'react'
@@ -14,7 +14,7 @@ type Props = {
     value: string
     label: string
   }[]
-  onSelect?: () => (event: ReactEventHandler<HTMLSelectElement>) => void,
+  onSelect?: () => (event: ReactEventHandler<HTMLSelectElement>) => void
   isRequired?: boolean
 }
 
@@ -23,7 +23,7 @@ export const FormikSelect: React.FC<Props> = ({
   label,
   options,
   onSelect,
-  isRequired = false
+  isRequired = false,
 }) => {
   return (
     <Field name={name}>
@@ -33,8 +33,17 @@ export const FormikSelect: React.FC<Props> = ({
             isRequired={isRequired}
             isInvalid={!!form.errors[name] && !!form.touched[name]}
           >
-            <FormLabel fontWeight="bold" htmlFor={name}>{label}</FormLabel>
-            <Select variant="filled" {...field} onSelect={onSelect} id={name} isRequired={isRequired}>
+            <FormLabel fontWeight="bold" htmlFor={name}>
+              {label}
+            </FormLabel>
+            <Select
+              variant="filled"
+              focusBorderColor="primary.blue.pure"
+              {...field}
+              onSelect={onSelect}
+              id={name}
+              isRequired={isRequired}
+            >
               {options.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}

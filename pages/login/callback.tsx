@@ -57,7 +57,7 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
         setTenantId(response.data.tenantId)
         dispatch(setUserSession({ ...user, tenantId: response.data.tenantId }))
         if (response.data) {
-          push('/login')
+          await push('/login')
         }
       } catch (error) {
         toast({
@@ -69,7 +69,7 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
           duration: 9000,
           isClosable: true,
         })
-        push('login')
+        await push('/login')
       } finally {
         setLoading(false)
       }

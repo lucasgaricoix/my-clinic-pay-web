@@ -21,10 +21,10 @@ export function getCalendarDays(
 
 export const weekDaysNames = [
   'Domingo',
-  'Segunda',
-  'Terça',
-  'Quarta',
-  'Quinta',
-  'Sexta',
+  'Segunda-feira',
+  'Terça-feira',
+  'Quarta-feira',
+  'Quinta-feira',
+  'Sexta-feira',
   'Sábado',
 ]

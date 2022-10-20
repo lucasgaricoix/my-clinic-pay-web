@@ -12,30 +12,29 @@ import { MdOutlineArrowForwardIos, MdOutlineArrowBackIos } from 'react-icons/md'
 import { dateToBRMonth } from '../../../utils/format'
 import CalendarDate from './date'
 
-type Props = {
-  year: number
-  month: number
+type CalendarHook = {
+  calendar: JSX.Element
   currentYear: number
   currentMonth: number
   currentDay: number
-  setYear: (value: number) => void
-  setMonth: (value: number) => void
-  handleSelectDay: (day: string) => void
+  year: number
+  month: number
+  selectedDate: number
 }
 
 const JANUARY = 0
 const DEZEMBER = 11
 
-export default function Calendar({
-  year,
-  month,
-  currentYear,
-  currentMonth,
-  currentDay,
-  setYear,
-  setMonth,
-  handleSelectDay,
-}: Props) {
+const date = new Date()
+const currentYear = date.getFullYear()
+const currentMonth = date.getMonth()
+const currentDay = date.getDate()
+
+export default function useCalendar(onOpen: () => void) {
+  const [year, setYear] = useState(currentYear)
+  const [month, setMonth] = useState(currentMonth)
+
+  const [selectedDate, setSelectedDate] = useState(date)
   const firstDayOfWeek = new Date(year, month, 1).getDay() // 6 (sábado/saturday)
   const daysInCurrentMonth = new Date(year, month + 1, 0).getDate() // 31
 
@@ -49,6 +48,15 @@ export default function Calendar({
 
     return +day > currentDay && ![0, 6].includes(weekDay)
   }
+
+  const handleSelectDay = useCallback(
+    (day: string) => {
+      console.log(new Date(year, month, +day))
+      setSelectedDate(new Date(year, month, +day))
+      onOpen()
+    },
+    [month, year, onOpen]
+  )
 
   const handleMonthBack = useCallback(
     (amount: number) => {
@@ -76,7 +84,7 @@ export default function Calendar({
     [month, year, setMonth, setYear]
   )
 
-  return (
+  const Calendar = () => (
     <VStack spacing={4} direction="column">
       <HStack justifyContent="space-between" w="full">
         <Box>
@@ -106,9 +114,20 @@ export default function Calendar({
         firstDayOfWeek={firstDayOfWeek}
         daysInCurrentMonth={daysInCurrentMonth}
         currentDay={currentDay}
+        selectedDate={selectedDate}
         isWorkingDays={isWorkingDays}
         handleSelectDay={handleSelectDay}
       />
     </VStack>
   )
+
+  return {
+    Calendar,
+    currentYear,
+    currentMonth,
+    currentDay,
+    year,
+    month,
+    selectedDate,
+  }
 }

@@ -1,9 +1,11 @@
 import {
+  Box,
   Button,
   Fade,
   Flex,
   HStack,
   Icon,
+  Spinner,
   Stack,
   StackDivider,
   Text,
@@ -12,8 +14,9 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { useCallback, useState } from 'react'
+import { Fragment, useCallback, useContext, useState } from 'react'
 import { IoArrowBack } from 'react-icons/io5'
+import { MediaContext } from '../../../providers/media-provider'
 import appointmentService from '../../../services/appointment/appointment.service'
 import { Appointment } from '../../../types/appointment/appointment'
 import { weekDaysNames } from '../../../utils/date'
@@ -32,9 +35,11 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
   const day = date.getDate()
   const { isOpen, onOpen, onClose: onCloseTime } = useDisclosure()
   const [indexSelected, setIndexSelected] = useState<number | null>(null)
-  const [time, setTime] = useState<Date>(new Date())
+  const [dateTime, setDateTime] = useState<string>(currentDate.toLocaleString())
+  const [loading, setLoading] = useState(false)
   const { push } = useRouter()
   const toast = useToast()
+  const { isLargerThanMd } = useContext(MediaContext)
 
   function getAvailableTimesInterval() {
     const times = []
@@ -54,21 +59,23 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
   const handleTimeSelect = useCallback(
     (time: string, index: number) => {
       const [hour, minutes] = time.split(':')
+      const dateTimeSelected = new Date(year, month, day, +hour, +minutes)
       onOpen()
       setIndexSelected(index)
-      setTime(new Date(year, month, day, +hour, +minutes))
+      setDateTime(dateTimeSelected.toLocaleString())
     },
     [day, month, year, onOpen]
   )
 
   const fetchAppointment = async () => {
     try {
+      setLoading(true)
       const data: Appointment = {
-        dateTime: time.toISOString(),
+        dateTime: dateTime,
         duration,
       }
       await appointmentService.create(data)
-      push('/appointment')
+      await push('/appointment')
     } catch (error) {
       toast({
         title: 'Erro',
@@ -78,29 +85,43 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         duration: 5000,
         isClosable: true,
       })
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <Stack direction={['column', 'row']} w="full" divider={<StackDivider />}>
+    <Stack
+      direction={['column']}
+      w="full"
+      divider={<StackDivider />}
+      overflow="auto"
+    >
       <VStack justifyContent="center" alignItems="center" p={4}>
-        <Button
-          w="40px"
-          h="40px"
-          borderRadius="50%"
-          borderColor="gray.300"
-          borderWidth={1}
-          bg="transparent"
-          position="absolute"
-          top="70px"
-          left="15px"
-          onClick={onClose}
-        >
-          <Icon color="primary.blue.pure" as={IoArrowBack} w="20px" h="20px" />
-        </Button>
+        {!isLargerThanMd && (
+          <Button
+            w="40px"
+            h="40px"
+            borderRadius="50%"
+            borderColor="gray.300"
+            borderWidth={1}
+            bg="transparent"
+            position="absolute"
+            top="25px"
+            left="15px"
+            onClick={onClose}
+          >
+            <Icon
+              color="primary.blue.pure"
+              as={IoArrowBack}
+              w="20px"
+              h="20px"
+            />
+          </Button>
+        )}
         <VStack>
           <Text fontSize="lg" fontWeight="bold">
-            {weekDaysNames[day]}
+            {weekDaysNames[date.getDay()]}
           </Text>
           <HStack>
             <Text>{day}</Text>
@@ -111,7 +132,8 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         <VStack>
           <Text fontWeight="bold">Time Zone</Text>
           <Text fontSize="xs">
-            Brasília Time({currentDate.getHours()}:{currentDate.getMinutes()})
+            Brasília Time({currentDate.getHours()}:
+            {currentDate.getMinutes().toString().padStart(2, '0')})
           </Text>
         </VStack>
       </VStack>
@@ -122,12 +144,11 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         <Text fontSize="sm">Duração: {duration} min</Text>
         <Stack w="full">
           {getAvailableTimesInterval().map((time, index) => (
-            <>
+            <Fragment key={time}>
               {indexSelected !== index && (
                 <Button
                   h="50px"
                   onClick={() => handleTimeSelect(time, index)}
-                  key={time}
                   variant="outline"
                   borderColor="primary.blue.pure"
                   textColor="primary.blue.pure"
@@ -154,12 +175,12 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
                       bg="primary.blue.pure"
                       color="white"
                     >
-                      Confirmar
+                      {loading ? <Spinner /> : <Text>Confirmar</Text>}
                     </Button>
                   </Flex>
                 </Fade>
               )}
-            </>
+            </Fragment>
           ))}
         </Stack>
       </VStack>

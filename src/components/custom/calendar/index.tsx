@@ -12,16 +12,6 @@ import { MdOutlineArrowForwardIos, MdOutlineArrowBackIos } from 'react-icons/md'
 import { dateToBRMonth } from '../../../utils/format'
 import CalendarDate from './date'
 
-type CalendarHook = {
-  calendar: JSX.Element
-  currentYear: number
-  currentMonth: number
-  currentDay: number
-  year: number
-  month: number
-  selectedDate: number
-}
-
 const JANUARY = 0
 const DEZEMBER = 11
 
@@ -39,19 +29,16 @@ export default function useCalendar(onOpen: () => void) {
   const daysInCurrentMonth = new Date(year, month + 1, 0).getDate() // 31
 
   function isWorkingDays(day: string) {
-    const date = new Date(year, month, +day)
-    const weekDay = date.getDay()
+    const calendarDate = new Date(year, month, +day)
+    const weekDay = calendarDate.getDay()
+    const isWeekend = [0, 6].includes(weekDay)
+    const isValidDate = calendarDate >= date
 
-    if (month < currentMonth && year === currentYear) {
-      return false
-    }
-
-    return +day > currentDay && ![0, 6].includes(weekDay)
+    return !isWeekend && isValidDate
   }
 
   const handleSelectDay = useCallback(
     (day: string) => {
-      console.log(new Date(year, month, +day))
       setSelectedDate(new Date(year, month, +day))
       onOpen()
     },
@@ -63,10 +50,12 @@ export default function useCalendar(onOpen: () => void) {
       if (month === JANUARY) {
         setYear(year - 1)
         setMonth(DEZEMBER)
+        setSelectedDate(new Date(year, DEZEMBER, 1))
         return
       }
 
       setMonth(month + amount)
+      setSelectedDate(new Date(year, month + amount, 1))
     },
     [month, year, setMonth, setYear]
   )
@@ -76,10 +65,12 @@ export default function useCalendar(onOpen: () => void) {
       if (month === DEZEMBER) {
         setYear(year + 1)
         setMonth(JANUARY)
+        setSelectedDate(new Date(year, JANUARY, 1))
         return
       }
 
       setMonth(month + amount)
+      setSelectedDate(new Date(year, month + amount, 1))
     },
     [month, year, setMonth, setYear]
   )

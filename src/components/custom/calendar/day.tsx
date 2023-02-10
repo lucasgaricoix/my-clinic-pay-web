@@ -19,7 +19,7 @@ import { IoArrowBack } from 'react-icons/io5'
 import { MediaContext } from '../../../providers/media-provider'
 import appointmentService from '../../../services/appointment/appointment.service'
 import { Appointment } from '../../../types/appointment/appointment'
-import { weekDaysNames } from '../../../utils/date'
+import { formatToHourMinutes, weekDaysNames } from '../../../utils/date'
 import { formatMonthNames } from '../../../utils/format'
 
 type Props = {
@@ -44,28 +44,45 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
   function getAvailableTimesInterval() {
     const times = []
     const startOfDay = 8
-    const endOfDay = 24
+    const endOfDay = 22
     const isInterval = duration === 30
 
     for (let i = startOfDay; i < endOfDay; i++) {
-      times.push(`${i.toString().padStart(2, '0')}:00`)
+      const dateCompare = new Date(year, month, day, i)
+      times.push({
+        dateTime: dateCompare,
+        patientName: '',
+      })
       if (isInterval) {
-        times.push(`${i.toString().padStart(2, '0')}:${duration}`)
+        times.push({
+          dateTime: new Date(year, month, day, i, 30),
+          patientName: '',
+        })
       }
     }
     return times
   }
 
   const handleTimeSelect = useCallback(
-    (time: string, index: number) => {
-      const [hour, minutes] = time.split(':')
-      const dateTimeSelected = new Date(year, month, day, +hour, +minutes)
+    (date: Date, index: number) => {
+      const dateTimeSelected = new Date(
+        year,
+        month,
+        day,
+        date.getHours(),
+        date.getMinutes()
+      )
       onOpen()
       setIndexSelected(index)
       setDateTime(dateTimeSelected.toLocaleString())
     },
     [day, month, year, onOpen]
   )
+
+  const handleCancelSelect = () => {
+    setIndexSelected(null)
+    onCloseTime()
+  }
 
   const fetchAppointment = async () => {
     try {
@@ -94,6 +111,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
     <Stack
       direction={['column']}
       w="full"
+      bg="white"
       divider={<StackDivider />}
       overflow="auto"
     >
@@ -107,7 +125,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
             borderWidth={1}
             bg="transparent"
             position="absolute"
-            top="25px"
+            top="70px"
             left="15px"
             onClick={onClose}
           >
@@ -144,16 +162,19 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         <Text fontSize="sm">Duração: {duration} min</Text>
         <Stack w="full">
           {getAvailableTimesInterval().map((time, index) => (
-            <Fragment key={time}>
+            <Fragment key={time.dateTime.toLocaleString()}>
               {indexSelected !== index && (
                 <Button
                   h="50px"
-                  onClick={() => handleTimeSelect(time, index)}
+                  onClick={() => handleTimeSelect(time.dateTime, index)}
                   variant="outline"
                   borderColor="primary.blue.pure"
                   textColor="primary.blue.pure"
                 >
-                  {time}
+                  <HStack w="full" justifyContent="space-between">
+                    <Text>{formatToHourMinutes(time.dateTime)}</Text>
+                    {time.patientName && <Text>{time.patientName}</Text>}
+                  </HStack>
                 </Button>
               )}
               {isOpen && indexSelected === index && (
@@ -164,9 +185,9 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
                       h="50px"
                       bg="#666"
                       color="white"
-                      onClick={onCloseTime}
+                      onClick={handleCancelSelect}
                     >
-                      {time}
+                      {formatToHourMinutes(time.dateTime)}
                     </Button>
                     <Button
                       onClick={fetchAppointment}

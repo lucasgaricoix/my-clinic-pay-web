@@ -14,6 +14,7 @@ type Props = {
 export default function CalendarDate({
   firstDayOfWeek,
   daysInCurrentMonth,
+  currentDay,
   selectedDate,
   isWorkingDays,
   handleSelectDay,

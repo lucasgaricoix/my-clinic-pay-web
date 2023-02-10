@@ -19,6 +19,10 @@ export function getCalendarDays(
   return weekDays.concat(getDays(daysInCurrentMonth))
 }
 
+export function formatToHourMinutes(date: Date) {
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+}
+
 export const weekDaysNames = [
   'Domingo',
   'Segunda-feira',

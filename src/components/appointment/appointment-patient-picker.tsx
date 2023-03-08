@@ -18,23 +18,7 @@ import { PatientService } from '../../services/patient'
 import { Option, Patient } from '../../types/patient'
 import { FormikSelect } from '../custom/formik'
 import { FormikCustomAutoCompleteDebounce } from '../custom/formik/formik-auto-complete-debounce'
-
-const appointmentTypeColorPicker = [
-  { name: 'Falta', nameName: 'Vermelho', color: 'rgb(255, 79, 0)' },
-  { name: 'Cancelou', nameName: 'Rosa', color: 'rgb(255, 117, 142)' },
-  { name: 'Não avisou', nameName: 'Magenta', color: 'rgb(229, 92, 255)' },
-  {
-    name: 'Sessão devolutiva',
-    nameName: 'Violeta',
-    color: 'rgb(130, 71, 245)',
-  },
-  { name: 'Atrasado', nameName: 'Azul', color: 'rgb(0, 153, 255)' },
-  { name: 'Atendido', nameName: 'Ciano', color: 'rgb(10, 232, 240)' },
-  { name: 'Agendamento', nameName: 'Verde Limão', color: 'rgb(23, 232, 133)' },
-  { name: 'Confirmado', nameName: 'Verde', color: 'rgb(204, 240, 0)' },
-  { name: 'Social', nameName: 'Amarelo', color: 'rgb(248, 228, 54)' },
-  { name: 'Não atendido', nameName: 'Laranja', color: 'rgb(255, 166, 0)' },
-]
+import { appointmentTypeColorPicker } from './appointment-colors'
 
 const selectOptions = [
   { label: '30 min', value: '30' },
@@ -43,6 +27,7 @@ const selectOptions = [
 
 type AppointmentType = {
   name: string
+  type: string
   color: string
 }
 
@@ -65,6 +50,7 @@ const initialValues: AppointmentPatientPicker = {
 
 const initialAppointmentTypeValues = {
   name: appointmentTypeColorPicker[0].name,
+  type: appointmentTypeColorPicker[0].type,
   color: appointmentTypeColorPicker[0].color,
 }
 
@@ -78,8 +64,8 @@ export default function AppointmentPatientPicker() {
   const toast = useToast()
   const { push } = useRouter()
 
-  const handleColorPicker = useCallback((name: string, color: string) => {
-    setAppointmentType({ name, color })
+  const handleColorPicker = useCallback((name: string, type: string, color: string) => {
+    setAppointmentType({ name, type, color })
   }, [])
 
   const searchPatientByName = useCallback(
@@ -119,7 +105,7 @@ export default function AppointmentPatientPicker() {
   ) => {
     const patient = patients.find((patient) => patient.id === values.person.id)
     push(
-      `/appointment/booking?type=${appointmentType.name}&color=${appointmentType.color}&patient=${patient?.name}&patientId=${patient?.id}&duration=${values.duration}`
+      `/appointment/booking?type=${appointmentType.type}&appointmentName=${appointmentType.name}&color=${appointmentType.color}&patient=${patient?.name}&patientId=${patient?.id}&duration=${values.duration}`
     )
     actions.resetForm()
   }
@@ -191,7 +177,7 @@ export default function AppointmentPatientPicker() {
             <Flex mr={2} mb={2} key={value.name}>
               <Tooltip hasArrow label={value.name}>
                 <Button
-                  onClick={() => handleColorPicker(value.name, value.color)}
+                  onClick={() => handleColorPicker(value.name, value.type, value.color)}
                   size="sm"
                   w="32px"
                   h="32px"

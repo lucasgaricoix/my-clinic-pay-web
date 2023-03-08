@@ -82,7 +82,7 @@ export default function AppointmentComponent() {
                 </Text>
               </HStack>
               <HStack alignItems="center">
-                <Text fontSize="xs">{query.type}</Text>
+                <Text fontSize="xs">{query.appointmentName}</Text>
                 <Box w="18px" h="18px" borderRadius="50%" bg={query.color} />
               </HStack>
             </HStack>

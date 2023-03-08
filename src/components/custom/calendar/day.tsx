@@ -16,8 +16,10 @@ import {
 import { useRouter } from 'next/router'
 import { Fragment, useCallback, useContext, useState } from 'react'
 import { IoArrowBack } from 'react-icons/io5'
+import { useSelector } from 'react-redux'
 import { MediaContext } from '../../../providers/media-provider'
 import appointmentService from '../../../services/appointment/appointment.service'
+import { RootState } from '../../../store/store'
 import { Appointment } from '../../../types/appointment/appointment'
 import { formatToHourMinutes, weekDaysNames } from '../../../utils/date'
 import { formatMonthNames } from '../../../utils/format'
@@ -40,6 +42,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
   const { push, query } = useRouter()
   const toast = useToast()
   const { isLargerThanMd } = useContext(MediaContext)
+  const userSession = useSelector((state: RootState) => state.userSession)
 
   function getAvailableTimesInterval() {
     // TODO: buscar os horários
@@ -90,8 +93,11 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
       setLoading(true)
       const data: Appointment = {
         patientId: query.patientId as string,
+        user: userSession.name,
         at: dateTime,
         duration,
+        type: query.type as string,
+        description: ''
       }
       await appointmentService.create(data)
       await push('/appointment')

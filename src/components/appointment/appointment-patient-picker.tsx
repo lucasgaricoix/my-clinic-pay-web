@@ -119,7 +119,7 @@ export default function AppointmentPatientPicker() {
   ) => {
     const patient = patients.find((patient) => patient.id === values.person.id)
     push(
-      `/appointment/booking?type=${appointmentType.name}&color=${appointmentType.color}&patient=${patient?.name}&duration=${values.duration}`
+      `/appointment/booking?type=${appointmentType.name}&color=${appointmentType.color}&patient=${patient?.name}&patientId=${patient?.id}&duration=${values.duration}`
     )
     actions.resetForm()
   }

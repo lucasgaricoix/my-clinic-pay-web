@@ -1,4 +1,6 @@
 export type Appointment = {
-  dateTime: string
+  patientId: string
+  at: string
   duration: number
+  description?: string
 }

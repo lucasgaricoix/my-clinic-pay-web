@@ -11,7 +11,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { useCallback, useContext, useState } from 'react'
+import { useContext } from 'react'
 import { HiClock } from 'react-icons/hi'
 import { useSelector } from 'react-redux'
 import { MediaContext } from '../../providers/media-provider'

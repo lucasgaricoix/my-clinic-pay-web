@@ -37,11 +37,12 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
   const [indexSelected, setIndexSelected] = useState<number | null>(null)
   const [dateTime, setDateTime] = useState<string>(currentDate.toLocaleString())
   const [loading, setLoading] = useState(false)
-  const { push } = useRouter()
+  const { push, query } = useRouter()
   const toast = useToast()
   const { isLargerThanMd } = useContext(MediaContext)
 
   function getAvailableTimesInterval() {
+    // TODO: buscar os horários
     const times = []
     const startOfDay = 8
     const endOfDay = 22
@@ -74,7 +75,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
       )
       onOpen()
       setIndexSelected(index)
-      setDateTime(dateTimeSelected.toLocaleString())
+      setDateTime(dateTimeSelected.toISOString())
     },
     [day, month, year, onOpen]
   )
@@ -88,7 +89,8 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
     try {
       setLoading(true)
       const data: Appointment = {
-        dateTime: dateTime,
+        patientId: query.patientId as string,
+        at: dateTime,
         duration,
       }
       await appointmentService.create(data)

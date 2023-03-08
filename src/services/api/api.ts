@@ -3,7 +3,6 @@ import axios, { AxiosInstance } from 'axios'
 let axiosInstance: AxiosInstance | null = null
 
 axiosInstance = axios.create({
-  // baseURL: 'https://my-clinic-pay.herokuapp.com',
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 })
 

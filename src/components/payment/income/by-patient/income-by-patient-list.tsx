@@ -159,6 +159,7 @@ export const IncomeByPatientList = () => {
                       <IncomeByPatientCard
                         key={incomeByPatient.name}
                         incomeByPatient={incomeByPatient}
+                        handlePaymentButton={handlePaymentButton}
                       />
                     )}
                   </AccordionPanel>

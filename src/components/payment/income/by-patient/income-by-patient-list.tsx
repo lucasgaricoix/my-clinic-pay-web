@@ -139,7 +139,7 @@ export const IncomeByPatientList = () => {
           />
 
           <Box>
-            <Accordion allowMultiple>
+            <Accordion allowMultiple defaultIndex={0}>
               {incomes.map((incomeByPatient) => (
                 <AccordionItem key={incomeByPatient.name}>
                   <AccordionButton>

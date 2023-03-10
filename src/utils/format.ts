@@ -5,7 +5,7 @@ export const toBRL = (value: number) => {
   }).format(value)
 }
 
-export const monthName = [
+export const monthNames = [
   'JANUARY',
   'FEBRUAY',
   'MARCH',
@@ -31,8 +31,28 @@ export const toBRMonth = (month: string) => {
     JULY: 'Julho',
     AUGUST: 'Agosto',
     SETEMBER: 'Setembro',
+    OCTOBER: 'Outubro',
     NOVEMBER: 'Novembro',
-    DEZEMBRO: 'Dezember',
+    DEZEMBER: 'Dezembro',
   }
   return monthList[month]
+}
+
+export const formatMonthNames = [
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
+]
+
+export const dateToBRMonth = (month: number) => {
+  return formatMonthNames[month]
 }

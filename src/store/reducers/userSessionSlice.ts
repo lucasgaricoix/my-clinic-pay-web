@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 
 const initialState: UserSession = {
+  id: '',
   name: '',
   email: '',
   picture: '',
@@ -17,6 +18,7 @@ const userSessionSlice = createSlice({
   initialState,
   reducers: {
     setUserSession: (state, action: PayloadAction<UserSession>) => {
+      state.id = action.payload.id
       state.name = action.payload.name
       state.email = action.payload.email
       state.picture = action.payload.picture

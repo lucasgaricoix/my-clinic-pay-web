@@ -8,3 +8,9 @@ export type Patient = {
 type Responsible = {
   name: string
 }
+
+
+export type Option = {
+  value: string
+  label: string
+}

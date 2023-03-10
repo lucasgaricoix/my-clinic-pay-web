@@ -1,10 +1,26 @@
-import { Avatar, Flex, Grid, GridItem, Icon, Link } from '@chakra-ui/react'
+import {
+  Avatar,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Icon,
+  Link,
+  Popover,
+  PopoverTrigger,
+} from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import NextLink from 'next/link'
+import { useCallback, useRef } from 'react'
 import { IconType } from 'react-icons'
+import { BiChevronDown } from 'react-icons/bi'
 import { IoHappy, IoHome, IoOptions, IoWallet } from 'react-icons/io5'
-import { useSelector } from 'react-redux'
+import { TbCalendarStats } from 'react-icons/tb'
+import { useDispatch, useSelector } from 'react-redux'
+import { clearUserSession } from '../../../store/reducers/userSessionSlice'
 import { RootState } from '../../../store/store'
+import AccountPopover from '../../account/account-popover'
+
 type Menu = {
   description: string
   icon: IconType
@@ -17,36 +33,45 @@ type Props = {
   onClose: () => void
 }
 
+const menus: Menu[] = [
+  { description: 'Home', icon: IoHome, link: '/' },
+  { description: 'Agendamento', icon: TbCalendarStats, link: '/appointment' },
+  {
+    description: 'Pagamentos',
+    icon: IoWallet,
+    link: '/payment',
+    subLink: ['/payment/income/[id]', '/payment/expense/[id]'],
+  },
+  {
+    description: 'Pacientes',
+    icon: IoHappy,
+    link: '/patient',
+    subLink: ['/patient/[id]'],
+  },
+  {
+    description: 'Tipos de pagamento',
+    icon: IoOptions,
+    link: '/payment/type',
+    subLink: ['/payment/type/[id]'],
+  },
+]
+
 export const SideBar: React.FC<Props> = ({
   isLargerThanMd = false,
   isLargerThanSm = false,
   onClose,
 }) => {
-  const menus: Menu[] = [
-    { description: 'Home', icon: IoHome, link: '/' },
-    {
-      description: 'Pagamentos',
-      icon: IoWallet,
-      link: '/payment',
-      subLink: ['/payment/income/[id]', '/payment/expense/[id]'],
-    },
-    {
-      description: 'Pacientes',
-      icon: IoHappy,
-      link: '/patient',
-      subLink: ['/patient/[id]'],
-    },
-    {
-      description: 'Tipos de pagamento',
-      icon: IoOptions,
-      link: '/payment/type',
-      subLink: ['/payment/type/[id]'],
-    },
-  ]
-  const { asPath, pathname } = useRouter()
+  const { asPath, pathname, push } = useRouter()
   const iconSize = { base: 4, md: 5, lg: 5 }
   const containerSize = { base: '38px', md: '50px', lg: '50px' }
   const userSession = useSelector((state: RootState) => state.userSession)
+  const initialFocusRef = useRef(null)
+  const dispatch = useDispatch()
+
+  const logout = useCallback(() => {
+    dispatch(clearUserSession())
+    push('/login')
+  }, [dispatch, push])
 
   if (!userSession.token) {
     return null
@@ -55,7 +80,7 @@ export const SideBar: React.FC<Props> = ({
   return (
     <Flex justifyContent="center" p={2}>
       <Grid
-        templateColumns={{ base: 'repeat(5, 1fr)', md: 'repeat(1, 1fr)' }}
+        templateColumns={{ base: 'repeat(6, 1fr)', md: 'repeat(1, 1fr)' }}
         h={{ base: 'auto', md: '250px' }}
         gap={{ base: 4, md: 1 }}
       >
@@ -95,12 +120,27 @@ export const SideBar: React.FC<Props> = ({
           )
         })}
         {!isLargerThanMd && userSession.token && (
-          <Avatar
-            alignSelf="center"
-            size="sm"
-            name={userSession.name}
-            src={userSession.picture}
-          />
+          <Popover
+            initialFocusRef={initialFocusRef}
+            placement="bottom"
+            closeOnBlur={false}
+          >
+            <PopoverTrigger>
+              <Button
+                bg="transparent"
+                _hover={{ bg: 'transparent' }}
+                rightIcon={<Icon as={BiChevronDown} />}
+              >
+                <Avatar
+                  alignSelf="center"
+                  size="sm"
+                  name={userSession.name}
+                  src={userSession.picture}
+                />
+              </Button>
+            </PopoverTrigger>
+            <AccountPopover logout={logout} />
+          </Popover>
         )}
       </Grid>
     </Flex>

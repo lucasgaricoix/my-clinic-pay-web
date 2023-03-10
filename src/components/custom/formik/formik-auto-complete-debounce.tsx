@@ -4,6 +4,10 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Spinner,
   Stack,
   Tag,
   TagLabel,
@@ -16,20 +20,22 @@ import { IoAdd } from 'react-icons/io5'
 interface Props {
   name: string
   label: string
-  placeholder?: string
   items: {
     value: string
     label: string
   }[]
   search: (param: string) => void
+  placeholder?: string
+  isLoading?: boolean
 }
 
 export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
   name,
   label,
-  placeholder,
   items,
   search,
+  placeholder,
+  isLoading,
 }) => {
   const [isVisible, setIsVisible] = useState(false)
   const [itemLabel, setItemLabel] = useState('')
@@ -43,27 +49,36 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
               isRequired
               isInvalid={!!form.errors[name] || !!form.errors[name]}
             >
-              <FormLabel fontWeight="bold" htmlFor={name}>{label}</FormLabel>
-              <Input
-                {...field}
-                variant="filled"
-                focusBorderColor="primary.blue.pure"
-                id={name}
-                placeholder={placeholder}
-                onChange={(event) => {
-                  setItemLabel(event.target.value)
-                  form.setFieldValue(name, event.target.value, true)
-                  form.setFieldTouched(name, true)
-                  if (event.target.value) {
-                    search(event.target.value)
-                  }
-                }}
-                onClick={() => setIsVisible(!isVisible)}
-                value={
-                  items.filter((item) => item.value === field.value)[0]
-                    ?.label || itemLabel
-                }
-              />
+              <FormLabel fontWeight="bold" htmlFor={name}>
+                {label}
+              </FormLabel>
+              <Stack spacing={4}>
+                <InputGroup>
+                  <Input
+                    {...field}
+                    variant="filled"
+                    focusBorderColor="primary.blue.pure"
+                    id={name}
+                    placeholder={placeholder}
+                    onChange={(event) => {
+                      setItemLabel(event.target.value)
+                      form.setFieldValue(name, event.target.value, true)
+                      form.setFieldTouched(name, true)
+                      if (event.target.value) {
+                        search(event.target.value)
+                      }
+                    }}
+                    onClick={() => setIsVisible(!isVisible)}
+                    value={
+                      items.filter((item) => item.value === field.value)[0]
+                        ?.label || itemLabel
+                    }
+                  />
+                  <InputRightElement>
+                    {isLoading && <Spinner color="gray.600" />}
+                  </InputRightElement>
+                </InputGroup>
+              </Stack>
               <Box py="2">
                 {isVisible && (
                   <Stack direction="column" wrap="wrap">

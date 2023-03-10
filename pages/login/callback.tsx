@@ -1,4 +1,4 @@
-import { Flex, Spinner, Text } from '@chakra-ui/react'
+import { Flex, Spinner, Text, useToast } from '@chakra-ui/react'
 import formidable from 'formidable'
 import { useDispatch } from 'react-redux'
 import { useCallback, useEffect, useState } from 'react'
@@ -41,6 +41,7 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
   const [loading, setLoading] = useState(false)
   const { push } = useRouter()
   const dispatch = useDispatch()
+  const toast = useToast()
 
   const handleCreateUser = useCallback(
     async (user: UserSession) => {
@@ -54,22 +55,31 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
         }
         const response = await createUser(userPayload)
         setTenantId(response.data.tenantId)
-        dispatch(setUserSession({ ...user, tenantId: response.data.tenantId }))
+        dispatch(setUserSession({ ...user, id: response.data.id ?? '', tenantId: response.data.tenantId }))
         if (response.data) {
-          push('/login')
+          await push('/login')
         }
       } catch (error) {
-        console.error(error)
+        toast({
+          title: 'Erro ao buscar usuário',
+          description:
+            'Não foi possível encontrar o usuário :(',
+          status: 'warning',
+          position: 'top-right',
+          duration: 9000,
+          isClosable: true,
+        })
+        await push('/login')
       } finally {
         setLoading(false)
       }
     },
-    [dispatch, push]
+    [dispatch, push, toast]
   )
 
   useEffect(() => {
     const { name, email, picture, iat, exp }: any = jwt.decode(sessionToken)
-    handleCreateUser({
+    handleCreateUser({      
       name,
       email,
       picture,

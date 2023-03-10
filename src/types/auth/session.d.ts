@@ -1,4 +1,5 @@
 export type UserSession = {
+  id?: string
   name: string
   email: string
   picture: string
@@ -9,6 +10,7 @@ export type UserSession = {
 }
 
 export type UserPayload = {
+  id?: string
   name: string
   email: string
   picture: string,

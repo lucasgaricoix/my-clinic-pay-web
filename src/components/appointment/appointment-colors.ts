@@ -1,7 +1,7 @@
 export const appointmentTypeColorPicker = [
   { name: 'Agendamento', type: 'schedule', nameColor: 'Verde Limão', color: 'rgb(23, 232, 133)' },
   { name: 'Confirmado', type: 'confirmed', nameColor: 'Verde', color: 'rgb(204, 240, 0)' },
-  { name: 'Falta', type: 'abscence', nameColor: 'Vermelho', color: 'rgb(255, 79, 0)' },
+  { name: 'Falta', type: 'absence', nameColor: 'Vermelho', color: 'rgb(255, 79, 0)' },
   { name: 'Cancelou', type: 'cancel',  nameColor: 'Rosa', color: 'rgb(255, 117, 142)' },
   { name: 'Não avisou', type: 'not_informed', nameColor: 'Magenta', color: 'rgb(229, 92, 255)' },
   {

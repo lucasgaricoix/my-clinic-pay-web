@@ -14,15 +14,19 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { Fragment, useCallback, useContext, useState } from 'react'
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
 import { IoArrowBack } from 'react-icons/io5'
 import { useSelector } from 'react-redux'
 import { MediaContext } from '../../../providers/media-provider'
 import appointmentService from '../../../services/appointment/appointment.service'
 import { RootState } from '../../../store/store'
-import { Appointment } from '../../../types/appointment/appointment'
+import {
+  Appointment,
+  AppointmentSchedule,
+} from '../../../types/appointment/appointment'
 import { formatToHourMinutes, weekDaysNames } from '../../../utils/date'
 import { formatMonthNames } from '../../../utils/format'
+import { appointmentTypeColorPicker } from '../../appointment/appointment-colors'
 
 type Props = {
   date: Date
@@ -38,32 +42,65 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
   const { isOpen, onOpen, onClose: onCloseTime } = useDisclosure()
   const [indexSelected, setIndexSelected] = useState<number | null>(null)
   const [dateTime, setDateTime] = useState<string>(currentDate.toLocaleString())
+  const [isoDateTime, setIsoDateTime] = useState<string>(
+    currentDate.toISOString()
+  )
   const [loading, setLoading] = useState(false)
   const { push, query } = useRouter()
   const toast = useToast()
   const { isLargerThanMd } = useContext(MediaContext)
   const userSession = useSelector((state: RootState) => state.userSession)
+  const [appointment, setAppointment] = useState<AppointmentSchedule>()
 
   function getAvailableTimesInterval() {
     // TODO: buscar os horários
-    const times = []
-    const startOfDay = 8
-    const endOfDay = 22
+    const times: any[] = []
+    const timesScheduled: any[] = []
+    const startOfDay = 6
+    const endOfDay = 23
     const isInterval = duration === 30
+
+    appointment?.scheduled.forEach((value) => {
+      timesScheduled.push({
+        dateTime: new Date(value.at),
+        patientName: value.patient.name,
+        type: value.appointmentType,
+        duration: value.duration
+      })
+    })
 
     for (let i = startOfDay; i < endOfDay; i++) {
       const dateCompare = new Date(year, month, day, i)
-      times.push({
-        dateTime: dateCompare,
-        patientName: '',
-      })
-      if (isInterval) {
+      const filter = timesScheduled.find(
+        (value) =>
+          value.dateTime.toLocaleString() == dateCompare.toLocaleString()
+      )
+      if (filter) {
         times.push({
-          dateTime: new Date(year, month, day, i, 30),
-          patientName: '',
+          dateTime: filter.dateTime,
+          patientName: filter.patientName,
+          type: filter.type,
+          duration: filter.duration
         })
+      } else {
+        times.push({
+          dateTime: dateCompare,
+          patientName: '',
+          type: '',
+          duration: 0,
+        })
+
+        if (isInterval) {
+          times.push({
+            dateTime: new Date(year, month, day, i, 30),
+            patientName: '',
+            type: '',
+            duration: 0,
+          })
+        }
       }
     }
+
     return times
   }
 
@@ -79,6 +116,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
       onOpen()
       setIndexSelected(index)
       setDateTime(dateTimeSelected.toISOString())
+      setIsoDateTime(dateTimeSelected.toISOString())
     },
     [day, month, year, onOpen]
   )
@@ -93,11 +131,11 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
       setLoading(true)
       const data: Appointment = {
         patientId: query.patientId as string,
-        user: userSession.name,
+        userId: userSession.tenantId!,
         at: dateTime,
         duration,
-        type: query.type as string,
-        description: ''
+        appointmentType: query.type as string,
+        description: '',
       }
       await appointmentService.create(data)
       await push('/appointment')
@@ -114,6 +152,36 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
       setLoading(false)
     }
   }
+
+  const getAppointments = async () => {
+    try {
+      setLoading(true)
+      const date = isoDateTime.substring(0, 10)
+      const response = await appointmentService.findAppointmentByUserAndDate(
+        userSession.tenantId!,
+        date
+      )
+      if (response.data) {
+        setAppointment(response.data)
+      }
+    } catch (error) {
+      console.log(error)
+      toast({
+        title: 'Erro',
+        description: 'Erro ao buscar os agendamentos :(',
+        status: 'error',
+        position: 'top-right',
+        duration: 5000,
+        isClosable: true,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getAppointments()
+  }, [])
 
   return (
     <Stack
@@ -177,7 +245,8 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
                   onClick={() => handleTimeSelect(time.dateTime, index)}
                   variant="outline"
                   borderColor="primary.blue.pure"
-                  textColor="primary.blue.pure"
+                  textColor={time.type ? 'gray.600' : "primary.blue.pure"}
+                  bgColor={appointmentTypeColorPicker.find(value => value.type === time.type)?.color ?? 'white'}
                 >
                   <HStack w="full" justifyContent="space-between">
                     <Text>{formatToHourMinutes(time.dateTime)}</Text>

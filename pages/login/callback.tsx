@@ -55,7 +55,7 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
         }
         const response = await createUser(userPayload)
         setTenantId(response.data.tenantId)
-        dispatch(setUserSession({ ...user, tenantId: response.data.tenantId }))
+        dispatch(setUserSession({ ...user, id: response.data.id ?? '', tenantId: response.data.tenantId }))
         if (response.data) {
           await push('/login')
         }
@@ -79,7 +79,7 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
 
   useEffect(() => {
     const { name, email, picture, iat, exp }: any = jwt.decode(sessionToken)
-    handleCreateUser({
+    handleCreateUser({      
       name,
       email,
       picture,

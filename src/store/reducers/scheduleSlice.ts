@@ -6,7 +6,14 @@ import {
 
 const initialState: AppointmentSchedule = {
   id: '',
-  user: '',
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    picture: '',
+    role: 'standard',
+    tenantId: ''
+  },
   date: '',
   scheduled: [],
 }

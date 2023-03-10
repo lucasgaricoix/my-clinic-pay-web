@@ -1,10 +1,15 @@
-import { Appointment } from '../../types/appointment/appointment'
+import { AxiosPromise } from 'axios'
+import { Appointment, AppointmentSchedule } from '../../types/appointment/appointment'
 import { api } from '../api'
 
 function create(data: Appointment) {
   return api.post('/appointments', data)
 }
 
-const appointmentService = { create }
+function findAppointmentByUserAndDate(userId: string, date: string): AxiosPromise<AppointmentSchedule> {
+  return api.get(`appointments/${userId}`, { params: { date }})
+}
+
+const appointmentService = { create, findAppointmentByUserAndDate }
 
 export default appointmentService

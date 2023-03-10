@@ -20,7 +20,7 @@ const currentYear = date.getFullYear()
 const currentMonth = date.getMonth()
 const currentDay = date.getDate()
 
-export default function useCalendar(onOpen: () => void) {
+export default function useCalendar(onOpen: () => void) {  
   const [year, setYear] = useState(currentYear)
   const [month, setMonth] = useState(currentMonth)
 

@@ -34,6 +34,14 @@ type Props = {
   onClose: () => void
 }
 
+type CalendarTimes = {
+  start: Date
+  end: Date
+  patientName: string
+  type: string
+  duration: number
+}
+
 export default function CalendarDay({ date, duration, onClose }: Props) {
   const currentDate = new Date()
   const year = date.getFullYear()
@@ -42,67 +50,12 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
   const { isOpen, onOpen, onClose: onCloseTime } = useDisclosure()
   const [indexSelected, setIndexSelected] = useState<number | null>(null)
   const [dateTime, setDateTime] = useState<string>(currentDate.toLocaleString())
-  const [isoDateTime, setIsoDateTime] = useState<string>(
-    currentDate.toISOString()
-  )
   const [loading, setLoading] = useState(false)
   const { push, query } = useRouter()
   const toast = useToast()
   const { isLargerThanMd } = useContext(MediaContext)
   const userSession = useSelector((state: RootState) => state.userSession)
-  const [appointment, setAppointment] = useState<AppointmentSchedule>()
-
-  function getAvailableTimesInterval() {
-    // TODO: buscar os horários
-    const times: any[] = []
-    const timesScheduled: any[] = []
-    const startOfDay = 6
-    const endOfDay = 23
-    const isInterval = duration === 30
-
-    appointment?.scheduled.forEach((value) => {
-      timesScheduled.push({
-        dateTime: new Date(value.at),
-        patientName: value.patient.name,
-        type: value.appointmentType,
-        duration: value.duration
-      })
-    })
-
-    for (let i = startOfDay; i < endOfDay; i++) {
-      const dateCompare = new Date(year, month, day, i)
-      const filter = timesScheduled.find(
-        (value) =>
-          value.dateTime.toLocaleString() == dateCompare.toLocaleString()
-      )
-      if (filter) {
-        times.push({
-          dateTime: filter.dateTime,
-          patientName: filter.patientName,
-          type: filter.type,
-          duration: filter.duration
-        })
-      } else {
-        times.push({
-          dateTime: dateCompare,
-          patientName: '',
-          type: '',
-          duration: 0,
-        })
-
-        if (isInterval) {
-          times.push({
-            dateTime: new Date(year, month, day, i, 30),
-            patientName: '',
-            type: '',
-            duration: 0,
-          })
-        }
-      }
-    }
-
-    return times
-  }
+  const [calendarTimes, setCalendarTimes] = useState<CalendarTimes[]>([])
 
   const handleTimeSelect = useCallback(
     (date: Date, index: number) => {
@@ -116,7 +69,6 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
       onOpen()
       setIndexSelected(index)
       setDateTime(dateTimeSelected.toISOString())
-      setIsoDateTime(dateTimeSelected.toISOString())
     },
     [day, month, year, onOpen]
   )
@@ -153,23 +105,24 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
     }
   }
 
-  const getAppointments = async () => {
+  const getAppointments = useCallback(async () => {
     try {
       setLoading(true)
-      const date = isoDateTime.substring(0, 10)
       const response = await appointmentService.findAppointmentByUserAndDate(
         userSession.tenantId!,
-        date
+        date.toISOString()
       )
       if (response.data) {
-        setAppointment(response.data)
+        const appointment = response.data
+        getAvailableTimesInterval(appointment)
       }
     } catch (error) {
       console.log(error)
+      getAvailableTimesInterval()
       toast({
-        title: 'Erro',
-        description: 'Erro ao buscar os agendamentos :(',
-        status: 'error',
+        title: 'Agendamentos',
+        description: 'Nenhum agendamento encontrado',
+        status: 'warning',
         position: 'top-right',
         duration: 5000,
         isClosable: true,
@@ -177,11 +130,71 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
     } finally {
       setLoading(false)
     }
+  }, [date])
+
+  const getAvailableTimesInterval = (appointment?: AppointmentSchedule) => {
+    const times: CalendarTimes[] = []
+    const startOfDay = 7
+    const endOfDay = 22
+
+    for (let i = startOfDay; i < endOfDay; i++) {
+      const oClockTimes = new Date(year, month, day, i)
+      const halfMinutesTimes = new Date(year, month, day, i, 30)
+      
+      const oClockFinded = appointment?.schedule.find(value => {
+        return (
+          oClockTimes.getTime() >= new Date(value.start).getTime() &&
+          oClockTimes.getTime() < new Date(value.end).getTime()
+        )
+      })
+
+      const halfTimesFinded = appointment?.schedule.find(value => {
+        return (
+          halfMinutesTimes.getTime() >= new Date(value.start).getTime() &&
+            halfMinutesTimes.getTime() < new Date(value.end).getTime()
+        )
+      })
+
+      if (!oClockFinded) {
+        times.push({
+          start: oClockTimes,
+          end: oClockTimes,
+          patientName: '',
+          type: '',
+          duration: 0,
+        })
+      }
+
+      if (!halfTimesFinded) {
+        times.push({
+          start: halfMinutesTimes,
+          end: halfMinutesTimes,
+          patientName: '',
+          type: '',
+          duration: 0,
+        })
+      }
+    }
+
+    appointment?.schedule.forEach((value) => {
+      times.push({
+        start: new Date(value.start),
+        end: new Date(value.end),
+        patientName: value.patient.name,
+        type: value.appointmentType,
+        duration: value.duration,
+      })
+    })
+
+
+    times.sort((a, b) => a.start.getTime() - b.start.getTime())
+
+    setCalendarTimes(times)
   }
 
   useEffect(() => {
     getAppointments()
-  }, [])
+  }, [getAppointments])
 
   return (
     <Stack
@@ -190,6 +203,18 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
       bg="white"
       divider={<StackDivider />}
       overflow="auto"
+      css={{
+        '&::-webkit-scrollbar': {
+          width: '0.5em',
+        },
+        '&::-webkit-scrollbar-track': {
+          width: '6px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: 'gray',
+          borderRadius: '24px',
+        },
+      }}
     >
       <VStack justifyContent="center" alignItems="center" p={4}>
         {!isLargerThanMd && (
@@ -237,20 +262,40 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         </Text>
         <Text fontSize="sm">Duração: {duration} min</Text>
         <Stack w="full">
-          {getAvailableTimesInterval().map((time, index) => (
-            <Fragment key={time.dateTime.toLocaleString()}>
+          {calendarTimes?.map((time, index) => (
+            <Fragment key={time.start.toLocaleString()}>
               {indexSelected !== index && (
                 <Button
                   h="50px"
-                  onClick={() => handleTimeSelect(time.dateTime, index)}
+                  disabled={time.patientName ? true : false}
+                  onClick={() => handleTimeSelect(time.start, index)}
                   variant="outline"
                   borderColor="primary.blue.pure"
-                  textColor={time.type ? 'gray.600' : "primary.blue.pure"}
-                  bgColor={appointmentTypeColorPicker.find(value => value.type === time.type)?.color ?? 'white'}
+                  textColor={time.type ? 'gray.800' : 'primary.blue.pure'}
                 >
                   <HStack w="full" justifyContent="space-between">
-                    <Text>{formatToHourMinutes(time.dateTime)}</Text>
+                    <VStack>
+                      {time.patientName ? (
+                        <Text>{`${formatToHourMinutes(
+                          time.start
+                        )} - ${formatToHourMinutes(time.end)}`}</Text>
+                      ) : (
+                        <Text>{formatToHourMinutes(time.start)}</Text>
+                      )}
+                    </VStack>
                     {time.patientName && <Text>{time.patientName}</Text>}
+                    {time.type && (
+                      <HStack>
+                      <Box w="18px" h="18px" borderRadius="50%" bg={query.color} />
+                      <Text>
+                        {
+                          appointmentTypeColorPicker.find(
+                            (value) => value.type === time.type
+                          )?.name
+                        }
+                      </Text>
+                      </HStack>
+                    )}
                   </HStack>
                 </Button>
               )}
@@ -264,7 +309,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
                       color="white"
                       onClick={handleCancelSelect}
                     >
-                      {formatToHourMinutes(time.dateTime)}
+                      {formatToHourMinutes(time.start)}
                     </Button>
                     <Button
                       onClick={fetchAppointment}

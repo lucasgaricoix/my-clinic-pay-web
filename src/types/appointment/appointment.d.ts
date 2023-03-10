@@ -14,13 +14,20 @@ export type AppointmentSchedule = {
   id: string
   user: UserPayload
   date: string
-  scheduled: Scheduled[]
+  schedule: Schedule[]
+  unavailableSchedule: UnavailableSchedule[]
 }
 
-type Scheduled = {
-  at: string,
+type Schedule = {
+  start: string,
+  end: string,
   duration: number
   patient: Patient
   appointmentType: string,
   description: string
+}
+
+type UnavailableSchedule = {
+  start: string
+  end: string
 }

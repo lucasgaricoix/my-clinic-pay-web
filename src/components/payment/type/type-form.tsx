@@ -4,6 +4,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Icon,
   Input,
   Progress,
   Select,
@@ -12,14 +13,17 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react'
-import { Field, FieldProps, Form, Formik, FormikHelpers } from 'formik'
+import { Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
 import { useCallback, useEffect, useState } from 'react'
+import { ImCheckmark } from 'react-icons/im'
 import * as yup from 'yup'
 import { PaymentTypeService } from '../../../services/payment'
 import { PaymentType } from '../../../types/payment/payment-type'
 import { FormikInput, FormikSelect } from '../../custom/formik'
 import FormWrapper from '../../wrapper/form-wrapper'
+import { colorPicker } from './type-colors'
+import { SketchPicker } from 'react-color'
 
 const initialValues: PaymentType = {
   id: '',
@@ -51,6 +55,7 @@ export const PaymentTypeFormComponent = () => {
   const route = useRouter()
   const { id } = route.query
   const toast = useToast()
+  const [color, setColor] = useState('')
 
   const fetchPaymentType = useCallback(
     async (id: string) => {
@@ -110,6 +115,10 @@ export const PaymentTypeFormComponent = () => {
     }
   }
 
+  function handleColorPicker(color: string) {
+    setColor(color)
+  }
+
   return (
     <Flex
       bg="primary.gray.background"
@@ -131,7 +140,7 @@ export const PaymentTypeFormComponent = () => {
             validationSchema={schema}
             enableReinitialize
           >
-            {({ initialValues, errors, touched }) => (
+            {({ initialValues, errors, touched, setFieldValue }) => (
               <Form>
                 <Stack w={{ base: 'xs', md: 'md', lg: 'md' }} spacing={4}>
                   {initialValues.id && (
@@ -149,12 +158,39 @@ export const PaymentTypeFormComponent = () => {
                     type="number"
                     placeholder="Adicione um valor"
                   />
+                  <Flex alignItems="center">
+                  {colorPicker.map((colorPick) => (
+                    <Flex key={colorPick} mr={2}>
+                      <Button
+                        onClick={() => {
+                          handleColorPicker(colorPick)
+                          setFieldValue('color', colorPick)
+                        }}
+                        size="sm"
+                        w="32px"
+                        h="32px"
+                        borderRadius="50%"
+                        borderWidth={0}
+                        bgColor={colorPick}
+                      >
+                        {color === colorPick && (
+                          <Icon
+                            as={ImCheckmark}
+                            w="18px"
+                            h="18px"
+                            color="white"
+                          />
+                        )}
+                      </Button>
+                    </Flex>
+                  ))}
+                  </Flex>
                   <Button
                     type="submit"
                     w={{
                       base: 'xs',
                       md: 'md',
-                      lg: 'md'
+                      lg: 'md',
                     }}
                     my="4"
                     bg="primary.blue.pure"

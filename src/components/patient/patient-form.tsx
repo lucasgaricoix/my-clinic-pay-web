@@ -1,23 +1,24 @@
 import {
   Button,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
   Progress,
   Stack,
   StackDivider,
   Text,
   useToast,
 } from '@chakra-ui/react'
-import { Field, FieldProps, Form, Formik, FormikHelpers } from 'formik'
+import { Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/dist/client/router'
 import { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { PatientService } from '../../services/patient'
+import { PaymentTypeService } from '../../services/payment'
+import { Option } from '../../types/common/common'
 import { Patient } from '../../types/patient/patient-type'
+import { PaymentType } from '../../types/payment'
+import { toBRL } from '../../utils/format'
 import { FormikInput } from '../custom/formik'
+import { FormikCustomAutoCompleteDebounce } from '../custom/formik/formik-auto-complete-debounce'
 import FormWrapper from '../wrapper/form-wrapper'
 
 const initialValues: Patient = {
@@ -27,7 +28,20 @@ const initialValues: Patient = {
   responsible: {
     name: '',
   },
+  paymentType: {
+    id: '',
+    type: '',
+    description: '',
+    value: 0,
+  },
 }
+
+const initialOptions: Option[] = [
+  {
+    value: '',
+    label: '',
+  },
+]
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -37,22 +51,29 @@ const schema = yup.object().shape({
 
 export const PatientFormComponent = () => {
   const [loading, setLoading] = useState(false)
-  const [paymentType, setPaymentType] = useState<Patient>(initialValues)
+  const [patient, setPatient] = useState<Patient>(initialValues)
+  const [paymentTypes, setPaymentTypes] = useState<PaymentType[]>([])
+  const [paymentTypesOptions, setPaymentTypesOptions] =
+    useState<Option[]>(initialOptions)
   const route = useRouter()
   const { id } = route.query
   const toast = useToast()
 
-  const fetchPaymentType = useCallback(
-    async (id: string) => {
+  const searchPaymentType = useCallback(
+    async (param: string) => {
       try {
         setLoading(true)
-        const response = await PatientService.findById(id)
-        setPaymentType(response.data)
-      } catch (error) {
+        const response = await PaymentTypeService.search(param, 'income')
+        const adapted = response.data.map((paymentType) => ({
+          value: paymentType.id,
+          label: `${paymentType.description} - ${toBRL(paymentType.value)}`,
+        }))
+        setPaymentTypes(response.data)
+        setPaymentTypesOptions(adapted)
+      } catch {
         toast({
           title: 'Erro ao buscar o tipo de pagamento',
-          description:
-            'Não foi encontrado o tipo de pagamento com o id informado :(',
+          description: 'Se não conseguir encontrar, cadastre um novo :)',
           status: 'warning',
           position: 'top-right',
           duration: 9000,
@@ -65,11 +86,46 @@ export const PatientFormComponent = () => {
     [toast]
   )
 
+  const fetchPatient = useCallback(
+    async (id: string) => {
+      try {
+        setLoading(true)
+        const response = await PatientService.findById(id)
+        setPatient(response.data)
+        if (response.data.paymentType) {
+          await searchPaymentType(response.data.paymentType.description)
+        }
+      } catch (error) {
+        toast({
+          title: 'Erro ao buscar o paciente',
+          description: 'Não foi encontrado o paciente com o id informado :(',
+          status: 'warning',
+          position: 'top-right',
+          duration: 9000,
+          isClosable: true,
+        })
+      } finally {
+        setLoading(false)
+      }
+    },
+    [toast, searchPaymentType]
+  )
+
   useEffect(() => {
     if (id && id !== 'new') {
-      fetchPaymentType(id as string)
+      fetchPatient(id as string)
     }
-  }, [id, fetchPaymentType])
+  }, [id, fetchPatient])
+
+  function normalizePatient(data: Patient): Patient {
+    const paymentTypeMatched = paymentTypes.find(
+      (value) => value.id === data.paymentType.id
+    )
+    if (paymentTypeMatched) {
+      return { ...data, paymentType: paymentTypeMatched }
+    }
+    return data
+  }
 
   const handleSubmit = async (
     values: Patient,
@@ -78,10 +134,10 @@ export const PatientFormComponent = () => {
     try {
       setLoading(true)
       const method = values.id ? 'update' : 'save'
-      await PatientService.save(values, method)
+      await PatientService.save(normalizePatient(values), method)
       toast({
         title: 'Sucesso',
-        description: 'Dados alterados no servidor :)',
+        description: 'Dados salvos do paciente :)',
         status: 'success',
         position: 'top-right',
         duration: 5000,
@@ -91,9 +147,8 @@ export const PatientFormComponent = () => {
       route.back()
     } catch (error) {
       toast({
-        title: 'Erro ao buscar o tipo de pagamento',
-        description:
-          'Não foi encontrado o tipo de pagamento com o id informado :(',
+        title: 'Erro ao cadastrar o paciente',
+        description: 'Não foi possível cadastrar o paciente :(',
         status: 'warning',
         position: 'top-right',
         duration: 9000,
@@ -120,12 +175,12 @@ export const PatientFormComponent = () => {
             Cadastro de paciente
           </Text>
           <Formik<Patient>
-            initialValues={paymentType}
+            initialValues={patient}
             onSubmit={handleSubmit}
             validationSchema={schema}
             enableReinitialize
           >
-            {({ initialValues, errors, touched }) => (
+            {({ initialValues }) => (
               <Form>
                 <Stack w={{ base: 'xs', md: 'md', lg: 'md' }} spacing={4}>
                   {initialValues.id && (
@@ -147,6 +202,13 @@ export const PatientFormComponent = () => {
                     name="responsible.name"
                     label="Responsável"
                     placeholder="Adicione o nome do responsável"
+                  />
+                  <FormikCustomAutoCompleteDebounce
+                    name="paymentType.id"
+                    label="Tipo de receita"
+                    placeholder="Clique para procurar o paciente"
+                    items={paymentTypesOptions}
+                    search={searchPaymentType}
                   />
                   <Button
                     type="submit"

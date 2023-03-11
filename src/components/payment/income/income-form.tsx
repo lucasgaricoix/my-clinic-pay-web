@@ -49,6 +49,12 @@ const initialValues: Income = {
     responsible: {
       name: '',
     },
+    paymentType: {
+      id: '',
+      type: '',
+      description: '',
+      value: 0
+    }
   },
 }
 
@@ -100,7 +106,7 @@ export const IncomeFormComponent = () => {
   const searchPaymentType = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await PaymentTypeService.search('*', 'income')
+      const response = await PaymentTypeService.search('', 'income')
       const adapted = response.data.map((paymentType) => ({
         value: paymentType.id,
         label: `${paymentType.description} - ${toBRL(paymentType.value)}`,

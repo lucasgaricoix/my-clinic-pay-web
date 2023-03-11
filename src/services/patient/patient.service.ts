@@ -10,7 +10,7 @@ export const deleteById = (id: string) => {
   return api.delete(`/persons/${id}`)
 }
 
-export const findById = (id: string) => {
+export const findById = (id: string): AxiosPromise<Patient> => {
   return api.get(`/persons/${id}`)
 }
 

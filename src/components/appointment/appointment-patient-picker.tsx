@@ -44,6 +44,12 @@ const initialValues: AppointmentPatientPicker = {
     responsible: {
       name: '',
     },
+    paymentType: {
+      id: '',
+      type: '',
+      description: '',
+      value: 0
+    }
   },
   duration: 30,
 }

@@ -1,8 +1,9 @@
-import { Flex, Progress, Text, useToast } from '@chakra-ui/react'
+import { Box, Flex, Progress, Text, useToast } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { PaymentService } from '../../../services/payment'
 import { PaymentOverMonthType } from '../../../types/payment/payment'
 import { MensalIncomeExpenseBarChart } from '../../custom/charts/bar/mensal-income'
+import { NivoLineChart } from '../../custom/charts/line/nivo-line-chart'
 
 export const PaymentDashboard = () => {
   const [loading, setLoading] = useState(false)
@@ -44,8 +45,11 @@ export const PaymentDashboard = () => {
         <Progress size="xs" isIndeterminate />
       ) : (
         <>
-          <Text>Dashboard</Text>
-          <MensalIncomeExpenseBarChart data={data || []} />
+          <h1>Dashboard</h1>
+          {/* <MensalIncomeExpenseBarChart data={data || []} /> */}
+          <Box width="800px" height="500px">
+          <NivoLineChart data={data || []} />
+          </Box>
         </>
       )}
     </Flex>

@@ -13,6 +13,9 @@
     "@chakra-ui/react": "^2.3.4",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@nivo/bar": "^0.80.0",
+    "@nivo/core": "^0.80.0",
+    "@nivo/line": "^0.80.0",
     "@reduxjs/toolkit": "^1.8.5",
     "axios": "^0.21.1",
     "formidable": "v3",
@@ -26,7 +29,6 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.2.0",
     "react-redux": "^8.0.4",
-    "recharts": "^2.0.10",
     "yup": "^0.32.9"
   },
   "devDependencies": {

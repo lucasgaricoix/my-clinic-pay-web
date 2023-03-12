@@ -25,11 +25,11 @@ const Login = () => {
   const { isLargerThanMd } = useContext(MediaContext)
   const state = useSelector((state: RootState) => state.userSession)
 
-  // useEffect(() => {
-  //   if (state.token) {
-  //     push('/')
-  //   }
-  // })
+  useEffect(() => {
+    if (state.token) {
+      push('/')
+    }
+  })
 
   const onSubmit = () => {
     push('/')

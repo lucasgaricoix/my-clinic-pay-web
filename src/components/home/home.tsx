@@ -9,19 +9,19 @@ export const HomeComponent = () => {
   const { isUserAuthenticated } = useContext(AuthContext)
   const { push } = useRouter()
 
-  // useEffect(() => {
-  //   if (!isUserAuthenticated) {
-  //     push('/login')
-  //   }
-  // })
+  useEffect(() => {
+    if (!isUserAuthenticated) {
+      push('/login')
+    }
+  })
 
-  // if (!isUserAuthenticated) {
-  //   return (
-  //     <Box>
-  //       <Text>Redirecting...</Text>
-  //     </Box>
-  //   )
-  // }
+  if (!isUserAuthenticated) {
+    return (
+      <Box>
+        <Text>Redirecting...</Text>
+      </Box>
+    )
+  }
 
   return (
     <PaymentDashboard />

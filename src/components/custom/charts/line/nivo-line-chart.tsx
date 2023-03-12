@@ -2,7 +2,6 @@ import { Box } from '@chakra-ui/react'
 import { ResponsiveLine } from '@nivo/line'
 import { PaymentOverMonthType } from '../../../../types/payment/payment'
 import { toBRMonth } from '../../../../utils/format'
-import { newData } from './mock'
 
 type Props = {
   data: PaymentOverMonthType[]

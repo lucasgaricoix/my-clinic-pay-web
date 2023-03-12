@@ -7,12 +7,14 @@ export type UserSession = {
   exp: number,
   token: string,
   tenantId?: string
+  sub?: string
 }
 
 export type UserPayload = {
   id?: string
   name: string
   email: string
+  password: string
   picture: string,
   role: string,
   tenantId?: string

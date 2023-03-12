@@ -7,6 +7,13 @@ import { wrapper } from '../src/store/store'
 import { Provider } from 'react-redux'
 import { AuthProvider } from '../src/providers/auth-provider'
 import MediaProvider from '../src/providers/media-provider'
+import { Roboto } from 'next/font/google'
+
+const roboto = Roboto({
+  weight: ['400', '700'],
+  style: ['normal'],
+  subsets: ['latin'],
+})
 
 function MyApp({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest)
@@ -19,9 +26,11 @@ function MyApp({ Component, ...rest }: AppProps) {
           isUserAuthenticated={store.getState().userSession.token !== ''}
         >
           <MediaProvider>
-            <MainLayout>
-              <Component {...pageProps} />
-            </MainLayout>
+            <main className={roboto.className}>
+              <MainLayout>
+                <Component {...pageProps} />
+              </MainLayout>
+            </main>
           </MediaProvider>
         </AuthProvider>
       </ChakraProvider>

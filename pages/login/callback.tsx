@@ -50,6 +50,7 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
         const userPayload: UserPayload = {
           name: user.name,
           email: user.email,
+          password: user.sub!,
           picture: user.picture,
           role: 'standard',
         }
@@ -78,14 +79,15 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
   )
 
   useEffect(() => {
-    const { name, email, picture, iat, exp }: any = jwt.decode(sessionToken)
-    handleCreateUser({      
+    const { name, email, picture, iat, exp, sub }: any = jwt.decode(sessionToken)
+    handleCreateUser({
       name,
       email,
       picture,
       iat,
       exp,
       token: sessionToken,
+      sub
     })
   }, [handleCreateUser, sessionToken])
 

@@ -44,11 +44,22 @@ export const PaymentDashboard = () => {
         <Progress size="xs" isIndeterminate />
       ) : (
         <>
-        <Text pb={6} fontSize="lg" fontWeight="bold" alignSelf="center">Dashboard</Text>
-        <Flex justify="center" alignItems="center" direction="column" width="500px" height="350px" bgColor="white" rounded="lg" shadow="md">
-          <Text>Pagamentos Ano/Mês</Text>
-          <NivoLineChart data={data || []} />
-        </Flex>
+          <Text pb={6} fontSize="lg" fontWeight="bold" alignSelf="center">
+            Dashboard
+          </Text>
+          <Flex
+            justify="center"
+            alignItems="center"
+            direction="column"
+            width="500px"
+            height="350px"
+            bgColor="white"
+            rounded="lg"
+            shadow="md"
+          >
+            <Text fontWeight="bold">Receitas e despesas ano/mês</Text>
+            <NivoLineChart data={data || []} />
+          </Flex>
         </>
       )}
     </Flex>

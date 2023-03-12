@@ -20,7 +20,10 @@ export const monthNames = [
   'DEZEMBRO',
 ]
 
-export const toBRMonth = (month: string) => {
+export const toBRMonth = (month?: string) => {
+  if (!month) {
+    return ''
+  }
   const monthList: Record<string, string> = {
     JANUARY: 'Janeiro',
     FEBRUAY: 'Fevereiro',

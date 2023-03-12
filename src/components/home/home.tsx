@@ -24,9 +24,6 @@ export const HomeComponent = () => {
   }
 
   return (
-    <Stack spacing={2} p="2">
-      <Divider orientation="vertical" />
-      <PaymentDashboard />
-    </Stack>
+    <PaymentDashboard />
   )
 }

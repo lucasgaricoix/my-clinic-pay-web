@@ -25,22 +25,22 @@ export const NivoLineChart = ({ data }: Props) => {
   data.sort((a,b) => a.year - b.year)
 
   const income = {
-    id: 'income',
+    id: 'receitas',
     color: 'hsl(63, 70%, 50%)',
     data: data.map(value => {
       return {
-        x: `${value.year} - ${value.month}`,
+        x: `${value.year} - ${toBRMonth(value.month)}`,
         y: value.income ?? 0,
       }    
     })  
   }
 
   const expense = {
-    id: 'expense',
+    id: 'despesas',
     color: 'hsl(358, 70%, 50%)',
     data: data.map(value => {
       return {
-        x: `${value.year} - ${value.month}`,
+        x: `${value.year} - ${toBRMonth(value.month)}`,
         y: value.expense ?? 0,
       }    
     })  
@@ -51,7 +51,7 @@ export const NivoLineChart = ({ data }: Props) => {
     color: 'hsl(34, 70%, 50%)',
     data: data.map(value => {
       return {
-        x: `${value.year} - ${value.month}`,
+        x: `${value.year} - ${toBRMonth(value.month)}`,
         y: value.income ?? 0 - value.expense ?? 0,
       }    
     })  
@@ -80,7 +80,7 @@ export const NivoLineChart = ({ data }: Props) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: 'transportation',
+        legend: 'ano/mês',
         legendOffset: 36,
         legendPosition: 'middle',
       }}
@@ -89,9 +89,9 @@ export const NivoLineChart = ({ data }: Props) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: 'count',
+        legend: 'valor',
         legendOffset: -40,
-        legendPosition: 'middle',
+        legendPosition: 'start',
       }}
       pointSize={10}
       pointColor={{ theme: 'background' }}

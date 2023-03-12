@@ -73,9 +73,9 @@ export const SideBar: React.FC<Props> = ({
     push('/login')
   }, [dispatch, push])
 
-  if (!userSession.token) {
-    return null
-  }
+  // if (!userSession.token) {
+  //   return null
+  // }
 
   return (
     <Flex justifyContent="center" p={2}>

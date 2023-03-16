@@ -25,7 +25,6 @@ export const FormikCheckboxItem: React.FC<Props> = ({
   isRequired = false,
   size = 'md'
 }) => {
-  console.log()
   return (
     <Field id={name} name={name}>
       {({ field, form }: FieldProps<string>) => {
@@ -42,6 +41,7 @@ export const FormikCheckboxItem: React.FC<Props> = ({
                 value={id}
                 defaultChecked={defaultIsChecked}
                 isRequired={isRequired}
+                size={size}
               />
               <FormLabel
                 mb={0}

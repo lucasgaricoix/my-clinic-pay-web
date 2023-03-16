@@ -1,4 +1,4 @@
-import { TimeRange } from "@/types/settings/weekday";
+import { TimeRange } from "@/types/settings/weekday-time";
 
 export const weekdayTimesData: TimeRange[] = [
   {

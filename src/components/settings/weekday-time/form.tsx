@@ -1,23 +1,20 @@
 import { FormikCheckboxItem } from '@/components/custom/formik'
-import { FormikTimeInput } from '@/components/custom/formik/formik-time-input'
-import { TimeRange, WeekdaySettings } from '@/types/settings/weekday'
+import { WeekdaySettings } from '@/types/settings/weekday-time'
 import { weekdaysShortNamesDefault } from '@/utils/date'
 import { AddIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
   CheckboxGroup,
-  Divider,
   Flex,
   Icon,
   Stack,
   Text,
   useMediaQuery,
-  VStack,
 } from '@chakra-ui/react'
-import { Field, Form, Formik, FormikHelpers } from 'formik'
-import { IoTrashOutline } from 'react-icons/io5'
+import { Form, Formik, FormikHelpers } from 'formik'
 import { weekdayTimesData } from './initial-value'
+import { TimeRangeComponent } from './time-range'
 
 const initialValues: WeekdaySettings = {
   weekdays: weekdaysShortNamesDefault,
@@ -65,14 +62,13 @@ export const WeekdayTimeSettings = () => {
     // TODO: add create service
   }
 
-  // console.log(initialValues)
   return (
     <Flex
       direction="column"
-      borderWidth="1px"
+      borderWidth={{base: 0, md: "1px"}}
       borderColor="gray.200"
       borderRadius="lg"
-      px={{ base: 2, md: 6 }}
+      px={{ base: 3, md: 6 }}
       pt={6}
     >
       <Text mb={6}>Configure seus horários de atendimento</Text>
@@ -81,7 +77,7 @@ export const WeekdayTimeSettings = () => {
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {({ initialValues, values, setFieldValue }) => (
+        {({ initialValues, values, setFieldValue, setFieldTouched }) => (
           <Form id="weekday-time-form">
             <CheckboxGroup
               colorScheme="blue"
@@ -100,43 +96,56 @@ export const WeekdayTimeSettings = () => {
                     py={{ base: 2, md: 4 }}
                   >
                     <Flex
+                      direction={['column', 'row']}
                       justifyContent="space-evenly"
                       alignItems="start"
                       w={{ base: 'full', md: 'auto' }}
                     >
-                      <Box w={{ base: '10vh', md: 24 }}>
-                        <FormikCheckboxItem
-                          id={weekdayTime.name}
-                          name="weekdays"
-                          label={weekdayTime.label}
-                          size={{ base: 'sm', md: 'md' }}
-                        />
-                      </Box>
-                      {!isLargerThanMd && (
-                        <Button
-                          bgColor="transparent"
-                          _hover={{ backgroundColor: 'transparent' }}
-                          size="sm"
-                          onClick={() =>
-                            setFieldValue(`weekdaysTimes[${mainIndex}].times`, [
-                              ...weekdayTime.times,
-                              { start: undefined, end: undefined },
-                            ])
-                          }
-                        >
-                          <Icon as={AddIcon} />
-                        </Button>
-                      )}
+                      <Flex
+                        justifyContent="space-between"
+                        alignItems="center"
+                        w="full"
+                        mb={{ base: 4 }}
+                      >
+                        <Box w={{ base: 'auto', md: 24 }}>
+                          <FormikCheckboxItem
+                            id={weekdayTime.name}
+                            name="weekdays"
+                            label={weekdayTime.label}
+                          />
+                        </Box>
+                        {!isLargerThanMd && (
+                          <Button
+                            bgColor="transparent"
+                            _hover={{ backgroundColor: 'transparent' }}
+                            size="sm"
+                            onClick={() =>
+                              setFieldValue(
+                                `weekdaysTimes[${mainIndex}].times`,
+                                [
+                                  ...weekdayTime.times,
+                                  { start: undefined, end: undefined },
+                                ]
+                              )
+                            }
+                          >
+                            <Icon as={AddIcon} />
+                          </Button>
+                        )}
+                      </Flex>
                       <Flex direction="column">
                         {weekdayTime.times.map((__, childIndex) => {
                           return (
                             <Flex direction="column" key={`time-${childIndex}`}>
                               <TimeRangeComponent
                                 values={values}
+                                times={weekdayTime.times}
                                 mainIndex={mainIndex}
                                 childIndex={childIndex}
                                 lastIndex={lastIndex}
                                 weekdayName={weekdayTime.name}
+                                setFieldValue={setFieldValue}
+                                setFieldTouched={setFieldTouched}
                               />
                             </Flex>
                           )
@@ -149,12 +158,12 @@ export const WeekdayTimeSettings = () => {
                           bgColor="transparent"
                           _hover={{ backgroundColor: 'transparent' }}
                           size="sm"
-                          onClick={() =>
+                          onClick={() => {
                             setFieldValue(`weekdaysTimes[${mainIndex}].times`, [
                               ...weekdayTime.times,
                               { start: undefined, end: undefined },
                             ])
-                          }
+                          }}
                         >
                           <Icon as={AddIcon} />
                         </Button>
@@ -164,70 +173,38 @@ export const WeekdayTimeSettings = () => {
                 )
               })}
             </CheckboxGroup>
-            {/* <Button type="submit">Salvar</Button> */}
+            <Flex
+              justifyContent="end"
+              alignItems="center"
+              p={{ base: 2, md: 4 }}
+            >
+              <Button
+                bgColor="transparent"
+                _hover={{
+                  backgroundColor: 'transparent',
+                  textDecorationLine: 'underline',
+                }}
+              >
+                <Text fontSize="sm">Cancelar</Text>
+              </Button>
+              <Button
+                form="weekday-time-form"
+                type="submit"
+                borderRadius="2xl"
+                size="sm"
+                bgColor="primary.blue.pure"
+                _hover={{
+                  backgroundColor: 'secondary.blue.pure',
+                }}
+              >
+                <Text fontSize="sm" color="white">
+                  Salvar
+                </Text>
+              </Button>
+            </Flex>
           </Form>
         )}
       </Formik>
-    </Flex>
-  )
-}
-
-type TimeRangeProps = {
-  values: WeekdaySettings
-  mainIndex: number
-  childIndex: number
-  lastIndex: boolean
-  weekdayName: string
-}
-
-function TimeRangeComponent({
-  values,
-  mainIndex,
-  childIndex,
-  lastIndex,
-  weekdayName,
-}: TimeRangeProps) {
-  // console.log(`weekdaysTimes[${mainIndex}].times[${childIndex}].start`)
-  return (
-    <Flex
-      justifyContent="start"
-      alignItems={['center', 'start']}
-      w="full"
-      // borderBottom={lastIndex ? 'transparent' : 'gray.300'}
-      // borderBottomWidth={lastIndex ? 'trannsparent' : '1px'}
-      // py={{ base: 4, md: 6 }}
-      pb={4}
-    >
-      {values.weekdays.includes(weekdayName) ? (
-        <Flex alignItems="start">
-          <Box mr={{ base: 1, md: 4 }}>
-            <FormikTimeInput
-              id={mainIndex.toString()}
-              name={`weekdaysTimes[${mainIndex}].times[${childIndex}].start`}
-              size={{ base: 'sm', md: 'md' }}
-            />
-          </Box>
-          {'-'}
-          <Box ml={{ base: 1, md: 4 }}>
-            <FormikTimeInput
-              id={mainIndex.toString()}
-              name={`weekdaysTimes[${mainIndex}].times[${childIndex}].end`}
-              size={{ base: 'sm', md: 'md' }}
-            />
-          </Box>
-          <Button
-            bgColor="transparent"
-            _hover={{ backgroundColor: 'transparent' }}
-            size="sm"
-          >
-            <Icon as={IoTrashOutline} />
-          </Button>
-        </Flex>
-      ) : (
-        <Flex>
-          <Text>Indisponível</Text>
-        </Flex>
-      )}
     </Flex>
   )
 }

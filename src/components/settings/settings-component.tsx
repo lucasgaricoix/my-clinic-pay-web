@@ -1,4 +1,3 @@
-import { WeekdaySettings } from '@/types/settings/weekday'
 import { Button, Divider, Flex, Stack, Text } from '@chakra-ui/react'
 import Header from './header'
 import { WeekdayTimeSettings } from './weekday-time/form'
@@ -18,7 +17,7 @@ export const SettingsComponent = () => {
         w={{ base: 'auto', md: '4xl' }}
         shadow="md"
         borderWidth="2px"
-        borderColor="gray.600"
+        borderColor={{ base: 'gray.300', md: "gray.600"}}
         borderRadius="sm"
         bgColor="white"
       >
@@ -26,7 +25,7 @@ export const SettingsComponent = () => {
           <Flex direction="column" p={{ base: 2, md: 6 }}>
             <WeekdayTimeSettings />
           </Flex>
-          <Flex justifyContent="end" alignItems="center" p={{ base: 2, md: 4 }}>
+          {/* <Flex justifyContent="end" alignItems="center" p={{ base: 2, md: 4 }}>
             <Button
               bgColor="transparent"
               _hover={{
@@ -50,7 +49,7 @@ export const SettingsComponent = () => {
                 Salvar
               </Text>
             </Button>
-          </Flex>
+          </Flex> */}
         </Stack>
       </Flex>
     </Flex>

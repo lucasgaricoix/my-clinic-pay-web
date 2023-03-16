@@ -14,7 +14,14 @@ import NextLink from 'next/link'
 import { useCallback, useRef } from 'react'
 import { IconType } from 'react-icons'
 import { BiChevronDown } from 'react-icons/bi'
-import { IoHappy, IoHome, IoOptions, IoWallet } from 'react-icons/io5'
+import {
+  IoHappy,
+  IoHome,
+  IoLogOutOutline,
+  IoOptions,
+  IoSettingsOutline,
+  IoWallet,
+} from 'react-icons/io5'
 import { TbCalendarStats } from 'react-icons/tb'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearUserSession } from '../../../store/reducers/userSessionSlice'
@@ -35,7 +42,12 @@ type Props = {
 
 const menus: Menu[] = [
   { description: 'Home', icon: IoHome, link: '/' },
-  { description: 'Agendamento', icon: TbCalendarStats, link: '/appointment' },
+  {
+    description: 'Agendamento',
+    icon: TbCalendarStats,
+    link: '/appointment',
+    subLink: ['/appointment/booking'],
+  },
   {
     description: 'Pagamentos',
     icon: IoWallet,
@@ -53,6 +65,12 @@ const menus: Menu[] = [
     icon: IoOptions,
     link: '/payment/type',
     subLink: ['/payment/type/[id]'],
+  },
+  {
+    description: 'Configurações',
+    icon: IoSettingsOutline,
+    link: '/settings',
+    subLink: [],
   },
 ]
 
@@ -73,12 +91,44 @@ export const SideBar: React.FC<Props> = ({
     push('/login')
   }, [dispatch, push])
 
-  // if (!userSession.token) {
-  //   return null
-  // }
+  if (!userSession.token) {
+    return null
+  }
 
   return (
-    <Flex justifyContent="center" p={2}>
+    <Flex
+      direction="column"
+      justifyContent="center"
+      alignItems="center"
+      p={2}
+      w={{ base: 'full', md: 'auto' }}
+      h={{ base: 'auto', md: '100vh' }}
+      position={{ base: 'relative', md: 'fixed' }}
+      borderRightColor="white"
+      borderRightWidth={{ base: '0px', md: '0.1rem', lg: '0.1rem' }}
+      zIndex={1}
+      bgColor="#fff"
+    >
+      {userSession.picture && isLargerThanMd && (
+        <Button
+          p={0}
+          bgColor="transparent"
+          position="absolute"
+          top={4}
+          left={2}
+          _hover={{
+            backgroundColor: 'transparent',
+            blur: 'sm',
+          }}
+        >
+          <Avatar
+            size="md"
+            name={userSession.name}
+            src={userSession.picture}
+            onClick={() => push('/user')}
+          />
+        </Button>
+      )}
       <Grid
         templateColumns={{ base: 'repeat(6, 1fr)', md: 'repeat(1, 1fr)' }}
         h={{ base: 'auto', md: '250px' }}
@@ -104,7 +154,7 @@ export const SideBar: React.FC<Props> = ({
                       bgColor={isActiveRoute ? 'primary.indigo.light' : 'white'}
                       w={containerSize}
                       h={containerSize}
-                      borderRadius="8px"
+                      borderRadius="2xl"
                     >
                       <Icon
                         w={iconSize}
@@ -133,6 +183,7 @@ export const SideBar: React.FC<Props> = ({
               >
                 <Avatar
                   alignSelf="center"
+                  justifySelf="center"
                   size="sm"
                   name={userSession.name}
                   src={userSession.picture}
@@ -143,6 +194,18 @@ export const SideBar: React.FC<Props> = ({
           </Popover>
         )}
       </Grid>
+      {isLargerThanMd && userSession.name && (
+        <Button
+          position="absolute"
+          bottom={4}
+          onClick={logout}
+          size="sm"
+          bg="transparent"
+          _hover={{ backGroundColor: 'transparent' }}
+        >
+          <Icon as={IoLogOutOutline} w={6} h={6} color="gray.700" />
+        </Button>
+      )}
     </Flex>
   )
 }

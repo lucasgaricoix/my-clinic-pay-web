@@ -14,6 +14,7 @@ type Props = {
   isRequired?: boolean
   isDisabled?: boolean
   autocomplete?: boolean
+  size?: string
 }
 
 export const FormikInput: React.FC<Props> = ({
@@ -23,13 +24,15 @@ export const FormikInput: React.FC<Props> = ({
   type,
   isRequired = false,
   isDisabled = false,
-  autocomplete = false
+  autocomplete = false,
+  size = 'md',
 }) => {
   return (
     <Field id={name} name={name} timezone="America/Sao_Paulo">
       {({ field, form }: FieldProps<string>) => {
         return (
           <FormControl
+            w={size}
             isRequired={isRequired}
             isInvalid={!!form.errors[name] && !!form.touched[name]}
           >
@@ -47,6 +50,7 @@ export const FormikInput: React.FC<Props> = ({
               isDisabled={isDisabled}
               autoComplete={autocomplete ? 'true' : 'false'}
               focusBorderColor="primary.blue.pure"
+              w={size}
             />
             {form.errors[name] && (
               <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>

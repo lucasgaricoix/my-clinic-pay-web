@@ -38,29 +38,29 @@ export const PaymentDashboard = () => {
       h="full"
       direction="column"
       backgroundColor="primary.gray.background"
-      p={6}
     >
+      <Flex bg="white" p={6} shadow="md" mb={6} justifyContent="center">
+        <Text fontSize="lg" fontWeight="bold" alignSelf="center">
+          Dashboard
+        </Text>
+      </Flex>
       {loading && data.length ? (
         <Progress size="xs" isIndeterminate />
       ) : (
-        <>
-          <Text pb={6} fontSize="lg" fontWeight="bold" alignSelf="center">
-            Dashboard
-          </Text>
-          <Flex
-            justify="center"
-            alignItems="center"
-            direction="column"
-            width="500px"
-            height="350px"
-            bgColor="white"
-            rounded="lg"
-            shadow="md"
-          >
-            <Text fontWeight="bold">Receitas e despesas ano/mês</Text>
-            <NivoLineChart data={data || []} />
-          </Flex>
-        </>
+        <Flex
+          justify="center"
+          alignItems="center"
+          direction="column"
+          width="500px"
+          height="350px"
+          bgColor="white"
+          rounded="lg"
+          shadow="md"
+          ml={6}
+        >
+          <Text fontWeight="bold">Receitas e despesas ano/mês</Text>
+          <NivoLineChart data={data || []} />
+        </Flex>
       )}
     </Flex>
   )

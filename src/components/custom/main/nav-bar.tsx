@@ -28,7 +28,7 @@ export default function NavBar() {
   }, [dispatch, push])
 
   return (
-    <Flex px={4} py={2} w="full" justifyContent="flex-end" alignItems="center">
+    <Flex px={4} pl="72px" w="full" justifyContent="flex-end" alignItems="center">
       {user.name && (
         <HStack>
           <Icon as={IoNotificationsOutline} w="20px" h="20px" />

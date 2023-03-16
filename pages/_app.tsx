@@ -7,10 +7,10 @@ import { wrapper } from '../src/store/store'
 import { Provider } from 'react-redux'
 import { AuthProvider } from '../src/providers/auth-provider'
 import MediaProvider from '../src/providers/media-provider'
-import { Roboto } from 'next/font/google'
+import { Roboto, Quicksand, Poppins } from 'next/font/google'
 
-const roboto = Roboto({
-  weight: ['400', '700'],
+const poppins = Poppins({
+  weight: ['300', '400', '500', '700'],
   style: ['normal'],
   subsets: ['latin'],
 })
@@ -26,7 +26,7 @@ function MyApp({ Component, ...rest }: AppProps) {
           isUserAuthenticated={store.getState().userSession.token !== ''}
         >
           <MediaProvider>
-            <main className={roboto.className}>
+            <main className={poppins.className}>
               <MainLayout>
                 <Component {...pageProps} />
               </MainLayout>

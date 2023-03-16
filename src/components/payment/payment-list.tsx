@@ -5,7 +5,7 @@ import { IncomeList } from './income/income-list'
 
 export const PaymentList = () => {
   return (
-    <Box w="full">
+    <Box w="full" h="full" pt={2} borderLeftWidth="0.1rem">
       <Tabs
         isFitted
         colorScheme="blue"

@@ -8,7 +8,6 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
-import NavBar from './nav-bar'
 import { SideBar } from './side-bar'
 
 type Props = {
@@ -40,8 +39,13 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
           <SideBar isLargerThanMd={isLargerThanSm} onClose={onClose} />
           <Divider orientation="vertical" />
           <VStack w="full" divider={<Divider />} spacing={0}>
-            <NavBar />
-            <Box w="full" minH="100vh" >{children}</Box>
+            <Box
+              w="full"
+              minH="100vh"
+              pl="67px"
+            >
+              {children}
+            </Box>
           </VStack>
         </Stack>
       )}
@@ -57,9 +61,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
             isLargerThanMd={isLargerThanMd}
             onClose={onClose}
           />
-          <Box w="full" >
-            {children}
-          </Box>
+          <Box w="full">{children}</Box>
         </VStack>
       )}
     </Flex>

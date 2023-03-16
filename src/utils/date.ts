@@ -20,10 +20,13 @@ export function getCalendarDays(
 }
 
 export function formatToHourMinutes(date: Date) {
-  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+  return `${date.getHours().toString().padStart(2, '0')}:${date
+    .getMinutes()
+    .toString()
+    .padStart(2, '0')}`
 }
 
-export const weekDaysNames = [
+export const weekdaysNames = [
   'Domingo',
   'Segunda-feira',
   'Terça-feira',
@@ -31,4 +34,43 @@ export const weekDaysNames = [
   'Quinta-feira',
   'Sexta-feira',
   'Sábado',
+]
+
+export const weekdaysShortNames = [
+  {
+    name: 'sunday',
+    label: 'DOM',
+  },
+  {
+    name: 'monday',
+    label: 'SEG',
+  },
+  {
+    name: 'tuesday',
+    label: 'TER',
+  },
+  {
+    name: 'wednesday',
+    label: 'QUA',
+  },
+  {
+    name: 'thursday',
+    label: 'QUI',
+  },
+  {
+    name: 'friday',
+    label: 'SEX',
+  },
+  {
+    name: 'saturday',
+    label: 'SAB',
+  },
+]
+
+export const weekdaysShortNamesDefault = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
 ]

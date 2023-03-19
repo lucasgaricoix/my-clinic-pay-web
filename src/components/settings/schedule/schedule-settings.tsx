@@ -1,5 +1,9 @@
 import { FormikCheckboxItem } from '@/components/custom/formik'
-import { WeekdaySettings } from '@/types/settings/weekday-time'
+import { UserService } from '@/services/user/user.service'
+import { RootState } from '@/store/store'
+import { UserSession } from '@/types/auth/session'
+import { UserPayload } from '@/types/user/user'
+import { ScheduleSettings } from '@/types/settings/schedule'
 import { weekdaysShortNamesDefault } from '@/utils/date'
 import { AddIcon } from '@chakra-ui/icons'
 import {
@@ -13,16 +17,25 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers } from 'formik'
+import { useDispatch, useSelector } from 'react-redux'
 import { weekdayTimesData } from './initial-value'
-import { TimeRangeComponent } from './time-range'
+import { TimeRangeComponent } from './time-interval'
+import { setUserSession } from '@/store/reducers/userSessionSlice'
 
-const initialValues: WeekdaySettings = {
+const initialValues: ScheduleSettings = {
   weekdays: weekdaysShortNamesDefault,
-  weekdaysTimes: weekdayTimesData,
+  rules: weekdayTimesData,
 }
 
-export const WeekdayTimeSettings = () => {
+const defaultValue = {
+  from: undefined,
+  to: undefined,
+}
+
+export const ScheduleSettingsComponent = () => {
   const [isLargerThanMd] = useMediaQuery(['(min-width: 48em)'])
+  const userSession = useSelector((state: RootState) => state.userSession)
+  const dispatch = useDispatch()
 
   function weekdayAdapter(weekday: string): number {
     const map: Record<string, number> = {
@@ -38,41 +51,80 @@ export const WeekdayTimeSettings = () => {
     return map[weekday]
   }
 
-  function handleSubmit(
-    data: WeekdaySettings,
-    action: FormikHelpers<WeekdaySettings>
+  function userAdapter(user: UserSession): UserPayload {
+    const userPayload: UserPayload = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      picture: user.picture,
+      role: user.role,
+      settings: user.settings,
+      tenantId: user.tenantId,
+    }
+    return userPayload
+  }
+
+  async function handleSubmit(
+    data: ScheduleSettings,
+    action: FormikHelpers<ScheduleSettings>
   ) {
-    data.weekdaysTimes
+    data.rules
       .filter((value) => data.weekdays.includes(value.name))
       .forEach((value) => {
-        if (!value.times.find((value) => value.start)) {
+        if (!value.intervals.find((value) => value.from)) {
           action.setFieldError(
-            `weekdaysTimes.${weekdayAdapter(value.name)}.start`,
+            `rules.${weekdayAdapter(value.name)}.from`,
             'Hora incorreta'
           )
         }
-        if (!value.times.find((value) => value.end)) {
+        if (!value.intervals.find((value) => value.to)) {
           action.setFieldError(
-            `weekdaysTimes.${weekdayAdapter(value.name)}.end`,
+            `rules.${weekdayAdapter(value.name)}.to`,
             'Hora incorreta'
           )
         }
       })
 
-    // TODO: add create service
+      console.log('entrou')
+      
+      const user: UserSession = {
+        ...userSession,
+        settings: { schedule: { rules: data.rules } },
+      }
+
+      const response = await UserService.updateUser(userAdapter(user))
+
+      console.log({response})
+
+    // try {
+    //   const user: UserSession = {
+    //     ...userSession,
+    //     settings: { schedule: { rules: data.rules } },
+    //   }
+
+    //   const response = await UserService.updateUser(userAdapter(user))
+    //   if (response.status == 200) {
+    //     const settings = response.data.settings
+    //     const dispatchData = { ...userSession, settings }
+    //     dispatch(setUserSession(dispatchData))
+    //   }
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
   return (
     <Flex
       direction="column"
-      borderWidth={{base: 0, md: "1px"}}
+      borderWidth={{ base: 0, md: '1px' }}
       borderColor="gray.200"
       borderRadius="lg"
       px={{ base: 3, md: 6 }}
       pt={6}
     >
       <Text mb={6}>Configure seus horários de atendimento</Text>
-      <Formik<WeekdaySettings>
+      <Formik<ScheduleSettings>
         initialValues={initialValues}
         onSubmit={handleSubmit}
         enableReinitialize
@@ -83,12 +135,12 @@ export const WeekdayTimeSettings = () => {
               colorScheme="blue"
               defaultValue={weekdaysShortNamesDefault}
             >
-              {values.weekdaysTimes.map((weekdayTime, mainIndex, arr) => {
+              {values.rules.map((rule, mainIndex, arr) => {
                 const lastIndex = mainIndex === arr.length - 1
                 return (
                   <Stack
                     direction={['column', 'row']}
-                    key={weekdayTime.name}
+                    key={rule.name}
                     alignItems="start"
                     justifyContent="start"
                     borderBottomColor="gray.300"
@@ -109,9 +161,9 @@ export const WeekdayTimeSettings = () => {
                       >
                         <Box w={{ base: 'auto', md: 24 }}>
                           <FormikCheckboxItem
-                            id={weekdayTime.name}
+                            id={rule.name}
                             name="weekdays"
-                            label={weekdayTime.label}
+                            label={rule.label}
                           />
                         </Box>
                         {!isLargerThanMd && (
@@ -120,13 +172,10 @@ export const WeekdayTimeSettings = () => {
                             _hover={{ backgroundColor: 'transparent' }}
                             size="sm"
                             onClick={() =>
-                              setFieldValue(
-                                `weekdaysTimes[${mainIndex}].times`,
-                                [
-                                  ...weekdayTime.times,
-                                  { start: undefined, end: undefined },
-                                ]
-                              )
+                              setFieldValue(`rules[${mainIndex}].intervals`, [
+                                ...rule.intervals,
+                                defaultValue,
+                              ])
                             }
                           >
                             <Icon as={AddIcon} />
@@ -134,18 +183,17 @@ export const WeekdayTimeSettings = () => {
                         )}
                       </Flex>
                       <Flex direction="column">
-                        {weekdayTime.times.map((__, childIndex) => {
+                        {rule.intervals.map((__, childIndex) => {
                           return (
                             <Flex direction="column" key={`time-${childIndex}`}>
                               <TimeRangeComponent
                                 values={values}
-                                times={weekdayTime.times}
+                                intervals={rule.intervals}
                                 mainIndex={mainIndex}
                                 childIndex={childIndex}
                                 lastIndex={lastIndex}
-                                weekdayName={weekdayTime.name}
+                                weekdayName={rule.name}
                                 setFieldValue={setFieldValue}
-                                setFieldTouched={setFieldTouched}
                               />
                             </Flex>
                           )
@@ -159,9 +207,9 @@ export const WeekdayTimeSettings = () => {
                           _hover={{ backgroundColor: 'transparent' }}
                           size="sm"
                           onClick={() => {
-                            setFieldValue(`weekdaysTimes[${mainIndex}].times`, [
-                              ...weekdayTime.times,
-                              { start: undefined, end: undefined },
+                            setFieldValue(`rules[${mainIndex}].intervals`, [
+                              ...rule.intervals,
+                              defaultValue,
                             ])
                           }}
                         >

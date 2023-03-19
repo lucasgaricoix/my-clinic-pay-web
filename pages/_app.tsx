@@ -7,7 +7,7 @@ import { wrapper } from '../src/store/store'
 import { Provider } from 'react-redux'
 import { AuthProvider } from '../src/providers/auth-provider'
 import MediaProvider from '../src/providers/media-provider'
-import { Roboto, Quicksand, Poppins } from 'next/font/google'
+import {  Poppins } from 'next/font/google'
 
 const poppins = Poppins({
   weight: ['300', '400', '500', '700'],

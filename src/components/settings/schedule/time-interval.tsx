@@ -1,17 +1,23 @@
 import { FormikTimeInput } from '@/components/custom/formik/formik-time-input'
-import { TimeRangeProps } from '@/types/settings/weekday-time'
+import { TimeRangeProps } from '@/types/settings/schedule'
 import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react'
 import { IoTrashOutline } from 'react-icons/io5'
 
+const defaultValue = [
+  {
+    from: undefined,
+    to: undefined,
+  },
+]
+
 export const TimeRangeComponent = ({
   values,
-  times,
+  intervals: times,
   mainIndex,
   childIndex,
   lastIndex,
   weekdayName,
   setFieldValue,
-  setFieldTouched,
 }: TimeRangeProps) => {
   return (
     <Flex
@@ -25,7 +31,7 @@ export const TimeRangeComponent = ({
           <Box mr={{ base: 1, md: 4 }}>
             <FormikTimeInput
               id={mainIndex.toString()}
-              name={`weekdaysTimes[${mainIndex}].times[${childIndex}].start`}
+              name={`rules[${mainIndex}].intervals[${childIndex}].from`}
               size={{ base: 'sm', md: 'md' }}
             />
           </Box>
@@ -33,7 +39,7 @@ export const TimeRangeComponent = ({
           <Box ml={{ base: 1, md: 4 }}>
             <FormikTimeInput
               id={mainIndex.toString()}
-              name={`weekdaysTimes[${mainIndex}].times[${childIndex}].end`}
+              name={`rules[${mainIndex}].intervals[${childIndex}].to`}
               size={{ base: 'sm', md: 'md' }}
             />
           </Box>
@@ -42,8 +48,11 @@ export const TimeRangeComponent = ({
             _hover={{ backgroundColor: 'transparent' }}
             size="sm"
             onClick={() => {
-              times.splice(childIndex, 1)
-              setFieldValue(`weekdaysTimes[${mainIndex}].times`, times)
+              const timeLeft = times.splice(childIndex, 1)
+              if (timeLeft.length === 0) {
+                setFieldValue(`rules[${mainIndex}].intervals`, defaultValue)
+              }
+              setFieldValue(`rules[${mainIndex}].intervals`, times)
             }}
           >
             <Icon as={IoTrashOutline} />

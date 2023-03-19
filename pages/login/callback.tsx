@@ -7,8 +7,9 @@ import { setUserSession } from '../../src/store/reducers/userSessionSlice'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next'
 import { createUser } from '../../src/services/user/user.service'
-import { UserPayload, UserSession } from '../../src/types/auth/session'
+import { UserSession } from '../../src/types/auth/session'
 import { setTenantId } from '../../src/services/api'
+import { UserPayload } from '@/types/user/user'
 
 type Props = {
   sessionToken: string
@@ -53,6 +54,11 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
           password: user.sub!,
           picture: user.picture,
           role: 'standard',
+          settings: {
+            schedule: {
+              rules: []
+            }
+          }
         }
         const response = await createUser(userPayload)
         setTenantId(response.data.tenantId)
@@ -83,6 +89,7 @@ const LoginCallback: React.FC<Props> = ({ sessionToken }) => {
     handleCreateUser({
       name,
       email,
+      password: sub,
       picture,
       iat,
       exp,

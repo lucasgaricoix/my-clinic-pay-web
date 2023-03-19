@@ -6,11 +6,18 @@ const initialState: UserSession = {
   id: '',
   name: '',
   email: '',
+  password: '',
   picture: '',
   iat: 0,
   exp: 0,
   token: '',
   tenantId: '',
+  sub: '',
+  settings: {
+    schedule: {
+      rules: [],
+    },
+  },
 }
 
 const userSessionSlice = createSlice({
@@ -26,6 +33,9 @@ const userSessionSlice = createSlice({
       state.exp = action.payload.exp
       state.token = action.payload.token
       state.tenantId = action.payload.tenantId
+      state.sub = action.payload.sub
+      state.role = action.payload.role
+      state.settings = action.payload.settings
     },
     clearUserSession: () => initialState,
   },

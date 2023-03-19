@@ -1,5 +1,5 @@
 import { Button, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react'
-import { getCalendarDays, weekDaysShortNames } from '../../../utils/date'
+import { getCalendarDays, weekdaysShortNames } from '../../../utils/date'
 import { BsDot } from 'react-icons/bs'
 
 type Props = {
@@ -21,9 +21,9 @@ export default function CalendarDate({
 }: Props) {
   return (
     <Grid templateColumns="repeat(7, 1fr)" gap={2}>
-      {weekDaysShortNames.map((value) => (
-        <Text key={value} fontSize="xs" color="gray.600">
-          {value}
+      {weekdaysShortNames.map((value) => (
+        <Text key={value.label} fontSize="xs" color="gray.600">
+          {value.label}
         </Text>
       ))}
       {getCalendarDays(firstDayOfWeek, daysInCurrentMonth).map((day) => (

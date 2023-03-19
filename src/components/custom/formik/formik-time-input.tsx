@@ -1,8 +1,4 @@
-import {
-  FormControl,
-  FormErrorMessage,
-  Input,
-} from '@chakra-ui/react'
+import { FormControl, FormErrorMessage, Input } from '@chakra-ui/react'
 import { Field, FieldProps, getIn } from 'formik'
 
 type Props = {
@@ -30,31 +26,32 @@ export const FormikTimeInput: React.FC<Props> = ({
     <Field id={name} name={name} timezone="America/Sao_Paulo">
       {({ field, form }: FieldProps<string>) => {
         return (
-            <FormControl
+          <FormControl
+            isRequired={isRequired}
+            isInvalid={
+              !!getIn(form.errors, name) && !!getIn(form.touched, name)
+            }
+          >
+            <Input
+              variant="outline"
+              {...field}
+              id={name}
+              name={name}
+              placeholder={placeholder}
               isRequired={isRequired}
-              isInvalid={!!getIn(form.errors, name) && !!getIn(form.touched, name)}
-            >
-              <Input
-                variant="outline"
-                {...field}
-                id={name}
-                name={name}
-                placeholder={placeholder}
-                isRequired={isRequired}
-                isDisabled={isDisabled}
-                autoComplete={autocomplete ? 'true' : 'false'}
-                type="time"
-                focusBorderColor="primary.blue.pure"
-                bgColor="transparent"
-                borderColor="gray.300"
-                size={size}
-              />
-              {getIn(form.errors, name) && (
-                <FormErrorMessage>
-                  {getIn(form.errors, name)}
-                </FormErrorMessage>
-              )}
-            </FormControl>
+              isDisabled={isDisabled}
+              autoComplete={autocomplete ? 'true' : 'false'}
+              type="time"
+              focusBorderColor="primary.blue.pure"
+              bgColor="transparent"
+              borderColor="gray.300"
+              size={size}
+              minW={{ base: '125px', md: '143.8px' }}
+            />
+            {getIn(form.errors, name) && (
+              <FormErrorMessage>{getIn(form.errors, name)}</FormErrorMessage>
+            )}
+          </FormControl>
         )
       }}
     </Field>

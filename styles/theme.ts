@@ -9,7 +9,7 @@ export const theme = extendTheme({
       purplehaze: '#FFF2FF',
       black: '#050505',
       gray: {
-        background: '#f1f5f9', // f1f5f9
+        background: '#fafafa', // #f1f5f9 - f1f5f9 - #FAFAFA
       },
       indigo: {
         light: '#EEF2FF',

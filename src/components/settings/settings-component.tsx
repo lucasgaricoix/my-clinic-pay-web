@@ -1,6 +1,6 @@
-import { Button, Divider, Flex, Stack, Text } from '@chakra-ui/react'
+import { Divider, Flex, Stack } from '@chakra-ui/react'
 import Header from './header'
-import { WeekdayTimeSettings } from './weekday-time/form'
+import { ScheduleSettingsComponent } from './schedule/schedule-settings'
 
 export const SettingsComponent = () => {
   return (
@@ -23,7 +23,7 @@ export const SettingsComponent = () => {
       >
         <Stack divider={<Divider borderColor="gray.300" />} spacing={0}>
           <Flex direction="column" p={{ base: 2, md: 6 }}>
-            <WeekdayTimeSettings />
+            <ScheduleSettingsComponent />
           </Flex>
           {/* <Flex justifyContent="end" alignItems="center" p={{ base: 2, md: 4 }}>
             <Button

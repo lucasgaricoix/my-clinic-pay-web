@@ -13,10 +13,10 @@ import { Form, Formik } from 'formik'
 import { useRouter } from 'next/dist/client/router'
 import { useContext, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { FormikInput } from '../../src/components/custom/formik'
-import GoogleScript from '../../src/components/signup/google-script'
-import { MediaContext } from '../../src/providers/media-provider'
-import { RootState } from '../../src/store/store'
+import { FormikInput } from '@/components/custom/formik'
+import GoogleScript from '@/components/signup/google-script'
+import { MediaContext } from '@/providers/media-provider'
+import { RootState } from '@/store/store'
 
 const initialValues = {}
 

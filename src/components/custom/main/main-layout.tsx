@@ -1,8 +1,10 @@
+import { AuthContext } from '@/providers/auth-provider'
 import {
   Box,
   Divider,
   Flex,
   Stack,
+  Text,
   useDisclosure,
   useMediaQuery,
   VStack,
@@ -22,7 +24,11 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
     '(min-width: 48em)',
   ])
   const { pathname } = useRouter()
-  const notRenderRoutes = ['/login', '/signup', '/login/callback']
+  const notRenderRoutes = [
+    '/auth/login',
+    '/auth/signup',
+    '/auth/login/callback',
+  ]
 
   if (notRenderRoutes.includes(pathname)) {
     return (
@@ -39,11 +45,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
           <SideBar isLargerThanMd={isLargerThanSm} onClose={onClose} />
           <Divider orientation="vertical" />
           <VStack w="full" divider={<Divider />} spacing={0}>
-            <Box
-              w="full"
-              minH="100vh"
-              pl="67px"
-            >
+            <Box w="full" minH="100vh" pl="67px">
               {children}
             </Box>
           </VStack>

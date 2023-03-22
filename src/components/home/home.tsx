@@ -11,7 +11,7 @@ export const HomeComponent = () => {
 
   useEffect(() => {
     if (!isUserAuthenticated) {
-      push('/login')
+      push('/auth/login')
     }
   })
 

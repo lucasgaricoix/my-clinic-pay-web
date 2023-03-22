@@ -12,7 +12,7 @@ import { useCallback, useRef } from 'react'
 import { IoNotificationsOutline, IoSettingsOutline } from 'react-icons/io5'
 import { BiChevronDown } from 'react-icons/bi'
 import { useDispatch, useSelector } from 'react-redux'
-import { clearUserSession } from '../../../store/reducers/userSessionSlice'
+import { clearUserSession } from '../../../store/reducers/userSession'
 import { RootState } from '../../../store/store'
 import AccountPopover from '../../account/account-popover'
 
@@ -24,7 +24,7 @@ export default function NavBar() {
 
   const logout = useCallback(() => {
     dispatch(clearUserSession())
-    push('/login')
+    push('/auth/login')
   }, [dispatch, push])
 
   return (

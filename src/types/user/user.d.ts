@@ -8,9 +8,16 @@ export type UserPayload = {
   role?: string,
   settings?: Settings
   tenantId?: string
+  token?: string
 }
 
 type Settings = {
   id?: string
   schedule: Pick<ScheduleSettings, 'rules'>
+}
+
+
+export type Credential ={
+  username: string
+  password: string
 }

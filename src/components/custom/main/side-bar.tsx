@@ -24,7 +24,7 @@ import {
 } from 'react-icons/io5'
 import { TbCalendarStats } from 'react-icons/tb'
 import { useDispatch, useSelector } from 'react-redux'
-import { clearUserSession } from '../../../store/reducers/userSessionSlice'
+import { clearUserSession } from '../../../store/reducers/userSession'
 import { RootState } from '../../../store/store'
 import AccountPopover from '../../account/account-popover'
 
@@ -88,7 +88,7 @@ export const SideBar: React.FC<Props> = ({
 
   const logout = useCallback(() => {
     dispatch(clearUserSession())
-    push('/login')
+    push('/auth/login')
   }, [dispatch, push])
 
   if (!userSession.token) {
@@ -194,7 +194,7 @@ export const SideBar: React.FC<Props> = ({
           </Popover>
         )}
       </Grid>
-      {isLargerThanMd && userSession.name && (
+      {isLargerThanMd && userSession.token && (
         <Button
           position="absolute"
           bottom={4}

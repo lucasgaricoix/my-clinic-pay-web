@@ -110,34 +110,36 @@ export const SignUpComponent = () => {
           <Formik<Signin> initialValues={initialValues} onSubmit={onSubmit}>
             {({}) => (
               <Form>
-                <FormikInput
-                  name="name"
-                  placeholder="nome completo"
-                  label="Nome"
-                  type="text"
-                />
-                <FormikInput
-                  name="email"
-                  placeholder="seu melhor e-amil"
-                  label="Email"
-                  type="email"
-                />
-                <FormikInput
-                  name="password"
-                  placeholder="senha"
-                  label="Senha"
-                  type="password"
-                />
-                <FormikInput
-                  name="confirm-password"
-                  placeholder="confirma a senha"
-                  label="Confirmação"
-                  type="password"
-                />
+                <Stack>
+                  <FormikInput
+                    name="name"
+                    placeholder="nome completo"
+                    label="Nome"
+                    type="text"
+                  />
+                  <FormikInput
+                    name="email"
+                    placeholder="seu melhor e-amil"
+                    label="Email"
+                    type="email"
+                  />
+                  <FormikInput
+                    name="password"
+                    placeholder="senha"
+                    label="Senha"
+                    type="password"
+                  />
+                  <FormikInput
+                    name="confirm-password"
+                    placeholder="confirma a senha"
+                    label="Confirmação"
+                    type="password"
+                  />
+                </Stack>
                 <Stack mt={6} spacing={4}>
                   <Button
                     isLoading={isLoading}
-                    type='submit'
+                    type="submit"
                     w={{
                       base: '2xs',
                       md: 'sm',

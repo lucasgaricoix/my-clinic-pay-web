@@ -1,16 +1,13 @@
-import { AuthContext } from '@/providers/auth-provider'
 import {
   Box,
   Divider,
   Flex,
   Stack,
-  Text,
   useDisclosure,
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
-import { useContext } from 'react'
 import { SideBar } from './side-bar'
 
 type Props = {
@@ -18,14 +15,13 @@ type Props = {
 }
 
 export const MainLayout: React.FC<Props> = ({ children }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [isBase, isLargerThanSm, isLargerThanMd] = useMediaQuery([
+  const { onClose } = useDisclosure()
+  const [isLargerThanSm, isLargerThanMd] = useMediaQuery([
     '(min-width: 18em)',
     '(min-width: 30em)',
     '(min-width: 48em)',
   ])
-  const { pathname, replace } = useRouter()
-  const { isAuthenticated } = useContext(AuthContext)
+  const { pathname } = useRouter()
   const ignoreRenderRoutes = [
     '/auth/login',
     '/auth/signup',

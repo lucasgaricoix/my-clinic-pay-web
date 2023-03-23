@@ -31,7 +31,6 @@ export const authApi = createApi({
         const token = meta?.response?.headers.get('Authorization')
         const tokenSubstring = token?.substring(7)
         const value = jwt.decode(tokenSubstring ?? '', { json: true })
-        console.log({ value })
         return {
           token: token ?? '',
           name: value?.aud as string,

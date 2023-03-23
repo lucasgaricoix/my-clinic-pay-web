@@ -1,11 +1,9 @@
 import { Flex, Spinner, Text, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next'
-import { setCustomHeaders } from '@/services/api'
 import { Credential, UserPayload } from '@/types/user/user'
 import { GoogleParsedCredential } from '@/types/auth/google'
-import { useLoginQuery, useSignupQuery } from '@/services/auth/redux-api'
-import { useEffect } from 'react'
+import { useLoginQuery, useSignupQuery } from '@/services/auth/auth-rtk-api'
 
 type Props = {
   id: string
@@ -60,23 +58,14 @@ const LoginCallback: React.FC<Props> = ({
     }
   }
 
-  const { data, error, isLoading, isFetching } = useSignupQuery(
+  const { error, isLoading, isFetching } = useSignupQuery(
     getUserPayload()
   )
 
   const { data: token } = useLoginQuery(getCredential(), { skip: isFetching })
 
-  const delay = () => {
-    return new Promise(function (resolve) {
-      push('/')
-      setTimeout(resolve, 3000)
-    })
-  }
-
   if (token) {
-    console.log(googleCredential.id)
-    setCustomHeaders(googleCredential.id, token)
-    delay()
+    push('/')
   }
 
   if (error) {

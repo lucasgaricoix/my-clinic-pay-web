@@ -3,14 +3,14 @@ import { createContext } from 'react'
 
 type Props = {
   children?: React.ReactNode
-  isUserAuthenticated: boolean
+  isAuthenticated: boolean
 }
 
-export const AuthContext = createContext({ isUserAuthenticated: false })
+export const AuthContext = createContext({ isAuthenticated: false })
 
-export const AuthProvider: React.FC<Props> = ({ children, isUserAuthenticated }) => {
+export const AuthProvider: React.FC<Props> = ({ children, isAuthenticated }) => {
   return (
-    <AuthContext.Provider value={{ isUserAuthenticated }}>
+    <AuthContext.Provider value={{ isAuthenticated }}>
       <Box>{children}</Box>
     </AuthContext.Provider>
   )

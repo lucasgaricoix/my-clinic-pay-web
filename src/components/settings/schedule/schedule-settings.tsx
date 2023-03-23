@@ -84,8 +84,6 @@ export const ScheduleSettingsComponent = () => {
           )
         }
       })
-
-      console.log('entrou')
       
       const user: UserSession = {
         ...userSession,

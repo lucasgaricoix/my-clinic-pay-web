@@ -27,7 +27,7 @@ function MyApp({ Component, ...rest }: AppProps) {
         <PersistGate loading={null} persistor={persistor}>
           <ChakraProvider theme={theme}>
             <AuthProvider
-              isUserAuthenticated={store.getState().userSession.token !== ''}
+              isAuthenticated={store.getState().userSession.token !== ''}
             >
               <MediaProvider>
                 <main className={poppins.className}>

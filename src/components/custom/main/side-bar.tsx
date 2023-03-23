@@ -1,3 +1,4 @@
+import { AuthContext } from '@/providers/auth-provider'
 import {
   Avatar,
   Button,
@@ -11,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import NextLink from 'next/link'
-import { useCallback, useRef } from 'react'
+import { useCallback, useContext, useRef } from 'react'
 import { IconType } from 'react-icons'
 import { BiChevronDown } from 'react-icons/bi'
 import {
@@ -31,7 +32,7 @@ import AccountPopover from '../../account/account-popover'
 type Menu = {
   description: string
   icon: IconType
-  link: string
+  href: string
   subLink?: string[]
 }
 type Props = {
@@ -41,45 +42,41 @@ type Props = {
 }
 
 const menus: Menu[] = [
-  { description: 'Home', icon: IoHome, link: '/' },
+  { description: 'Home', icon: IoHome, href: '/' },
   {
     description: 'Agendamento',
     icon: TbCalendarStats,
-    link: '/appointment',
+    href: '/appointment',
     subLink: ['/appointment/booking'],
   },
   {
     description: 'Pagamentos',
     icon: IoWallet,
-    link: '/payment',
+    href: '/payment',
     subLink: ['/payment/income/[id]', '/payment/expense/[id]'],
   },
   {
     description: 'Pacientes',
     icon: IoHappy,
-    link: '/patient',
+    href: '/patient',
     subLink: ['/patient/[id]'],
   },
   {
     description: 'Tipos de pagamento',
     icon: IoOptions,
-    link: '/payment/type',
+    href: '/payment/type',
     subLink: ['/payment/type/[id]'],
   },
   {
     description: 'Configurações',
     icon: IoSettingsOutline,
-    link: '/settings',
+    href: '/settings',
     subLink: [],
   },
 ]
 
-export const SideBar: React.FC<Props> = ({
-  isLargerThanMd = false,
-  isLargerThanSm = false,
-  onClose,
-}) => {
-  const { asPath, pathname, push } = useRouter()
+export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
+  const { asPath, pathname, push, replace } = useRouter()
   const iconSize = { base: 4, md: 5, lg: 5 }
   const containerSize = { base: '38px', md: '50px', lg: '50px' }
   const userSession = useSelector((state: RootState) => state.userSession)
@@ -90,10 +87,6 @@ export const SideBar: React.FC<Props> = ({
     dispatch(clearUserSession())
     push('/auth/login')
   }, [dispatch, push])
-
-  if (!userSession.token) {
-    return null
-  }
 
   return (
     <Flex
@@ -109,7 +102,7 @@ export const SideBar: React.FC<Props> = ({
       zIndex={1}
       bgColor="#fff"
     >
-      {userSession.picture && isLargerThanMd && (
+      {userSession.name && isLargerThanMd && (
         <Button
           p={0}
           bgColor="transparent"
@@ -136,11 +129,11 @@ export const SideBar: React.FC<Props> = ({
       >
         {menus.map((menu) => {
           const isActiveSubLink = menu.subLink?.includes(pathname)
-          const isActiveLink = asPath === menu.link
+          const isActiveLink = asPath === menu.href
           const isActiveRoute = isActiveSubLink || isActiveLink
           return (
             <GridItem key={menu.description}>
-              <NextLink href={menu.link} shallow passHref>
+              <NextLink href={menu.href} shallow passHref>
                 <Link>
                   <Flex
                     direction="column"
@@ -169,7 +162,7 @@ export const SideBar: React.FC<Props> = ({
             </GridItem>
           )
         })}
-        {!isLargerThanMd && userSession.token && (
+        {!isLargerThanMd && userSession.name && (
           <Popover
             initialFocusRef={initialFocusRef}
             placement="bottom"
@@ -182,6 +175,7 @@ export const SideBar: React.FC<Props> = ({
                 rightIcon={<Icon as={BiChevronDown} />}
               >
                 <Avatar
+                  showBorder
                   alignSelf="center"
                   justifySelf="center"
                   size="sm"

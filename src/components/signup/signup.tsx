@@ -1,4 +1,4 @@
-import { useLazySignupQuery } from '@/services/auth/redux-api'
+import { useLazySignupQuery } from '@/services/auth/auth-rtk-api'
 import { UserPayload } from '@/types/user/user'
 import {
   Box,

@@ -1,5 +1,7 @@
-import { Credential, UserPayload } from '@/types/user/user'
+import { Credential, ParsedJWT, UserPayload } from '@/types/user/user'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import jwt from 'jsonwebtoken'
+import { setCustomHeadersFromToken } from '../api'
 
 export const authApi = createApi({
   reducerPath: 'authSession',
@@ -16,7 +18,7 @@ export const authApi = createApi({
         },
       }),
     }),
-    login: builder.query<string, Credential>({
+    login: builder.query<ParsedJWT, Credential>({
       query: (credential) => ({
         url: '/api/auth/login',
         method: 'POST',
@@ -26,7 +28,24 @@ export const authApi = createApi({
         },
       }),
       transformResponse(__, meta) {
-        return meta?.response?.headers.get('Authorization') ?? ''
+        const token = meta?.response?.headers.get('Authorization')
+        const tokenSubstring = token?.substring(7)
+        const value = jwt.decode(tokenSubstring ?? '', { json: true })
+        console.log({ value })
+        return {
+          token: token ?? '',
+          name: value?.aud as string,
+          email: value?.sub as string,
+          tenantId: value?.jti,
+        }
+      },
+      async onQueryStarted(__, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled
+          setCustomHeadersFromToken(data.token, data.tenantId)
+        } catch (error) {
+          console.log(error)
+        }
       },
     }),
   }),

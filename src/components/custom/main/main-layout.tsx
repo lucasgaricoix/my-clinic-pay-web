@@ -10,6 +10,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
+import { useContext } from 'react'
 import { SideBar } from './side-bar'
 
 type Props = {
@@ -23,14 +24,16 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
     '(min-width: 30em)',
     '(min-width: 48em)',
   ])
-  const { pathname } = useRouter()
-  const notRenderRoutes = [
+  const { pathname, replace } = useRouter()
+  const { isAuthenticated } = useContext(AuthContext)
+  const ignoreRenderRoutes = [
     '/auth/login',
     '/auth/signup',
     '/auth/login/callback',
   ]
+  const isIgnoreRenderRoutes = ignoreRenderRoutes.includes(pathname)
 
-  if (notRenderRoutes.includes(pathname)) {
+  if (isIgnoreRenderRoutes) {
     return (
       <Box w="full" h="100vh">
         {children}

@@ -2,7 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import userSessionReducer from './reducers/userSession'
 import { createWrapper } from 'next-redux-wrapper'
 import scheduleReducer from './reducers/schedule'
-import { authApi } from '@/services/auth/redux-api'
+import { authApi } from '@/services/auth/auth-rtk-api'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
 import {
   persistStore,
@@ -37,7 +37,7 @@ const rootReducer = combineReducers({
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
-const store = () =>
+export const store = () =>
   configureStore({
     reducer: persistedReducer,
     middleware: (getDefaultMiddleware) =>

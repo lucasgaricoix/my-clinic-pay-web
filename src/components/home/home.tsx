@@ -6,16 +6,16 @@ import { AuthContext } from '../../providers/auth-provider'
 import { PaymentDashboard } from '../payment/all/dashboard'
 
 export const HomeComponent = () => {
-  const { isUserAuthenticated } = useContext(AuthContext)
+  const { isAuthenticated } = useContext(AuthContext)
   const { push } = useRouter()
 
   useEffect(() => {
-    if (!isUserAuthenticated) {
+    if (!isAuthenticated) {
       push('/auth/login')
     }
   })
 
-  if (!isUserAuthenticated) {
+  if (!isAuthenticated) {
     return (
       <Box>
         <Text>Redirecting...</Text>

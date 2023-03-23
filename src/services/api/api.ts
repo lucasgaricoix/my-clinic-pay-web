@@ -21,11 +21,9 @@ function setCustomHeaders(tenantId?: string, token?: string) {
   })
 }
 
-function setCustomHeadersFromToken(token: string) {
-  const tokenSubstring = token.substring(7)
-  const value = jwt.decode(tokenSubstring, { json: true }) as unknown as Token
+function setCustomHeadersFromToken(token: string, tenantid?: string) {
   axiosInstance?.interceptors.request.use(function (config) {
-    config.headers['X-tenant-id'] = value.jti
+    config.headers['X-tenant-id'] = tenantid
     config.headers['Authorization'] = token
     return config
   })

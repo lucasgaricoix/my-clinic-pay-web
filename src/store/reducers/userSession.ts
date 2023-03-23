@@ -1,6 +1,6 @@
 import { UserSession } from '../../types/auth/session'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { authApi } from '@/services/auth/redux-api'
+import { authApi } from '@/services/auth/auth-rtk-api'
 
 const initialState: UserSession = {
   id: '',
@@ -48,7 +48,10 @@ const userSessionSlice = createSlice({
       builder.addMatcher(
         authApi.endpoints.login.matchFulfilled,
         (state, { payload }) => {
-          state.token = payload
+          state.name = payload.name ?? ''
+          state.email = payload.email ?? ''
+          state.token = payload.token
+          state.tenantId = payload.tenantId
         }
       )
   },

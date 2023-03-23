@@ -19,7 +19,7 @@ import { MediaContext } from '@/providers/media-provider'
 import { RootState } from '@/store/store'
 import { Credential } from '@/types/user/user'
 import { setCustomHeadersFromToken } from '@/services/api'
-import { useLazyLoginQuery } from '@/services/auth/redux-api'
+import { useLazyLoginQuery } from '@/services/auth/auth-rtk-api'
 
 const initialValues = {
   username: '',
@@ -32,11 +32,9 @@ const Login = () => {
   const state = useSelector((state: RootState) => state.userSession)
   const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
-  const dispatch = useDispatch()
   const [trigger, response]= useLazyLoginQuery()
 
   useEffect(() => {
-    console.log(state)
     if (state.token) {
       replace('/')
     }
@@ -48,10 +46,8 @@ const Login = () => {
       const response = await trigger(values)
 
       if (response.isSuccess) {
-        setCustomHeadersFromToken(response.data)
         await replace('/')
       }
-      
     } catch (error) {
       console.log(error)
       toast({

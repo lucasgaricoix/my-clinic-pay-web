@@ -30,7 +30,7 @@ const LoginCallback: React.FC<Props> = ({
   picture,
 }: Props) => {
   const { push } = useRouter()
-  const toast = useToast()
+  // const toast = useToast()
   const googleCredential: GoogleParsedCredential = {
     id,
     name,
@@ -74,19 +74,20 @@ const LoginCallback: React.FC<Props> = ({
   }
 
   if (token) {
+    console.log(googleCredential.id)
     setCustomHeaders(googleCredential.id, token)
     delay()
   }
 
   if (error) {
-    toast({
-      title: 'Erro ao buscar usuário',
-      description: 'Não foi possível encontrar o usuário',
-      status: 'warning',
-      position: 'top-right',
-      duration: 6000,
-      isClosable: true,
-    })
+    // toast({
+    //   title: 'Erro ao buscar usuário',
+    //   description: 'Não foi possível encontrar o usuário',
+    //   status: 'warning',
+    //   position: 'top-right',
+    //   duration: 6000,
+    //   isClosable: true,
+    // })
     push('/auth/login')
   }
 

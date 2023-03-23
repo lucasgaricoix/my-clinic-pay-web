@@ -1,4 +1,11 @@
 import axios, { AxiosInstance } from 'axios'
+import jwt from 'jsonwebtoken'
+
+interface Token {
+  jti: string
+  sub: string
+  exp: string
+}
 
 let axiosInstance: AxiosInstance | null = null
 
@@ -14,6 +21,16 @@ function setCustomHeaders(tenantId?: string, token?: string) {
   })
 }
 
+function setCustomHeadersFromToken(token: string) {
+  const tokenSubstring = token.substring(7)
+  const value = jwt.decode(tokenSubstring, { json: true }) as unknown as Token
+  axiosInstance?.interceptors.request.use(function (config) {
+    config.headers['X-tenant-id'] = value.jti
+    config.headers['Authorization'] = token
+    return config
+  })
+}
+
 const api = axiosInstance
 
-export { api, setCustomHeaders }
+export { api, setCustomHeaders, setCustomHeadersFromToken }

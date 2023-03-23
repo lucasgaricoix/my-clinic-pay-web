@@ -32,4 +32,9 @@ export const authApi = createApi({
   }),
 })
 
-export const { useSignupQuery, useLoginQuery } = authApi
+export const {
+  useSignupQuery,
+  useLoginQuery,
+  useLazySignupQuery,
+  useLazyLoginQuery,
+} = authApi

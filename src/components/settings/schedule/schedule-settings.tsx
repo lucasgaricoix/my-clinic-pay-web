@@ -20,7 +20,6 @@ import { Form, Formik, FormikHelpers } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { weekdayTimesData } from './initial-value'
 import { TimeRangeComponent } from './time-interval'
-import { setUserSession } from '@/store/reducers/userSessionSlice'
 
 const initialValues: ScheduleSettings = {
   weekdays: weekdaysShortNamesDefault,
@@ -55,8 +54,8 @@ export const ScheduleSettingsComponent = () => {
     const userPayload: UserPayload = {
       id: user.id,
       name: user.name,
-      email: user.email,
-      password: user.password,
+      email: user.email, 
+      password: "123",
       picture: user.picture,
       role: user.role,
       settings: user.settings,

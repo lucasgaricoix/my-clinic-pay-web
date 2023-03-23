@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Divider,
@@ -8,32 +7,65 @@ import {
   Link,
   Stack,
   Text,
+  useToast,
 } from '@chakra-ui/react'
 import { Form, Formik } from 'formik'
 import { useRouter } from 'next/dist/client/router'
-import { useContext, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { FormikInput } from '@/components/custom/formik'
 import GoogleScript from '@/components/signup/google-script'
 import { MediaContext } from '@/providers/media-provider'
 import { RootState } from '@/store/store'
+import { Credential } from '@/types/user/user'
+import { setCustomHeadersFromToken } from '@/services/api'
+import { useLazyLoginQuery } from '@/services/auth/redux-api'
 
-const initialValues = {}
+const initialValues = {
+  username: '',
+  password: '',
+}
 
 const Login = () => {
-  const { push } = useRouter()
+  const { replace } = useRouter()
   const { isLargerThanMd } = useContext(MediaContext)
   const state = useSelector((state: RootState) => state.userSession)
+  const toast = useToast()
+  const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useDispatch()
+  const [trigger, response]= useLazyLoginQuery()
 
   useEffect(() => {
+    console.log(state)
     if (state.token) {
-      push('/')
+      replace('/')
     }
   })
 
-  const onSubmit = () => {
-    push('/')
-  }
+  const onSubmit = useCallback(async (values: Credential) => {
+    try {
+      setIsLoading(true)
+      const response = await trigger(values)
+
+      if (response.isSuccess) {
+        setCustomHeadersFromToken(response.data)
+        await replace('/')
+      }
+      
+    } catch (error) {
+      console.log(error)
+      toast({
+        title: 'Erro ao fazer login',
+        description: 'Verifique se usuário/senha estão corretos',
+        status: 'warning',
+        position: 'top-right',
+        duration: 6000,
+        isClosable: true,
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }, [replace, toast, trigger])
 
   if (state.token) {
     return null
@@ -85,7 +117,7 @@ const Login = () => {
           </Text>
         </Flex>
         <Flex direction="column">
-          <Formik initialValues={initialValues} onSubmit={onSubmit}>
+          <Formik<Credential> initialValues={initialValues} onSubmit={onSubmit}>
             {() => (
               <Form>
                 <Stack
@@ -98,7 +130,7 @@ const Login = () => {
                   }}
                 >
                   <FormikInput
-                    name="user"
+                    name="username"
                     label="Email"
                     type="email"
                     placeholder="endereço de email"
@@ -112,61 +144,65 @@ const Login = () => {
                     isRequired
                   />
                 </Stack>
+                <Box mt={1}>
+                  <Link>
+                    <Text fontSize="sm" color="primary.blue.pure">
+                      Esqueci minha senha
+                    </Text>
+                  </Link>
+                </Box>
+
+                <Stack my={6} spacing={4}>
+                  <Button
+                    isLoading={isLoading}
+                    w={{
+                      base: 'xs',
+                      md: 'sm',
+                      lg: 'sm',
+                    }}
+                    alignSelf="center"
+                    bgColor="primary.blue.pure"
+                    color="white"
+                    _hover={{
+                      bg: 'white',
+                      textColor: 'primary.blue.pure',
+                      borderWidth: 1,
+                      borderColor: 'primary.blue.pure',
+                    }}
+                    borderRadius="3xl"
+                    type="submit"
+                  >
+                    Entrar
+                  </Button>
+                  <Flex
+                    w="full"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Divider borderColor="gray.300" w="44%" />
+                    <Text fontSize="xs">OU</Text>
+                    <Divider borderColor="gray.300" w="44%" />
+                  </Flex>
+                  <Box
+                    alignSelf="center"
+                    className="g_id_signin"
+                    data-type="standard"
+                    data-shape="pill"
+                    data-theme="outline"
+                    data-text="signin_with"
+                    data-size="large"
+                    data-logo_alignment="left"
+                    data-width={isLargerThanMd ? '384' : '320'}
+                  />
+                </Stack>
               </Form>
             )}
           </Formik>
-
-          <Box mt={1}>
-            <Link>
-              <Text fontSize="sm" color="primary.blue.pure">
-                Esqueci minha senha
-              </Text>
-            </Link>
-          </Box>
-
-          <Stack my={6} spacing={4}>
-            <Button
-              w={{
-                base: 'xs',
-                md: 'sm',
-                lg: 'sm',
-              }}
-              alignSelf="center"
-              bgColor="primary.blue.pure"
-              color="white"
-              _hover={{
-                bg: 'white',
-                textColor: 'primary.blue.pure',
-                borderWidth: 1,
-                borderColor: 'primary.blue.pure',
-              }}
-              borderRadius="3xl"
-              type="submit"
-            >
-              Entrar
-            </Button>
-            <Flex w="full" justifyContent="space-between" alignItems="center">
-              <Divider borderColor="gray.300" w="44%" />
-              <Text fontSize="xs">OU</Text>
-              <Divider borderColor="gray.300" w="44%" />
-            </Flex>
-            <Box
-              alignSelf="center"
-              className="g_id_signin"
-              data-type="standard"
-              data-shape="pill"
-              data-theme="outline"
-              data-text="signin_with"
-              data-size="large"
-              data-logo_alignment="left"
-              data-width={isLargerThanMd ? '384' : '320'}
-            />
-          </Stack>
         </Flex>
 
         <Flex direction="row">
           <Text mr={1}>Não tem cadastro ainda?</Text>
-          <Link href="/signup">
+          <Link href="/auth/signup">
             <Text fontWeight="bold" color="primary.blue.pure">
               Cadastre-se
             </Text>

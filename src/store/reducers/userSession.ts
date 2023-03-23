@@ -1,7 +1,6 @@
 import { UserSession } from '../../types/auth/session'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { authApi } from '@/services/auth/redux-api'
-import storage from 'redux-persist/lib/storage'
 
 const initialState: UserSession = {
   id: '',

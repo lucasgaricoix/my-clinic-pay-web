@@ -1,19 +1,13 @@
+import { ScheduleSettings } from "../settings/schedule"
+import { Settings } from "../user/user"
+
 export type UserSession = {
   id?: string
   name: string
   email: string
   picture: string
-  iat: number
-  exp: number,
-  token: string,
+  token?: string,
   tenantId?: string
-}
-
-export type UserPayload = {
-  id?: string
-  name: string
-  email: string
-  picture: string,
-  role: string,
-  tenantId?: string
+  role?: string
+  settings?: Settings
 }

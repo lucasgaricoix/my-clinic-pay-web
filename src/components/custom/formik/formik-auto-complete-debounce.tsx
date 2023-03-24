@@ -32,7 +32,7 @@ interface Props {
 export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
   name,
   label,
-  items,
+  items = [],
   search,
   placeholder,
   isLoading,
@@ -70,8 +70,8 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
                     }}
                     onClick={() => setIsVisible(!isVisible)}
                     value={
-                      items.filter((item) => item.value === field.value)[0]
-                        ?.label || itemLabel
+                      items.find((item) => item.value === field.value)?.label ||
+                      itemLabel
                     }
                   />
                   <InputRightElement>
@@ -91,7 +91,7 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
                           onClick={() => {
                             form.setFieldValue(name, item.value, true)
                             form.setFieldTouched(name, true)
-                            setIsVisible(false)
+                            setIsVisible(!isVisible)
                           }}
                         >
                           <TagLeftIcon w={5} h={5} as={IoAdd} />

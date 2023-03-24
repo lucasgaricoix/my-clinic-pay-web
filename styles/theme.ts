@@ -9,7 +9,7 @@ export const theme = extendTheme({
       purplehaze: '#FFF2FF',
       black: '#050505',
       gray: {
-        background: '#fbfcfd',
+        background: '#fafafa', // #f1f5f9 - f1f5f9 - #FAFAFA
       },
       indigo: {
         light: '#EEF2FF',
@@ -17,7 +17,13 @@ export const theme = extendTheme({
       },
       blue: {
         pure: '#0069ff',
+        
       },
     },
+    secondary: {
+      blue: {
+        pure: '#0080ff',
+      }
+    }
   },
 })

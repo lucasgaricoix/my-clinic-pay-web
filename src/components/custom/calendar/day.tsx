@@ -24,7 +24,7 @@ import {
   Appointment,
   AppointmentSchedule,
 } from '../../../types/appointment/appointment'
-import { formatToHourMinutes, weekDaysNames } from '../../../utils/date'
+import { formatToHourMinutes, weekdaysNames } from '../../../utils/date'
 import { formatMonthNames } from '../../../utils/format'
 import { appointmentTypeColorPicker } from '../../appointment/appointment-colors'
 
@@ -113,8 +113,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         date.toISOString()
       )
       if (response.data) {
-        const appointment = response.data
-        getAvailableTimesInterval(appointment)
+        getAvailableTimesInterval(response.data)
       }
     } catch (error) {
       console.log(error)
@@ -124,7 +123,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         description: 'Nenhum agendamento encontrado',
         status: 'warning',
         position: 'top-right',
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
       })
     } finally {
@@ -240,7 +239,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         )}
         <VStack>
           <Text fontSize="lg" fontWeight="bold">
-            {weekDaysNames[date.getDay()]}
+            {weekdaysNames[date.getDay()]}
           </Text>
           <HStack>
             <Text>{day}</Text>

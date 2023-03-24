@@ -81,7 +81,7 @@ export const ExpenseFormComponent = () => {
   const searchPaymentType = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await PaymentTypeService.search('*', 'expense')
+      const response = await PaymentTypeService.search('', 'expense')
       const adapted = response.data.map((paymentType) => ({
         value: paymentType.id,
         label: `${paymentType.description} - ${toBRL(paymentType.value)}`,

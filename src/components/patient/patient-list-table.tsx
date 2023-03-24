@@ -43,6 +43,7 @@ export default function PatientListTable({
             <Th>Data de nascimento</Th>
             <Th>Idade</Th>
             <Th>Responsável</Th>
+            <Th>Tipo de receita</Th>
             <Th>Opçoes</Th>
           </Tr>
         </Thead>
@@ -57,6 +58,7 @@ export default function PatientListTable({
               </Td>
               <Td>{getAge(patient.birthDate) || ''}</Td>
               <Td>{patient.responsible.name}</Td>
+              <Td>{patient.paymentType?.description || ''}</Td>
               <Td>
                 <Flex>
                   <NextLink href={`patient/${patient.id}`}>

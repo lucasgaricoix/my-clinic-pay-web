@@ -89,7 +89,14 @@ export const PaymentTypeComponent = () => {
   }, [removeId, onClose, toast, fetch])
 
   return (
-    <Flex w="full" h="full" direction="column" p="4" overflow="auto">
+    <Flex
+      w="full"
+      h="full"
+      direction="column"
+      p="4"
+      overflow="auto"
+      borderLeftWidth="0.1rem"
+    >
       <Flex direction="column" p="4">
         <Flex justifyContent="space-between">
           <Text fontWeight="600" fontSize="lg">
@@ -97,7 +104,7 @@ export const PaymentTypeComponent = () => {
           </Text>
           <NextLink href="/payment/type/new" shallow passHref>
             <Button
-              size={{base: 'sm', lg: 'md'}}
+              size={{ base: 'sm', lg: 'md' }}
               leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
               bg="primary.blue.pure"
               textColor="white"
@@ -115,7 +122,7 @@ export const PaymentTypeComponent = () => {
       ) : (
         <>
           <TableContainer>
-            <Table size={{base: 'sm', md: 'md', lg: 'md'}}>
+            <Table size={{ base: 'sm', md: 'md', lg: 'md' }}>
               <Thead>
                 <Tr>
                   <Th>Tipo</Th>

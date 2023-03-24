@@ -8,7 +8,6 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
-import NavBar from './nav-bar'
 import { SideBar } from './side-bar'
 
 type Props = {
@@ -16,16 +15,21 @@ type Props = {
 }
 
 export const MainLayout: React.FC<Props> = ({ children }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [isBase, isLargerThanSm, isLargerThanMd] = useMediaQuery([
+  const { onClose } = useDisclosure()
+  const [isLargerThanSm, isLargerThanMd] = useMediaQuery([
     '(min-width: 18em)',
     '(min-width: 30em)',
     '(min-width: 48em)',
   ])
   const { pathname } = useRouter()
-  const notRenderRoutes = ['/login', '/signup', '/login/callback']
+  const ignoreRenderRoutes = [
+    '/auth/login',
+    '/auth/signup',
+    '/auth/login/callback',
+  ]
+  const isIgnoreRenderRoutes = ignoreRenderRoutes.includes(pathname)
 
-  if (notRenderRoutes.includes(pathname)) {
+  if (isIgnoreRenderRoutes) {
     return (
       <Box w="full" h="100vh">
         {children}
@@ -40,8 +44,9 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
           <SideBar isLargerThanMd={isLargerThanSm} onClose={onClose} />
           <Divider orientation="vertical" />
           <VStack w="full" divider={<Divider />} spacing={0}>
-            <NavBar />
-            <Box w="full" minH="100vh" >{children}</Box>
+            <Box w="full" minH="100vh" pl="67px">
+              {children}
+            </Box>
           </VStack>
         </Stack>
       )}
@@ -57,9 +62,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
             isLargerThanMd={isLargerThanMd}
             onClose={onClose}
           />
-          <Box w="full" >
-            {children}
-          </Box>
+          <Box w="full">{children}</Box>
         </VStack>
       )}
     </Flex>

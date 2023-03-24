@@ -94,6 +94,7 @@ export default function PatientListCard({
           />
           <Display label="Idade:" value={getAge(patient.birthDate)} />
           <Display label="Responsável:" value={patient.responsible.name} />
+          <Display label="Rceita:" value={patient.paymentType?.description} />
           <OptionsButton
             handlePaymentButton={handlePaymentButton}
             id={patient.id!}

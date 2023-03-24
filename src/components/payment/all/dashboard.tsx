@@ -1,8 +1,8 @@
-import { Flex, Progress, Text, useToast } from '@chakra-ui/react'
+import { Box, Flex, Progress, Text, useToast } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { PaymentService } from '../../../services/payment'
 import { PaymentOverMonthType } from '../../../types/payment/payment'
-import { MensalIncomeExpenseBarChart } from '../../custom/charts/bar/mensal-income'
+import { NivoLineChart } from '../../custom/charts/line/nivo-line-chart'
 
 export const PaymentDashboard = () => {
   const [loading, setLoading] = useState(false)
@@ -37,16 +37,30 @@ export const PaymentDashboard = () => {
       w="full"
       h="full"
       direction="column"
-      justifyContent="center"
-      alignItems="center"
+      backgroundColor="primary.gray.background"
     >
+      <Flex bg="white" p={6} shadow="md" mb={6} justifyContent="center">
+        <Text fontSize="lg" fontWeight="bold" alignSelf="center">
+          Dashboard
+        </Text>
+      </Flex>
       {loading && data.length ? (
         <Progress size="xs" isIndeterminate />
       ) : (
-        <>
-          <Text>Dashboard</Text>
-          <MensalIncomeExpenseBarChart data={data || []} />
-        </>
+        <Flex
+          justify="center"
+          alignItems="center"
+          direction="column"
+          width="500px"
+          height="350px"
+          bgColor="white"
+          rounded="lg"
+          shadow="md"
+          ml={6}
+        >
+          <Text fontWeight="bold">Receitas e despesas ano/mês</Text>
+          <NivoLineChart data={data || []} />
+        </Flex>
       )}
     </Flex>
   )

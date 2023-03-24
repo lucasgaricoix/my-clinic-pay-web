@@ -12,7 +12,7 @@ import { useCallback, useRef } from 'react'
 import { IoNotificationsOutline, IoSettingsOutline } from 'react-icons/io5'
 import { BiChevronDown } from 'react-icons/bi'
 import { useDispatch, useSelector } from 'react-redux'
-import { clearUserSession } from '../../../store/reducers/userSessionSlice'
+import { clearUserSession } from '../../../store/reducers/userSession'
 import { RootState } from '../../../store/store'
 import AccountPopover from '../../account/account-popover'
 
@@ -24,11 +24,11 @@ export default function NavBar() {
 
   const logout = useCallback(() => {
     dispatch(clearUserSession())
-    push('/login')
+    push('/auth/login')
   }, [dispatch, push])
 
   return (
-    <Flex px={4} py={2} w="full" justifyContent="flex-end" alignItems="center">
+    <Flex px={4} pl="72px" w="full" justifyContent="flex-end" alignItems="center">
       {user.name && (
         <HStack>
           <Icon as={IoNotificationsOutline} w="20px" h="20px" />

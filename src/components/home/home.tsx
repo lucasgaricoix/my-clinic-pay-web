@@ -6,27 +6,24 @@ import { AuthContext } from '../../providers/auth-provider'
 import { PaymentDashboard } from '../payment/all/dashboard'
 
 export const HomeComponent = () => {
-  const { isUserAuthenticated } = useContext(AuthContext)
+  const { isAuthenticated } = useContext(AuthContext)
   const { push } = useRouter()
 
-  // useEffect(() => {
-  //   if (!isUserAuthenticated) {
-  //     push('/login')
-  //   }
-  // })
+  useEffect(() => {
+    if (!isAuthenticated) {
+      push('/auth/login')
+    }
+  })
 
-  // if (!isUserAuthenticated) {
-  //   return (
-  //     <Box>
-  //       <Text>Redirecting...</Text>
-  //     </Box>
-  //   )
-  // }
+  if (!isAuthenticated) {
+    return (
+      <Box>
+        <Text>Redirecting...</Text>
+      </Box>
+    )
+  }
 
   return (
-    <Stack spacing={2} p="2">
-      <Divider orientation="vertical" />
-      <PaymentDashboard />
-    </Stack>
+    <PaymentDashboard />
   )
 }

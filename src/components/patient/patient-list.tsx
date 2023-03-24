@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { IoAddCircleOutline, IoPencil, IoTrash } from 'react-icons/io5'
+import { IoAddCircleOutline } from 'react-icons/io5'
 import { MediaContext } from '../../providers/media-provider'
 import { PatientService } from '../../services/patient'
 import { Patient } from '../../types/patient/patient-type'
@@ -91,7 +91,13 @@ export const PatientList = () => {
   }
 
   return (
-    <Flex direction="column">
+    <Flex
+      w="full"
+      direction="column"
+      p="4"
+      overflow="auto"
+      borderLeftWidth="0.1rem"
+    >
       <Flex direction="column" justifyContent="space-between" p={4}>
         {loading && <Progress size="xs" isIndeterminate />}
         <Flex justifyContent="space-between" py={4}>

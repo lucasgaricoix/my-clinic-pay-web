@@ -12,14 +12,14 @@ import {
 import { Form, Formik } from 'formik'
 import { useRouter } from 'next/dist/client/router'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { FormikInput } from '@/components/custom/formik'
 import GoogleScript from '@/components/signup/google-script'
 import { MediaContext } from '@/providers/media-provider'
 import { RootState } from '@/store/store'
 import { Credential } from '@/types/user/user'
-import { setCustomHeadersFromToken } from '@/services/api'
 import { useLazyLoginQuery } from '@/services/auth/auth-rtk-api'
+import { useCookies } from 'react-cookie'
 
 const initialValues = {
   username: '',
@@ -32,7 +32,8 @@ const Login = () => {
   const state = useSelector((state: RootState) => state.userSession)
   const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
-  const [trigger, response]= useLazyLoginQuery()
+  const [trigger, response] = useLazyLoginQuery()
+  const [__, setCookie] = useCookies()
 
   useEffect(() => {
     if (state.token) {
@@ -40,28 +41,43 @@ const Login = () => {
     }
   })
 
-  const onSubmit = useCallback(async (values: Credential) => {
-    try {
-      setIsLoading(true)
-      const response = await trigger(values)
+  
+  const addMonths = (date: Date, months: number) => {
+    date.setMonth(date.getMonth(), months)
+    return date
+  }
 
-      if (response.isSuccess) {
-        await replace('/')
+  const onSubmit = useCallback(
+    async (values: Credential) => {
+      try {
+        setIsLoading(true)
+        const response = await trigger(values)
+        if (response.isSuccess) {
+          const cookie = response.data.refreshToken.split(';')
+          setCookie('refresh-token', cookie[0].trim().substring(14), {
+            path: cookie[1].trim().substring(4),
+            maxAge: +cookie[2].trim().substring(9),
+            expires: addMonths(new Date(), 1),
+          })
+
+          await replace('/')
+        }
+      } catch (error) {
+        console.log(error)
+        toast({
+          title: 'Erro ao fazer login',
+          description: 'Verifique se usuário/senha estão corretos',
+          status: 'warning',
+          position: 'top-right',
+          duration: 6000,
+          isClosable: true,
+        })
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error) {
-      console.log(error)
-      toast({
-        title: 'Erro ao fazer login',
-        description: 'Verifique se usuário/senha estão corretos',
-        status: 'warning',
-        position: 'top-right',
-        duration: 6000,
-        isClosable: true,
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }, [replace, toast, trigger])
+    },
+    [replace, toast, trigger, setCookie]
+  )
 
   if (state.token) {
     return null

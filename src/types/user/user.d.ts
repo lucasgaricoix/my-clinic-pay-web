@@ -22,6 +22,7 @@ export interface Credential {
 
 export interface ParsedJWT {
   token: string
+  refreshToken: string
   name?: string
   email?: string
   tenantId?: string

@@ -51,6 +51,11 @@ const LoginCallback: React.FC<Props> = ({
     }
   }
 
+  const addMonths = (date: Date, months: number) => {
+    date.setMonth(date.getMonth(), months)
+    return date
+  }
+
   const getCredential = (): Credential => {
     return {
       username: googleCredential.email,
@@ -58,13 +63,12 @@ const LoginCallback: React.FC<Props> = ({
     }
   }
 
-  const { error, isLoading, isFetching } = useSignupQuery(
-    getUserPayload()
-  )
+  const { error, isLoading, isFetching } = useSignupQuery(getUserPayload())
 
-  const { data: token } = useLoginQuery(getCredential(), { skip: isFetching })
+  const { data } = useLoginQuery(getCredential(), { skip: isFetching })
 
-  if (token) {
+  if (data) {
+    console.log(data.refreshToken)
     push('/')
   }
 

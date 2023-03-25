@@ -1,6 +1,8 @@
+import { login, refresh } from '@/services/auth/auth.service'
 import { Box } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { createContext, useEffect } from 'react'
+import { createContext } from 'react'
+import { useCookies} from 'react-cookie'
 
 type Props = {
   children?: React.ReactNode
@@ -14,11 +16,16 @@ export const AuthProvider: React.FC<Props> = ({
   isAuthenticated,
 }) => {
   const { replace, pathname } = useRouter()
+  const [cookies] = useCookies()
 
   const notProtected = ['/auth/login', '/auth/signup', '/auth/google/callback']
 
   if (!isAuthenticated && !notProtected.includes(pathname)) {
-    replace('/auth/login')
+    try {
+      const refreshToken = cookies.get('refresh_token')
+    } catch (error) {
+      replace('/auth/login')
+    }
     return null
   }
 

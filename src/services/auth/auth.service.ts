@@ -14,4 +14,10 @@ export const login = (credential: Credential): AxiosPromise<UserPayload> => {
   return api.post('/api/auth/login', credential)
 }
 
+export const refresh = (token: string): AxiosPromise<UserPayload> => {
+  return api.post('/api/auth/login', token, {
+    headers: { 'Refresh-Token': token },
+  })
+}
+
 export const AuthService = { signup, login }

@@ -29,10 +29,12 @@ export const authApi = createApi({
       }),
       transformResponse(__, meta) {
         const token = meta?.response?.headers.get('Authorization')
+        const refreshToken = meta?.response?.headers.get('Refresh-Token')
         const tokenSubstring = token?.substring(7)
         const value = jwt.decode(tokenSubstring ?? '', { json: true })
         return {
           token: token ?? '',
+          refreshToken: refreshToken ?? '',
           name: value?.aud as string,
           email: value?.sub as string,
           tenantId: value?.jti,
@@ -47,6 +49,16 @@ export const authApi = createApi({
         }
       },
     }),
+    refresh: builder.query<string, string>({
+      query: (token)  => ({
+        url: '/api/auth/refresh-token',
+        method: 'POST',
+        body: token,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      })
+    })
   }),
 })
 

@@ -1,6 +1,6 @@
 import { UserSession } from '../../types/auth/session'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { authApi } from '@/services/auth/auth-rtk-api'
+import { useAuthApi } from '@/services/auth/auth-rtk-api'
 
 const initialState: UserSession = {
   id: '',
@@ -34,7 +34,7 @@ const userSessionSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addMatcher(
-      authApi.endpoints.signup.matchFulfilled,
+      useAuthApi.endpoints.signup.matchFulfilled,
       (state, { payload }) => {
         state.id = payload.id
         state.name = payload.name
@@ -46,7 +46,7 @@ const userSessionSlice = createSlice({
       }
     ),
       builder.addMatcher(
-        authApi.endpoints.login.matchFulfilled,
+        useAuthApi.endpoints.login.matchFulfilled,
         (state, { payload }) => {
           state.name = payload.name ?? ''
           state.email = payload.email ?? ''

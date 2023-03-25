@@ -92,7 +92,6 @@ export const ScheduleSettingsComponent = () => {
 
       const response = await UserService.updateUser(userAdapter(user))
 
-      console.log({response})
 
     // try {
     //   const user: UserSession = {

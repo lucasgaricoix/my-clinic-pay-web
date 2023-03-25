@@ -33,7 +33,7 @@ const Login = () => {
   const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [trigger, response] = useLazyLoginQuery()
-  const [__, setCookie] = useCookies()
+  const [cookies, setCookie] = useCookies(['refresh-token'])
 
   useEffect(() => {
     if (state.token) {

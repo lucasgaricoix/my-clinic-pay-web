@@ -1,8 +1,12 @@
+import {
+  useLazyRefreshQuery,
+  useRefreshQuery,
+} from '@/services/auth/auth-rtk-api'
 import { login, refresh } from '@/services/auth/auth.service'
 import { Box } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { createContext } from 'react'
-import { useCookies} from 'react-cookie'
+import { createContext, useCallback, useEffect } from 'react'
+import { useCookies } from 'react-cookie'
 
 type Props = {
   children?: React.ReactNode
@@ -16,16 +20,32 @@ export const AuthProvider: React.FC<Props> = ({
   isAuthenticated,
 }) => {
   const { replace, pathname } = useRouter()
-  const [cookies] = useCookies()
+  const [cookies] = useCookies(['refresh-token'])
+  const [trigger] = useLazyRefreshQuery()
 
   const notProtected = ['/auth/login', '/auth/signup', '/auth/google/callback']
 
-  if (!isAuthenticated && !notProtected.includes(pathname)) {
-    try {
-      const refreshToken = cookies.get('refresh_token')
-    } catch (error) {
+  console.log({isAuthenticated})
+
+  const triggerRefreshToken = useCallback(async () => {
+    const refreshToken = cookies['refresh-token']
+    const { isSuccess, error } = await trigger(refreshToken)
+    if (isSuccess) {
+      replace('/')
+    }
+
+    if (error) {
       replace('/auth/login')
     }
+  }, [cookies, replace, trigger])
+
+  useEffect(() => {
+    if (!isAuthenticated && !notProtected.includes(pathname)) {
+      triggerRefreshToken()
+    }
+  }, [])
+
+  if (!isAuthenticated && !notProtected.includes(pathname)) {
     return null
   }
 

@@ -80,7 +80,7 @@ export const SignUpComponent = () => {
     <Flex
       alignItems="center"
       w="full"
-      h="full"
+      minH="100vh"
       direction="column"
       bg="transparent"
     >
@@ -95,7 +95,7 @@ export const SignUpComponent = () => {
       <Flex
         direction="column"
         w={{
-          base: 'xs',
+          base: 'auto',
           md: 'md',
           lg: 'lg',
         }}
@@ -116,24 +116,28 @@ export const SignUpComponent = () => {
                     placeholder="nome completo"
                     label="Nome"
                     type="text"
+                    size={{ base: 'xs', md: 'md'}}
                   />
                   <FormikInput
                     name="email"
                     placeholder="seu melhor e-amil"
                     label="Email"
                     type="email"
+                    size={{ base: 'xs', md: 'md'}}
                   />
                   <FormikInput
                     name="password"
                     placeholder="senha"
                     label="Senha"
                     type="password"
+                    size={{ base: 'xs', md: 'md'}}
                   />
                   <FormikInput
                     name="confirm-password"
                     placeholder="confirma a senha"
                     label="Confirmação"
                     type="password"
+                    size={{ base: 'xs', md: 'md'}}
                   />
                 </Stack>
                 <Stack mt={6} spacing={4}>

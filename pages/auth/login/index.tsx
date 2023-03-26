@@ -41,7 +41,6 @@ const Login = () => {
     }
   })
 
-  
   const addMonths = (date: Date, months: number) => {
     date.setMonth(date.getMonth(), months)
     return date
@@ -49,31 +48,34 @@ const Login = () => {
 
   const onSubmit = useCallback(
     async (values: Credential) => {
-      try {
-        setIsLoading(true)
-        const response = await trigger(values)
-        if (response.isSuccess) {
-          const cookie = response.data.refreshToken.split(';')
-          setCookie('refresh-token', cookie[0].trim().substring(14), {
-            path: cookie[1].trim().substring(4),
-            maxAge: +cookie[2].trim().substring(9),
-            expires: addMonths(new Date(), 1),
-          })
+      setIsLoading(true)
+      const response = await trigger(values)
+      if (response.isSuccess) {
+        const cookie = response.data.refreshToken.split(';')
+        setCookie('refresh-token', cookie[0].trim().substring(14), {
+          path: cookie[1].trim().substring(4),
+          maxAge: +cookie[2].trim().substring(9),
+          expires: addMonths(new Date(), 1),
+          sameSite: 'none',
+        })
+        setIsLoading(false)
+        await replace('/')
+      }
 
-          await replace('/')
-        }
-      } catch (error) {
-        console.log(error)
+      console.log(response.error)
+
+      if (response.isError) {
         toast({
           title: 'Erro ao fazer login',
-          description: 'Verifique se usuário/senha estão corretos',
-          status: 'warning',
+          description: 'Verifique se o usuário e senha estão corretos',
+          status: 'error',
           position: 'top-right',
-          duration: 6000,
+          duration: 3000,
           isClosable: true,
+          onCloseComplete: function () {
+            setIsLoading(false)
+          },
         })
-      } finally {
-        setIsLoading(false)
       }
     },
     [replace, toast, trigger, setCookie]
@@ -136,7 +138,7 @@ const Login = () => {
                   spacing={4}
                   direction="column"
                   w={{
-                    base: 'xs',
+                    base: 'auto',
                     md: 'xl',
                     lg: 'xl',
                   }}
@@ -147,6 +149,7 @@ const Login = () => {
                     type="email"
                     placeholder="endereço de email"
                     isRequired
+                    size={{ base: 'xs', md: 'md' }}
                   />
                   <FormikInput
                     name="password"
@@ -154,6 +157,7 @@ const Login = () => {
                     type="password"
                     placeholder="senha"
                     isRequired
+                    size={{ base: 'xs', md: 'md' }}
                   />
                 </Stack>
                 <Box mt={1}>

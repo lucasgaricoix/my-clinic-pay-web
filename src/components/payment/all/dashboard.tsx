@@ -35,11 +35,19 @@ export const PaymentDashboard = () => {
   return (
     <Flex
       w="full"
-      h="full"
+      minH="100vh"
       direction="column"
       backgroundColor="primary.gray.background"
+      alignItems="center"
     >
-      <Flex bg="white" p={6} shadow="md" mb={6} justifyContent="center">
+      <Flex
+        bg="white"
+        w="full"
+        p={{ base: 3, md: 6 }}
+        shadow="md"
+        mb={6}
+        justifyContent="center"
+      >
         <Text fontSize="lg" fontWeight="bold" alignSelf="center">
           Dashboard
         </Text>
@@ -51,12 +59,12 @@ export const PaymentDashboard = () => {
           justify="center"
           alignItems="center"
           direction="column"
-          width="500px"
+          w={{ base: '350px', md: '500px' }}
           height="350px"
           bgColor="white"
           rounded="lg"
           shadow="md"
-          ml={6}
+          ml={{ base: 0, md: 6 }}
         >
           <Text fontWeight="bold">Receitas e despesas ano/mês</Text>
           <NivoLineChart data={data || []} />

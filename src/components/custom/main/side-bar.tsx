@@ -1,4 +1,3 @@
-import { AuthContext } from '@/providers/auth-provider'
 import {
   Avatar,
   Button,
@@ -9,6 +8,7 @@ import {
   Link,
   Popover,
   PopoverTrigger,
+  Text,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import NextLink from 'next/link'
@@ -92,7 +92,7 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
     <Flex
       direction="column"
       justifyContent="center"
-      alignItems="center"
+      alignItems={['space-between', 'center']}
       p={2}
       w={{ base: 'full', md: 'auto' }}
       h={{ base: 'auto', md: '100vh' }}
@@ -102,7 +102,7 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
       zIndex={1}
       bgColor="#fff"
     >
-      {userSession.name && isLargerThanMd && (
+      {userSession.name && isLargerThanMd ? (
         <Button
           p={0}
           bgColor="transparent"
@@ -113,16 +113,52 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
             backgroundColor: 'transparent',
             blur: 'sm',
           }}
+          onClick={() => push('/user')}
         >
-          <Avatar
-            size="md"
-            name={userSession.name}
-            src={userSession.picture}
-            onClick={() => push('/user')}
-          />
+          <Avatar size="md" name={userSession.name} src={userSession.picture} />
         </Button>
+      ) : (
+        <Flex
+          w="full"
+          alignSelf="start"
+          alignItems="center"
+          // bgColor="primary.blue.pure"
+          pb="3"
+          borderBottomRightRadius="xl"
+          borderBottomLeftRadius="xl"
+        >
+          <Popover
+            initialFocusRef={initialFocusRef}
+            placement="bottom"
+            closeOnBlur={false}
+          >
+            <PopoverTrigger>
+              <Button
+                bg="transparent"
+                _hover={{ bg: 'transparent' }}
+                rightIcon={<Icon as={BiChevronDown} />}
+                pl={2}
+              >
+                <Avatar
+                  showBorder
+                  alignSelf="center"
+                  justifySelf="center"
+                  size="sm"
+                  name={userSession.name}
+                  src={userSession.picture}
+                />
+              </Button>
+            </PopoverTrigger>
+            <AccountPopover logout={logout} />
+          </Popover>
+          <Text fontSize="sm">
+            Bem vindo de volta{' '}
+            <span style={{ fontWeight: 'bold' }}>{userSession.name}</span>
+          </Text>
+        </Flex>
       )}
       <Grid
+        pt={{ base: 2, md: 0 }}
         templateColumns={{ base: 'repeat(6, 1fr)', md: 'repeat(1, 1fr)' }}
         h={{ base: 'auto', md: '250px' }}
         gap={{ base: 4, md: 1 }}
@@ -162,31 +198,6 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
             </GridItem>
           )
         })}
-        {!isLargerThanMd && userSession.name && (
-          <Popover
-            initialFocusRef={initialFocusRef}
-            placement="bottom"
-            closeOnBlur={false}
-          >
-            <PopoverTrigger>
-              <Button
-                bg="transparent"
-                _hover={{ bg: 'transparent' }}
-                rightIcon={<Icon as={BiChevronDown} />}
-              >
-                <Avatar
-                  showBorder
-                  alignSelf="center"
-                  justifySelf="center"
-                  size="sm"
-                  name={userSession.name}
-                  src={userSession.picture}
-                />
-              </Button>
-            </PopoverTrigger>
-            <AccountPopover logout={logout} />
-          </Popover>
-        )}
       </Grid>
       {isLargerThanMd && userSession.token && (
         <Button

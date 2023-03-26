@@ -1,3 +1,4 @@
+import { setError } from '@/store/reducers/notification'
 import { Credential, ParsedJWT, UserPayload } from '@/types/user/user'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import jwt from 'jsonwebtoken'
@@ -40,12 +41,17 @@ export const useAuthApi = createApi({
           tenantId: value?.jti,
         }
       },
-      async onQueryStarted(__, { queryFulfilled }) {
+      async onQueryStarted(__, { queryFulfilled, dispatch }) {
         try {
           const { data } = await queryFulfilled
           setCustomHeadersFromToken(data.token, data.tenantId)
-        } catch (error) {
-          console.log(error)
+        } catch (error: any) {
+          const exception = {
+            code: 403,
+            message: 'Bad credentials.',
+            meta: error,
+          }
+          dispatch(setError(exception))
         }
       },
     }),
@@ -56,7 +62,7 @@ export const useAuthApi = createApi({
         body: token,
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
-          'Refresh-token': token
+          'Refresh-token': token,
         },
       }),
       transformResponse(__, meta) {
@@ -72,13 +78,9 @@ export const useAuthApi = createApi({
           tenantId: value?.jti,
         }
       },
-      async onQueryStarted(__, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled
-          setCustomHeadersFromToken(data.token, data.tenantId)
-        } catch (error) {
-          console.log(error)
-        }
+      async onQueryStarted(arg, { queryFulfilled }) {
+        const { data } = await queryFulfilled
+        setCustomHeadersFromToken(data.token, data.tenantId)
       },
     }),
   }),

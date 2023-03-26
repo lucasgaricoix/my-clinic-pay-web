@@ -15,6 +15,7 @@ import {
   Stack,
   Text,
   useMediaQuery,
+  useToast,
 } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
@@ -34,7 +35,7 @@ const defaultValue = {
 export const ScheduleSettingsComponent = () => {
   const [isLargerThanMd] = useMediaQuery(['(min-width: 48em)'])
   const userSession = useSelector((state: RootState) => state.userSession)
-  const dispatch = useDispatch()
+  const toast = useToast()
 
   function weekdayAdapter(weekday: string): number {
     const map: Record<string, number> = {
@@ -54,8 +55,7 @@ export const ScheduleSettingsComponent = () => {
     const userPayload: UserPayload = {
       id: user.id,
       name: user.name,
-      email: user.email, 
-      password: "123",
+      email: user.email,
       picture: user.picture,
       role: user.role,
       settings: user.settings,
@@ -84,30 +84,24 @@ export const ScheduleSettingsComponent = () => {
           )
         }
       })
-      
-      const user: UserSession = {
-        ...userSession,
-        settings: { schedule: { rules: data.rules } },
-      }
 
-      const response = await UserService.updateUser(userAdapter(user))
+    const user: UserSession = {
+      ...userSession,
+      settings: { schedule: { rules: data.rules } },
+    }
 
+    const response = await UserService.updateUser(userAdapter(user))
 
-    // try {
-    //   const user: UserSession = {
-    //     ...userSession,
-    //     settings: { schedule: { rules: data.rules } },
-    //   }
-
-    //   const response = await UserService.updateUser(userAdapter(user))
-    //   if (response.status == 200) {
-    //     const settings = response.data.settings
-    //     const dispatchData = { ...userSession, settings }
-    //     dispatch(setUserSession(dispatchData))
-    //   }
-    // } catch (error) {
-    //   console.log(error)
-    // }
+    if (response.status === 200) {
+      toast({
+        title: 'Sucesso',
+        description: 'As configurações foram salvas com sucesso.',
+        status: 'success',
+        position: 'top-right',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
   }
 
   return (
@@ -222,7 +216,7 @@ export const ScheduleSettingsComponent = () => {
               alignItems="center"
               p={{ base: 2, md: 4 }}
             >
-              <Button
+              {/* <Button
                 bgColor="transparent"
                 _hover={{
                   backgroundColor: 'transparent',
@@ -230,7 +224,7 @@ export const ScheduleSettingsComponent = () => {
                 }}
               >
                 <Text fontSize="sm">Cancelar</Text>
-              </Button>
+              </Button> */}
               <Button
                 form="weekday-time-form"
                 type="submit"

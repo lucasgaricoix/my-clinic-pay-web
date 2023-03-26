@@ -2,7 +2,7 @@ export type UserPayload = {
   id?: string
   name: string
   email: string
-  password: string
+  password?: string
   picture: string
   role?: string
   settings?: Settings

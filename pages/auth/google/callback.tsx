@@ -68,19 +68,10 @@ const LoginCallback: React.FC<Props> = ({
   const { data } = useLoginQuery(getCredential(), { skip: isFetching })
 
   if (data) {
-    console.log(data.refreshToken)
     push('/')
   }
 
   if (error) {
-    // toast({
-    //   title: 'Erro ao buscar usuário',
-    //   description: 'Não foi possível encontrar o usuário',
-    //   status: 'warning',
-    //   position: 'top-right',
-    //   duration: 6000,
-    //   isClosable: true,
-    // })
     push('/auth/login')
   }
 

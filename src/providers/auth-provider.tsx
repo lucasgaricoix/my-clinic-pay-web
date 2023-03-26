@@ -29,7 +29,6 @@ export const AuthProvider: React.FC<Props> = ({
     const refreshToken = cookies['refresh-token']
     const { isSuccess, error } = await trigger(refreshToken)
 
-    console.log({ isSuccess })
     if (isSuccess) {
       await replace('/')
     }

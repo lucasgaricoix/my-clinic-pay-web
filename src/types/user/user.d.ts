@@ -2,7 +2,7 @@ export type UserPayload = {
   id?: string
   name: string
   email: string
-  password: string
+  password?: string
   picture: string
   role?: string
   settings?: Settings
@@ -22,6 +22,7 @@ export interface Credential {
 
 export interface ParsedJWT {
   token: string
+  refreshToken: string
   name?: string
   email?: string
   tenantId?: string

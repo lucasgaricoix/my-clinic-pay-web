@@ -14,7 +14,7 @@ type Props = {
   isRequired?: boolean
   isDisabled?: boolean
   autocomplete?: boolean
-  size?: string
+  size?: string | object
 }
 
 export const FormikInput: React.FC<Props> = ({

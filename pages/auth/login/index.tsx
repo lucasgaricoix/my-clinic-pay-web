@@ -12,14 +12,14 @@ import {
 import { Form, Formik } from 'formik'
 import { useRouter } from 'next/dist/client/router'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { FormikInput } from '@/components/custom/formik'
 import GoogleScript from '@/components/signup/google-script'
 import { MediaContext } from '@/providers/media-provider'
 import { RootState } from '@/store/store'
 import { Credential } from '@/types/user/user'
-import { setCustomHeadersFromToken } from '@/services/api'
 import { useLazyLoginQuery } from '@/services/auth/auth-rtk-api'
+import { useCookies } from 'react-cookie'
 
 const initialValues = {
   username: '',
@@ -32,7 +32,8 @@ const Login = () => {
   const state = useSelector((state: RootState) => state.userSession)
   const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
-  const [trigger, response]= useLazyLoginQuery()
+  const [trigger, response] = useLazyLoginQuery()
+  const [cookies, setCookie] = useCookies(['refresh-token'])
 
   useEffect(() => {
     if (state.token) {
@@ -40,28 +41,45 @@ const Login = () => {
     }
   })
 
-  const onSubmit = useCallback(async (values: Credential) => {
-    try {
+  const addMonths = (date: Date, months: number) => {
+    date.setMonth(date.getMonth(), months)
+    return date
+  }
+
+  const onSubmit = useCallback(
+    async (values: Credential) => {
       setIsLoading(true)
       const response = await trigger(values)
-
       if (response.isSuccess) {
+        const cookie = response.data.refreshToken.split(';')
+        setCookie('refresh-token', cookie[0].trim().substring(14), {
+          path: cookie[1].trim().substring(4),
+          maxAge: +cookie[2].trim().substring(9),
+          expires: addMonths(new Date(), 1),
+          sameSite: 'none',
+        })
+        setIsLoading(false)
         await replace('/')
       }
-    } catch (error) {
-      console.log(error)
-      toast({
-        title: 'Erro ao fazer login',
-        description: 'Verifique se usuário/senha estão corretos',
-        status: 'warning',
-        position: 'top-right',
-        duration: 6000,
-        isClosable: true,
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }, [replace, toast, trigger])
+
+      console.log(response.error)
+
+      if (response.isError) {
+        toast({
+          title: 'Erro ao fazer login',
+          description: 'Verifique se o usuário e senha estão corretos',
+          status: 'error',
+          position: 'top-right',
+          duration: 3000,
+          isClosable: true,
+          onCloseComplete: function () {
+            setIsLoading(false)
+          },
+        })
+      }
+    },
+    [replace, toast, trigger, setCookie]
+  )
 
   if (state.token) {
     return null
@@ -120,7 +138,7 @@ const Login = () => {
                   spacing={4}
                   direction="column"
                   w={{
-                    base: 'xs',
+                    base: 'auto',
                     md: 'xl',
                     lg: 'xl',
                   }}
@@ -131,6 +149,7 @@ const Login = () => {
                     type="email"
                     placeholder="endereço de email"
                     isRequired
+                    size={{ base: 'xs', md: 'md' }}
                   />
                   <FormikInput
                     name="password"
@@ -138,6 +157,7 @@ const Login = () => {
                     type="password"
                     placeholder="senha"
                     isRequired
+                    size={{ base: 'xs', md: 'md' }}
                   />
                 </Stack>
                 <Box mt={1}>

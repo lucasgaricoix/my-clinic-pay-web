@@ -10,6 +10,7 @@ import MediaProvider from '../src/providers/media-provider'
 import { Poppins } from 'next/font/google'
 import React from 'react'
 import { PersistGate } from 'redux-persist/integration/react'
+// import { CookiesProvider } from 'react-cookie'
 
 const poppins = Poppins({
   weight: ['300', '400', '500', '700'],
@@ -26,17 +27,19 @@ function MyApp({ Component, ...rest }: AppProps) {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <ChakraProvider theme={theme}>
-            <AuthProvider
-              isAuthenticated={store.getState().userSession.token !== ''}
-            >
-              <MediaProvider>
-                <main className={poppins.className}>
-                  <MainLayout>
-                    <Component {...pageProps} />
-                  </MainLayout>
-                </main>
-              </MediaProvider>
-            </AuthProvider>
+            {/* <CookiesProvider> */}
+              <AuthProvider
+                isAuthenticated={store.getState().userSession.token !== ''}
+              >
+                <MediaProvider>
+                  <main className={poppins.className}>
+                    <MainLayout>
+                      <Component {...pageProps} />
+                    </MainLayout>
+                  </main>
+                </MediaProvider>
+              </AuthProvider>
+            {/* </CookiesProvider> */}
           </ChakraProvider>
         </PersistGate>
       </Provider>

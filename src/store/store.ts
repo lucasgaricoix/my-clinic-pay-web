@@ -1,8 +1,9 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import userSessionReducer from './reducers/userSession'
+import notificationReducer from './reducers/notification'
 import { createWrapper } from 'next-redux-wrapper'
 import scheduleReducer from './reducers/schedule'
-import { authApi } from '@/services/auth/auth-rtk-api'
+import { useAuthApi } from '@/services/auth/auth-rtk-api'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
 import {
   persistStore,
@@ -21,7 +22,7 @@ const persistConfig = {
   key: 'root',
   storage,
   whiteList: ['userSession'],
-  blacklist: [authApi.reducerPath]
+  blacklist: [useAuthApi.reducerPath],
 }
 
 const userConfig = {
@@ -32,7 +33,8 @@ const userConfig = {
 const rootReducer = combineReducers({
   userSession: persistReducer(userConfig, userSessionReducer),
   schedule: scheduleReducer,
-  [authApi.reducerPath]: authApi.reducer,
+  notification: notificationReducer,
+  [useAuthApi.reducerPath]: useAuthApi.reducer,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
@@ -45,7 +47,9 @@ export const store = () =>
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
-      }).concat(authApi.middleware).concat(thunk),
+      })
+        .concat(useAuthApi.middleware)
+        .concat(thunk),
   })
 
 setupListeners(store().dispatch)

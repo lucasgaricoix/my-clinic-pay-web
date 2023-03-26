@@ -25,17 +25,17 @@ export const AuthProvider: React.FC<Props> = ({
 
   const notProtected = ['/auth/login', '/auth/signup', '/auth/google/callback']
 
-  console.log({isAuthenticated})
-
   const triggerRefreshToken = useCallback(async () => {
     const refreshToken = cookies['refresh-token']
     const { isSuccess, error } = await trigger(refreshToken)
+
+    console.log({ isSuccess })
     if (isSuccess) {
-      replace('/')
+      await replace('/')
     }
 
     if (error) {
-      replace('/auth/login')
+      await replace('/auth/login')
     }
   }, [cookies, replace, trigger])
 

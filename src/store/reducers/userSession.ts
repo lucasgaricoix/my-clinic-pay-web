@@ -1,6 +1,7 @@
 import { UserSession } from '../../types/auth/session'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { useAuthApi } from '@/services/auth/auth-rtk-api'
+import { m } from 'framer-motion'
 
 const initialState: UserSession = {
   id: '',
@@ -47,6 +48,15 @@ const userSessionSlice = createSlice({
     ),
       builder.addMatcher(
         useAuthApi.endpoints.login.matchFulfilled,
+        (state, { payload }) => {
+          state.name = payload.name ?? ''
+          state.email = payload.email ?? ''
+          state.token = payload.token
+          state.tenantId = payload.tenantId
+        }
+      ),
+      builder.addMatcher(
+        useAuthApi.endpoints.refresh.matchFulfilled,
         (state, { payload }) => {
           state.name = payload.name ?? ''
           state.email = payload.email ?? ''

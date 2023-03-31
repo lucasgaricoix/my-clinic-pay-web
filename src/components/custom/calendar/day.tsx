@@ -23,6 +23,7 @@ import { RootState } from '../../../store/store'
 import {
   Appointment,
   AppointmentSchedule,
+  CalendarTimes,
 } from '../../../types/appointment/appointment'
 import { formatToHourMinutes, weekdaysNames } from '../../../utils/date'
 import { formatMonthNames } from '../../../utils/format'
@@ -32,14 +33,6 @@ type Props = {
   date: Date
   duration: number
   onClose: () => void
-}
-
-type CalendarTimes = {
-  start: Date
-  end: Date
-  patientName: string
-  type: string
-  duration: number
 }
 
 export default function CalendarDay({ date, duration, onClose }: Props) {
@@ -139,18 +132,18 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
     for (let i = startOfDay; i < endOfDay; i++) {
       const oClockTimes = new Date(year, month, day, i)
       const halfMinutesTimes = new Date(year, month, day, i, 30)
-      
-      const oClockFinded = appointment?.schedule.find(value => {
+
+      const oClockFinded = appointment?.schedule.find((value) => {
         return (
           oClockTimes.getTime() >= new Date(value.start).getTime() &&
           oClockTimes.getTime() < new Date(value.end).getTime()
         )
       })
 
-      const halfTimesFinded = appointment?.schedule.find(value => {
+      const halfTimesFinded = appointment?.schedule.find((value) => {
         return (
           halfMinutesTimes.getTime() >= new Date(value.start).getTime() &&
-            halfMinutesTimes.getTime() < new Date(value.end).getTime()
+          halfMinutesTimes.getTime() < new Date(value.end).getTime()
         )
       })
 
@@ -184,7 +177,6 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         duration: value.duration,
       })
     })
-
 
     times.sort((a, b) => a.start.getTime() - b.start.getTime())
 
@@ -285,14 +277,19 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
                     {time.patientName && <Text>{time.patientName}</Text>}
                     {time.type && (
                       <HStack>
-                      <Box w="18px" h="18px" borderRadius="50%" bg={query.color} />
-                      <Text>
-                        {
-                          appointmentTypeColorPicker.find(
-                            (value) => value.type === time.type
-                          )?.name
-                        }
-                      </Text>
+                        <Box
+                          w="18px"
+                          h="18px"
+                          borderRadius="50%"
+                          bg={query.color}
+                        />
+                        <Text>
+                          {
+                            appointmentTypeColorPicker.find(
+                              (value) => value.type === time.type
+                            )?.name
+                          }
+                        </Text>
                       </HStack>
                     )}
                   </HStack>

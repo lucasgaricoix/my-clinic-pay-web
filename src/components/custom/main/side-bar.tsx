@@ -76,6 +76,7 @@ const menus: Menu[] = [
 ]
 
 export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
+  console.log(isLargerThanMd)
   const { asPath, pathname, push, replace } = useRouter()
   const iconSize = { base: 4, md: 5, lg: 5 }
   const containerSize = { base: '38px', md: '50px', lg: '50px' }
@@ -93,7 +94,7 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
       direction="column"
       justifyContent="center"
       alignItems={['space-between', 'center']}
-      p={2}
+      p={1}
       w={{ base: 'full', md: 'auto' }}
       h={{ base: 'auto', md: '100vh' }}
       position={{ base: 'relative', md: 'fixed' }}
@@ -102,7 +103,7 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
       zIndex={1}
       bgColor="#fff"
     >
-      {userSession.name && isLargerThanMd ? (
+      {userSession.name && isLargerThanMd && (
         <Button
           p={0}
           bgColor="transparent"
@@ -117,7 +118,8 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
         >
           <Avatar size="md" name={userSession.name} src={userSession.picture} />
         </Button>
-      ) : (
+      )}
+      {userSession.name && !isLargerThanMd && (
         <Flex
           w="full"
           alignSelf="start"

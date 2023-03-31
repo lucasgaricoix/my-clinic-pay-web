@@ -31,3 +31,11 @@ type UnavailableSchedule = {
   start: string
   end: string
 }
+
+export type CalendarTimes = {
+  start: Date
+  end: Date
+  patientName: string
+  type: string
+  duration: number
+}

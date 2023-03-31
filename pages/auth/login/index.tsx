@@ -52,6 +52,7 @@ const Login = () => {
       const response = await trigger(values)
       if (response.isSuccess) {
         const cookie = response.data.refreshToken.split(';')
+        console.log(response)
         setCookie('refresh-token', cookie[0].trim().substring(14), {
           path: cookie[1].trim().substring(4),
           maxAge: +cookie[2].trim().substring(9),

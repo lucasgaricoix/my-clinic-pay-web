@@ -218,7 +218,7 @@ export default function AppointmentPatientPicker() {
                 label="Duração"
                 options={selectOptions}
               />
-              <Flex py={8} w="full">
+              <Flex direction="column"  py={8} w="full">
                 <Button
                   type="submit"
                   w="full"
@@ -230,6 +230,11 @@ export default function AppointmentPatientPicker() {
                   }}
                 >
                   Próximo
+                </Button>
+                <Button
+                  onClick={() => push('/appointment/list')}
+                >
+                  Listagem
                 </Button>
               </Flex>
             </Form>

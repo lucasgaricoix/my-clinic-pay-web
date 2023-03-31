@@ -36,6 +36,31 @@ export const weekdaysNames = [
   'Sábado',
 ]
 
+export const ptBRMonths = [
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
+]
+
+export const simpleWeekdaysShortNames = [
+  'Dom',
+  'Seg',
+  'Ter',
+  'Qua',
+  'Qui',
+  'Sex',
+  'Sáb'
+]
+
 export const weekdaysShortNames = [
   {
     name: 'sunday',

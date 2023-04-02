@@ -47,7 +47,7 @@ const menus: Menu[] = [
     description: 'Agendamento',
     icon: TbCalendarStats,
     href: '/appointment',
-    subLink: ['/appointment/booking'],
+    subLink: ['/appointment/booking', '/appointment/patient/pick'],
   },
   {
     description: 'Pagamentos',
@@ -76,7 +76,6 @@ const menus: Menu[] = [
 ]
 
 export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
-  console.log(isLargerThanMd)
   const { asPath, pathname, push, replace } = useRouter()
   const iconSize = { base: 4, md: 5, lg: 5 }
   const containerSize = { base: '38px', md: '50px', lg: '50px' }
@@ -94,7 +93,7 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
       direction="column"
       justifyContent="center"
       alignItems={['space-between', 'center']}
-      p={1}
+      pl={2}
       w={{ base: 'full', md: 'auto' }}
       h={{ base: 'auto', md: '100vh' }}
       position={{ base: 'relative', md: 'fixed' }}

@@ -8,7 +8,6 @@ import {
   Text,
   Tooltip,
   useToast,
-  VStack,
 } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/router'
@@ -230,11 +229,6 @@ export default function AppointmentPatientPicker() {
                   }}
                 >
                   Próximo
-                </Button>
-                <Button
-                  onClick={() => push('/appointment/list')}
-                >
-                  Listagem
                 </Button>
               </Flex>
             </Form>

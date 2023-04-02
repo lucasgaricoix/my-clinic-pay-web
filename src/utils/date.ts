@@ -52,13 +52,13 @@ export const ptBRMonths = [
 ]
 
 export const simpleWeekdaysShortNames = [
-  'Dom',
   'Seg',
   'Ter',
   'Qua',
   'Qui',
   'Sex',
-  'Sáb'
+  'Sáb',
+  'Dom',
 ]
 
 export const weekdaysShortNames = [
@@ -99,3 +99,24 @@ export const weekdaysShortNamesDefault = [
   'thursday',
   'friday',
 ]
+
+export const isSameDate = (first: Date, second: Date) => {
+  return (
+    first.getFullYear() === second.getFullYear() &&
+    first.getMonth() === second.getMonth() &&
+    first.getDate() === second.getDate()
+  )
+}
+
+export const addDays = (date: Date, days: number) => {
+  const currentDate = new Date(date)
+
+  return new Date(currentDate.setDate(currentDate.getDate() + days))
+}
+
+export const getMonday = () => {
+  const today = new Date()
+  const first = today.getDate() - today.getDay() + 1
+  return new Date(today.setDate(first))
+}
+

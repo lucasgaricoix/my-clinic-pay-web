@@ -26,6 +26,22 @@ export function formatToHourMinutes(date: Date) {
     .padStart(2, '0')}`
 }
 
+export function getDateString(date: Date) {
+  const month = ptBRMonths[date.getMonth()]
+  return `${date
+    .getDate()
+    .toString()
+    .padStart(2, '0')} ${month} ${date.getFullYear()}`
+}
+
+export function formatDateWithWeekDate(date: Date) {
+  const month = ptBRMonths[date.getMonth()]
+  const weekDay = weekdaysNames[date.getDay()]
+  return `
+  ${weekDay}, 
+  ${date.getDate().toString().padStart(2, '0')} ${month} ${date.getFullYear()}`
+}
+
 export const weekdaysNames = [
   'Domingo',
   'Segunda-feira',
@@ -119,4 +135,3 @@ export const getMonday = () => {
   const first = today.getDate() - today.getDay() + 1
   return new Date(today.setDate(first))
 }
-

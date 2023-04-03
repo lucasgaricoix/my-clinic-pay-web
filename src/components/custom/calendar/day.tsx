@@ -28,6 +28,7 @@ import {
 import { formatToHourMinutes, weekdaysNames } from '../../../utils/date'
 import { formatMonthNames } from '../../../utils/format'
 import { appointmentTypeColorPicker } from '../../appointment/appointment-colors'
+import { Error } from '@/types/http/exception'
 
 type Props = {
   date: Date
@@ -71,7 +72,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
     onCloseTime()
   }
 
-  const fetchAppointment = async () => {
+  const createAppointment = async () => {
     try {
       setLoading(true)
       const data: Appointment = {
@@ -84,13 +85,14 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
       }
       await appointmentService.create(data)
       await push('/appointment')
-    } catch (error) {
+    } catch (e) {
+      const error = e as Error
       toast({
         title: 'Erro',
-        description: 'Erro ao tentar cadastrar o agendamento :(',
+        description: `Erro ao tentar cadastrar o agendamento :( \n ${error.message}`,
         status: 'error',
         position: 'top-right',
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
       })
     } finally {
@@ -308,7 +310,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
                       {formatToHourMinutes(time.start)}
                     </Button>
                     <Button
-                      onClick={fetchAppointment}
+                      onClick={createAppointment}
                       w="48%"
                       h="50px"
                       bg="primary.blue.pure"

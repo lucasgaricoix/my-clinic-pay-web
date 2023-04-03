@@ -2,5 +2,6 @@ export type PaymentType = {
   id: string,
   type: string,
   description: string,
-  value: number
+  value: number,
+  color?: string
 }

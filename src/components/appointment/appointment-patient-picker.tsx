@@ -15,7 +15,7 @@ import { useCallback, useState } from 'react'
 import { ImCheckmark } from 'react-icons/im'
 import { PatientService } from '../../services/patient'
 import { Option, Patient } from '../../types/patient'
-import { FormikSelect } from '../custom/formik'
+import { FormikSelect, FormikTextArea } from '../custom/formik'
 import { FormikCustomAutoCompleteDebounce } from '../custom/formik/formik-auto-complete-debounce'
 import { appointmentTypeColorPicker } from './appointment-colors'
 
@@ -47,8 +47,9 @@ const initialValues: AppointmentPatientPicker = {
       id: '',
       type: '',
       description: '',
-      value: 0
-    }
+      value: 0,
+      color: '',
+    },
   },
   duration: 30,
 }
@@ -69,9 +70,12 @@ export default function AppointmentPatientPicker() {
   const toast = useToast()
   const { push } = useRouter()
 
-  const handleColorPicker = useCallback((name: string, type: string, color: string) => {
-    setAppointmentType({ name, type, color })
-  }, [])
+  const handleColorPicker = useCallback(
+    (name: string, type: string, color: string) => {
+      setAppointmentType({ name, type, color })
+    },
+    []
+  )
 
   const searchPatientByName = useCallback(
     async (param: string) => {
@@ -118,12 +122,12 @@ export default function AppointmentPatientPicker() {
   return (
     <Stack
       direction="column"
-      w='full'
+      w="full"
       minH="100vh"
       bg="primary.gray.background"
       spacing={{
         base: 6,
-        md: 12
+        md: 12,
       }}
     >
       <Stack
@@ -158,7 +162,7 @@ export default function AppointmentPatientPicker() {
         }}
         h={{
           base: 'auto',
-          md: 'lg',
+          md: 'auto',
         }}
         borderColor="gray.300"
         borderWidth={1}
@@ -182,7 +186,9 @@ export default function AppointmentPatientPicker() {
             <Flex mr={2} mb={2} key={value.name}>
               <Tooltip hasArrow label={value.name}>
                 <Button
-                  onClick={() => handleColorPicker(value.name, value.type, value.color)}
+                  onClick={() =>
+                    handleColorPicker(value.name, value.type, value.color)
+                  }
                   size="sm"
                   w="32px"
                   h="32px"
@@ -203,7 +209,7 @@ export default function AppointmentPatientPicker() {
           onSubmit={onSubmit}
         >
           {({}) => (
-            <Form autoComplete='off'>
+            <Form autoComplete="off">
               <FormikCustomAutoCompleteDebounce
                 name="person.id"
                 label="Paciente"
@@ -217,7 +223,14 @@ export default function AppointmentPatientPicker() {
                 label="Duração"
                 options={selectOptions}
               />
-              <Flex direction="column"  py={8} w="full">
+              <Box pt={4}>
+                <FormikTextArea
+                  name="description"
+                  label="Descrição"
+                  placeholder="Observações do agendamento"
+                />
+              </Box>
+              <Flex direction="column" pt={8} w="full">
                 <Button
                   type="submit"
                   w="full"

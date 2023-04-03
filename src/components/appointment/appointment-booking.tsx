@@ -19,7 +19,7 @@ import { RootState } from '../../store/store'
 import useCalendar from '../custom/calendar'
 import CalendarDay from '../custom/calendar/day'
 
-export default function AppointmentComponent() {
+export default function AppointmentBookingComponent() {
   const { isLargerThanMd } = useContext(MediaContext)
 
   const { query } = useRouter()

@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<Props> = ({
     const { isSuccess, error } = await trigger(refreshToken)
 
     if (isSuccess) {
-      await replace('/')
+      await replace(pathname)
     }
 
     if (error) {

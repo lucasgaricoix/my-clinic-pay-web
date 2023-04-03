@@ -1,7 +1,6 @@
 import { UserSession } from '../../types/auth/session'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { useAuthApi } from '@/services/auth/auth-rtk-api'
-import { m } from 'framer-motion'
 
 const initialState: UserSession = {
   id: '',

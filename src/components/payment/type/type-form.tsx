@@ -95,7 +95,7 @@ export const PaymentTypeFormComponent = () => {
       await PaymentTypeService.save(values, method)
       toast({
         title: 'Sucesso',
-        description: 'Dados salvos no servidor :)',
+        description: 'Dados salvos com sucesso :)',
         status: 'success',
         position: 'top-right',
         duration: 5000,

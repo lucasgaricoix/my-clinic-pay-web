@@ -1,9 +1,10 @@
-import { UserPayload } from "../auth/session"
-import { Patient } from "../patient"
+import { UserPayload } from '../auth/session'
+import { Patient } from '../patient'
+import { Schedule, UnavailableSchedule } from './schedule'
 
 export type Appointment = {
   patientId: string
-  userId: string,
+  userId: string
   at: string
   duration: number
   appointmentType: string
@@ -16,20 +17,6 @@ export type AppointmentSchedule = {
   date: string
   schedule: Schedule[]
   unavailableSchedule: UnavailableSchedule[]
-}
-
-type Schedule = {
-  start: string,
-  end: string,
-  duration: number
-  patient: Patient
-  appointmentType: string,
-  description: string
-}
-
-type UnavailableSchedule = {
-  start: string
-  end: string
 }
 
 export type CalendarTimes = {

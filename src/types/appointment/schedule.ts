@@ -1,6 +1,7 @@
 import { Patient } from "../patient"
 
 export type Schedule = {
+  id?: string
   start: string
   end: string
   duration: number

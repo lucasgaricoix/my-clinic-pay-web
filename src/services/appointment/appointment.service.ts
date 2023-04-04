@@ -23,6 +23,10 @@ function findWeeklyAppointment(
   return api.get('appointments/weekly', { params: { from, to } })
 }
 
-const appointmentService = { create, findAppointmentByUserAndDate, findWeeklyAppointment }
+function deleteByIds(id: string, scheduleId: string) {
+  return api.delete(`appointments/${id}/${scheduleId}`)
+}
+
+const appointmentService = { create, findAppointmentByUserAndDate, findWeeklyAppointment, deleteByIds }
 
 export default appointmentService

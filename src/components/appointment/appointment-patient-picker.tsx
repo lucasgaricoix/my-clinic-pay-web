@@ -18,6 +18,7 @@ import { Option, Patient } from '../../types/patient'
 import { FormikSelect, FormikTextArea } from '../custom/formik'
 import { FormikCustomAutoCompleteDebounce } from '../custom/formik/formik-auto-complete-debounce'
 import { appointmentTypeColorPicker } from './appointment-colors'
+import { appointmentStatus } from './appointment-status'
 
 const selectOptions = [
   { label: '30 min', value: '30' },
@@ -27,12 +28,12 @@ const selectOptions = [
 type AppointmentType = {
   name: string
   type: string
-  color: string
 }
 
 type AppointmentPatientPicker = {
   person: Patient
   duration: number
+  description: string
 }
 
 const initialValues: AppointmentPatientPicker = {
@@ -52,6 +53,7 @@ const initialValues: AppointmentPatientPicker = {
     },
   },
   duration: 30,
+  description: '',
 }
 
 const initialAppointmentTypeValues = {
@@ -70,12 +72,9 @@ export default function AppointmentPatientPicker() {
   const toast = useToast()
   const { push } = useRouter()
 
-  const handleColorPicker = useCallback(
-    (name: string, type: string, color: string) => {
-      setAppointmentType({ name, type, color })
-    },
-    []
-  )
+  const handleSelect = useCallback((name: string, type: string) => {
+    setAppointmentType({ name, type })
+  }, [])
 
   const searchPatientByName = useCallback(
     async (param: string) => {
@@ -113,9 +112,18 @@ export default function AppointmentPatientPicker() {
     actions: FormikHelpers<AppointmentPatientPicker>
   ) => {
     const patient = patients.find((patient) => patient.id === values.person.id)
-    push(
-      `/appointment/booking?type=${appointmentType.type}&appointmentName=${appointmentType.name}&color=${appointmentType.color}&patient=${patient?.name}&patientId=${patient?.id}&duration=${values.duration}`
-    )
+    push({
+      pathname: '/appointment/booking',
+      query: {
+        type: appointmentType.type,
+        appointmentName: appointmentType.name,
+        color: patient?.paymentType.color,
+        patient: patient?.name,
+        patientId: patient?.id,
+        duration: values.duration,
+        description: values.description,
+      },
+    })
     actions.resetForm()
   }
 
@@ -145,12 +153,7 @@ export default function AppointmentPatientPicker() {
         {appointmentType && (
           <HStack>
             <Text fontSize="xs">{appointmentType.name}</Text>
-            <Box
-              w="18px"
-              h="18px"
-              borderRadius="50%"
-              bg={appointmentType.color}
-            />
+            <Box w="18px" h="18px" borderRadius="50%" />
           </HStack>
         )}
       </Stack>
@@ -175,35 +178,12 @@ export default function AppointmentPatientPicker() {
           md: 16,
         }}
       >
-        <Text fontWeight="bold">Qual o tipo da agenda</Text>
         <Flex
           flexWrap="wrap"
           justifyContent="flex-start"
           alignItems="center"
           alignContent="space-between"
-        >
-          {appointmentTypeColorPicker.map((value) => (
-            <Flex mr={2} mb={2} key={value.name}>
-              <Tooltip hasArrow label={value.name}>
-                <Button
-                  onClick={() =>
-                    handleColorPicker(value.name, value.type, value.color)
-                  }
-                  size="sm"
-                  w="32px"
-                  h="32px"
-                  borderRadius="50%"
-                  borderWidth={0}
-                  bgColor={value.color}
-                >
-                  {appointmentType?.name === value.name && (
-                    <Icon as={ImCheckmark} w="18px" h="18px" color="white" />
-                  )}
-                </Button>
-              </Tooltip>
-            </Flex>
-          ))}
-        </Flex>
+        ></Flex>
         <Formik<AppointmentPatientPicker>
           initialValues={initialValues}
           onSubmit={onSubmit}
@@ -218,6 +198,13 @@ export default function AppointmentPatientPicker() {
                 search={searchPatientByName}
                 isLoading={loading}
               />
+              <Box pb={2}>
+              <FormikSelect
+                name="appointmentType"
+                label="Tipo da agenda"
+                options={appointmentStatus}
+              />
+              </Box>
               <FormikSelect
                 name="duration"
                 label="Duração"

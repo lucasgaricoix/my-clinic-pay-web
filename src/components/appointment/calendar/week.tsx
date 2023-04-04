@@ -19,6 +19,8 @@ import {
   Spinner,
   Stack,
   Text,
+  useBoolean,
+  useDisclosure,
   useToast,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
@@ -28,10 +30,12 @@ import {
   IoChevronBackOutline,
   IoAddCircleOutline,
 } from 'react-icons/io5'
+import BookModal from './book-modal'
 
 export default function AppointmentCalendarComponent() {
   //constants
   const hourHeight = 60
+  const marginTop = 48
   const date = new Date()
 
   // States
@@ -39,8 +43,16 @@ export default function AppointmentCalendarComponent() {
   const [isLoading, setIsLoading] = useState(false)
   const [appointments, setAppointments] = useState<AppointmentSchedule[]>([])
 
+  const {
+    isOpen: isOpenModal,
+    onOpen: onOpenModal,
+    onClose: onCloseModal,
+  } = useDisclosure()
+
   // Hooks
   const { push } = useRouter()
+  const toast = useToast()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   //functions
   const range = (): number[] => {
@@ -53,7 +65,7 @@ export default function AppointmentCalendarComponent() {
   const timeRange = (): number[] => [...Array(48).keys()]
 
   const fromTop = (hour: number, minutes: number) => {
-    return hour * hourHeight + hourHeight / 2 + minutes
+    return hour * hourHeight + marginTop + hourHeight / 2 + minutes - 30
   }
 
   const fromTopTimeLine = () => {
@@ -90,6 +102,32 @@ export default function AppointmentCalendarComponent() {
     getAppointments()
   }, [getAppointments])
 
+  const removeSchedule = useCallback(
+    async (id: string, scheduleId: string) => {
+      try {
+        setIsLoading(true)
+        const response = await appointmentService.deleteByIds(id, scheduleId)
+        if (response.status === 200) {
+          toast({
+            title: 'Agendamento deletado',
+            description: 'O agendamento do ${name} foi removido com sucesso.',
+            status: 'info',
+            position: 'top-right',
+            duration: 2000,
+            isClosable: true,
+          })
+        }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        onClose()
+        setIsLoading(false)
+        getAppointments()
+      }
+    },
+    [onClose, toast, getAppointments]
+  )
+
   return (
     <Stack p={4} spacing={4} bg="primary.gray.background">
       {isLoading && (
@@ -97,12 +135,8 @@ export default function AppointmentCalendarComponent() {
           <Spinner />
         </Flex>
       )}
-      <Stack p={2} bg="white" borderRadius="lg" shadow="md">
-        <HStack
-          bg="white"
-          justifyContent="space-between"
-          width="calc(100% - 30px)"
-        >
+      <Stack p={4} bg="white" borderRadius="lg" shadow="md">
+        <HStack bg="white" justifyContent="space-between" width="full">
           <HStack justifyContent="start" alignItems="center" spacing={10}>
             <Button
               size={{
@@ -149,7 +183,7 @@ export default function AppointmentCalendarComponent() {
         </HStack>
         <Stack
           spacing={0}
-          width="calc(100% - 30px)"
+          width="calc(100%)"
           borderLeft="1px solid"
           borderColor="gray.300"
           margin="15px"
@@ -164,7 +198,7 @@ export default function AppointmentCalendarComponent() {
               templateRows="repeat(24, 1fr)"
               justifyContent="center"
               _first={{
-                marginTop: '49px',
+                marginTop: `${marginTop - 1}px`,
                 borderTop: '1px solid',
                 borderTopColor: 'gray.300',
               }}
@@ -172,7 +206,7 @@ export default function AppointmentCalendarComponent() {
               {range().map((hour, index) => {
                 return (
                   <GridItem
-                    key={hour}
+                    key={`${hour}-${index}`}
                     height={`${hourHeight}px`}
                     alignItems="center"
                   >
@@ -188,14 +222,19 @@ export default function AppointmentCalendarComponent() {
                 <GridItem
                   key={day}
                   display="relative"
-                  border="1px solid"
+                  borderLeft="1px solid"
                   borderColor="gray.300"
+                  _last={{
+                    borderRight: 'solid 1px',
+                    borderRightColor: 'gray.300',
+                  }}
                 >
                   <Flex
                     pl={2}
                     direction="column"
                     borderBottom="1px solid"
                     borderBottomColor="gray.300"
+                    h={`${marginTop}px`}
                   >
                     <Text
                       fontWeight={isToday(index) ? 'bold' : 'regular'}
@@ -213,7 +252,7 @@ export default function AppointmentCalendarComponent() {
 
                   <Grid
                     position="absolute"
-                    width="calc(100% / 7 - 5px)"
+                    width="calc(100% / 7 - 7px)"
                     templateRows="repeat(48, 1fr)"
                   >
                     {timeRange().map((time, index, arr) => {
@@ -232,6 +271,7 @@ export default function AppointmentCalendarComponent() {
                             <Button
                               w="full"
                               h="full"
+                              borderRadius="none"
                               variant="unstyled"
                               _hover={{
                                 bgColor: 'gray.100',
@@ -251,6 +291,7 @@ export default function AppointmentCalendarComponent() {
                             <Button
                               w="full"
                               h="full"
+                              borderRadius="none"
                               variant="unstyled"
                               _hover={{
                                 bgColor: 'gray.100',
@@ -262,37 +303,47 @@ export default function AppointmentCalendarComponent() {
                     })}
                   </Grid>
                   {appointments.map((appointment) => {
-                    return appointment.schedule.map((schedule) => {
-                      let scheduleStart = new Date(schedule.start)
-                      if (
-                        isSameDate(addDays(mondayDate, index), scheduleStart)
-                      ) {
-                        return (
-                          <Flex
-                            key={schedule.start}
-                            p={2}
-                            position="relative"
-                            top={`${fromTop(
-                              scheduleStart.getHours(),
-                              scheduleStart.getMinutes()
-                            )}px`}
-                            height={`${
-                              (schedule.duration / 60) * hourHeight
-                            }px`}
-                            bgColor="primary.blue.pure"
-                            alignItems="center"
-                            borderRadius="md"
-                            color="white"
-                            borderLeft="10px solid"
-                            borderColor="#3b60e4"
-                            marginTop="-30px"
-                            mr={1}
-                          >
-                            <PatientPopover schedule={schedule} />
-                          </Flex>
-                        )
+                    return appointment.schedules.map(
+                      (schedule, scheduleIndex) => {
+                        let scheduleStart = new Date(schedule.start)
+                        if (
+                          isSameDate(addDays(mondayDate, index), scheduleStart)
+                        ) {
+                          return (
+                            <Flex
+                              key={schedule.start}
+                              p={2}
+                              position="absolute"
+                              top={`${fromTop(
+                                scheduleStart.getHours(),
+                                scheduleStart.getMinutes()
+                              )}px`}
+                              height={`${
+                                (schedule.duration / 60) * hourHeight - 2
+                              }px`}
+                              bgColor="primary.blue.pure"
+                              alignItems="center"
+                              borderRadius="md"
+                              color="white"
+                              borderLeft="10px solid"
+                              borderColor="#3b60e4"
+                              width="calc(100% / 7 - 10px)"
+                            >
+                              <PatientPopover
+                                id={appointment.id}
+                                schedule={schedule}
+                                isLoading={isLoading}
+                                isOpen={isOpen}
+                                onOpen={onOpen}
+                                onClose={onClose}
+                                removeSchedule={removeSchedule}
+                                onSubmit={() => {}}
+                              />
+                            </Flex>
+                          )
+                        }
                       }
-                    })
+                    )
                   })}
                 </GridItem>
               ))}
@@ -302,7 +353,7 @@ export default function AppointmentCalendarComponent() {
             position="absolute"
             width="100%"
             top={`${fromTopTimeLine()}px`}
-            border="1px dotted red"
+            border="1px solid red"
           />
         </Stack>
       </Stack>

@@ -117,9 +117,7 @@ const Login = () => {
         >
           <Heading mb={2}>
             Bem vindo de volta ao
-            <span>
-              <Text textColor="primary.blue.pure">MyClinic</Text>
-            </span>
+            <Text textColor="primary.blue.pure">MyClinic</Text>
           </Heading>
           <Text wordBreak="normal" textColor="gray.500">
             Entre novamente na sua conta e volte para o gerenciamento de suas

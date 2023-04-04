@@ -23,7 +23,7 @@ import { RootState } from '../../../store/store'
 import {
   Appointment,
   AppointmentSchedule,
-  CalendarTimes,
+  ScheduleTimes,
 } from '../../../types/appointment/appointment'
 import { formatToHourMinutes, weekdaysNames } from '../../../utils/date'
 import { formatMonthNames } from '../../../utils/format'
@@ -49,7 +49,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
   const toast = useToast()
   const { isLargerThanMd } = useContext(MediaContext)
   const userSession = useSelector((state: RootState) => state.userSession)
-  const [calendarTimes, setCalendarTimes] = useState<CalendarTimes[]>([])
+  const [calendarTimes, setCalendarTimes] = useState<ScheduleTimes[]>([])
 
   const handleTimeSelect = useCallback(
     (date: Date, index: number) => {
@@ -81,18 +81,20 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         at: dateTime,
         duration,
         appointmentType: query.type as string,
-        description: '',
+        description: query.description as string,
       }
       await appointmentService.create(data)
       await push('/appointment')
     } catch (e) {
       const error = e as Error
+      handleCancelSelect()
+      getAppointments()
       toast({
-        title: 'Erro',
-        description: `Erro ao tentar cadastrar o agendamento :( \n ${error.message}`,
+        title: 'Erro ao tentar cadastrar o agendamento',
+        description: error.message,
         status: 'error',
         position: 'top-right',
-        duration: 3000,
+        duration: 2000,
         isClosable: true,
       })
     } finally {
@@ -124,10 +126,10 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
     } finally {
       setLoading(false)
     }
-  }, [date])
+  }, [date, toast])
 
   const getAvailableTimesInterval = (appointment?: AppointmentSchedule) => {
-    const times: CalendarTimes[] = []
+    const times: ScheduleTimes[] = []
     const startOfDay = 7
     const endOfDay = 22
 
@@ -135,14 +137,14 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
       const oClockTimes = new Date(year, month, day, i)
       const halfMinutesTimes = new Date(year, month, day, i, 30)
 
-      const oClockFinded = appointment?.schedule.find((value) => {
+      const oClockFinded = appointment?.schedules.find((value) => {
         return (
           oClockTimes.getTime() >= new Date(value.start).getTime() &&
           oClockTimes.getTime() < new Date(value.end).getTime()
         )
       })
 
-      const halfTimesFinded = appointment?.schedule.find((value) => {
+      const halfTimesFinded = appointment?.schedules.find((value) => {
         return (
           halfMinutesTimes.getTime() >= new Date(value.start).getTime() &&
           halfMinutesTimes.getTime() < new Date(value.end).getTime()
@@ -170,7 +172,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
       }
     }
 
-    appointment?.schedule.forEach((value) => {
+    appointment?.schedules.forEach((value) => {
       times.push({
         start: new Date(value.start),
         end: new Date(value.end),

@@ -25,6 +25,7 @@ import { Patient } from '../../types/patient/patient-type'
 import { CustomAlertDialog } from '../custom/alert/alert-dialog'
 import PatientListCard from './patient-list-card'
 import PatientListTable from './patient-list-table'
+import Plus from '@/assets/svg/plus'
 
 export const PatientList = () => {
   const [loading, setLoading] = useState(false)
@@ -110,7 +111,7 @@ export const PatientList = () => {
                 base: 'sm',
                 lg: 'md',
               }}
-              leftIcon={<Icon as={IoAddCircleOutline} h={6} w={6} mr="2" />}
+              leftIcon={<Plus />}
               bg="primary.blue.pure"
               textColor="white"
               _hover={{

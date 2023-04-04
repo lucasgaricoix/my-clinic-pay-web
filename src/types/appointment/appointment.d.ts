@@ -1,5 +1,6 @@
 import { UserPayload } from '../auth/session'
 import { Patient } from '../patient'
+import { PaymentType } from '../payment'
 import { Schedule, UnavailableSchedule } from './schedule'
 
 export type Appointment = {
@@ -15,14 +16,16 @@ export type AppointmentSchedule = {
   id: string
   user: UserPayload
   date: string
-  schedule: Schedule[]
+  schedules: Schedule[]
   unavailableSchedule: UnavailableSchedule[]
 }
 
-export type CalendarTimes = {
+export type ScheduleTimes = {
+  id?: string
   start: Date
   end: Date
-  patientName: string
-  type: string
   duration: number
+  appointmentType: string
+  description: string
+  patient?: Patient
 }

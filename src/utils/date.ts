@@ -135,3 +135,10 @@ export const getMonday = () => {
   const first = today.getDate() - today.getDay() + 1
   return new Date(today.setDate(first))
 }
+
+export const getAge = (birthday: string) => {
+  const date = new Date(birthday)
+  var ageDifMs = Date.now() - date.getTime()
+  var ageDate = new Date(ageDifMs)
+  return Math.abs(ageDate.getUTCFullYear() - 1970)
+}

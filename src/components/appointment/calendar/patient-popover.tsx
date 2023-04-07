@@ -2,6 +2,7 @@ import PencilSquare from '@/assets/svg/pencil-square'
 import Trash from '@/assets/svg/trash'
 import Xmark from '@/assets/svg/x-mark'
 import { CustomAlertDialog } from '@/components/custom/alert/alert-dialog'
+import appointmentService from '@/services/appointment/appointment.service'
 import { Schedule, scheduleTypeEnum } from '@/types/appointment/schedule'
 import { formatDateWithWeekDate, formatToHourMinutes } from '@/utils/date'
 import {
@@ -19,8 +20,8 @@ import {
   PopoverTrigger,
   Text,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react'
-import { Form, Formik } from 'formik'
 import { useState } from 'react'
 import {
   IoCalendarClearOutline,
@@ -38,8 +39,7 @@ interface Props {
   isOpen: boolean
   onOpen: () => void
   onClose: () => void
-  removeSchedule: (id: string, scheduleId: string) => void
-  onSubmit: (values: any) => void
+  getAppointments: () => void
 }
 
 export default function PatientPopover({
@@ -49,8 +49,7 @@ export default function PatientPopover({
   isOpen,
   onOpen,
   onClose,
-  removeSchedule,
-  onSubmit,
+  getAppointments
 }: Props) {
   const start = new Date(schedule.start)
   const end = new Date(schedule.end)
@@ -58,6 +57,7 @@ export default function PatientPopover({
   const name = patientName[0]
   const lastName =
     patientName.length > 1 ? patientName[patientName.length - 1] : ''
+  const toast = useToast()
 
   const {
     isOpen: isOpenPopover,
@@ -65,7 +65,28 @@ export default function PatientPopover({
     onClose: onClosePopover,
   } = useDisclosure()
 
-  const [isEditing, setEditing] = useState(false)
+  const removeSchedule = async () => {
+    try {
+      console.log(id, schedule.id!)
+      const response = await appointmentService.deleteByIds(id, schedule.id!)
+      if (response.status === 200) {
+        toast({
+          title: 'Agendamento deletado',
+          description: 'O agendamento foi removido com sucesso.',
+          status: 'success',
+          position: 'top-right',
+          duration: 2000,
+          isClosable: true,
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      onClose()
+      getAppointments()
+    }
+  }
+
 
   return (
     <>
@@ -94,7 +115,6 @@ export default function PatientPopover({
           <PopoverHeader>
             <Flex justifyContent="end">
               <IconButton
-                onClick={() => setEditing(!isEditing)}
                 variant="unstyled"
                 size="md"
                 aria-label="edit-schedule"
@@ -129,34 +149,11 @@ export default function PatientPopover({
               />
             </Flex>
           </PopoverHeader>
-          <Formik<Schedule> initialValues={schedule} onSubmit={onSubmit}>
-            <Form>
-              <PopoverBody display="flex" flexDirection="column">
-                <ScheduleView start={start} end={end} schedule={schedule} />
-              </PopoverBody>
-              <PopoverFooter>
-                <Flex justifyContent="space-between" alignItems="center">
-                  <Box />
-                  <Flex>
-                    <Button
-                      form="weekday-time-form"
-                      type="submit"
-                      borderRadius="2xl"
-                      size="sm"
-                      bgColor="primary.blue.pure"
-                      _hover={{
-                        backgroundColor: 'secondary.blue.pure',
-                      }}
-                    >
-                      <Text fontSize="sm" color="white">
-                        Salvar
-                      </Text>
-                    </Button>
-                  </Flex>
-                </Flex>
-              </PopoverFooter>
-            </Form>
-          </Formik>
+          <PopoverBody display="flex" flexDirection="column">
+            {/* <Text>{id}</Text>
+            <Text>{schedule.id}</Text> */}
+            <ScheduleView start={start} end={end} schedule={schedule} />
+          </PopoverBody>
         </PopoverContent>
       </Popover>
       <CustomAlertDialog
@@ -166,7 +163,7 @@ export default function PatientPopover({
         label="Sim"
         isOpen={isOpen}
         onClose={onClose}
-        onSubmit={() => removeSchedule(id, schedule.id!)}
+        onSubmit={() => removeSchedule()}
       />
     </>
   )

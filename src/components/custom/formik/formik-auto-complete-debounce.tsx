@@ -60,6 +60,12 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
                     focusBorderColor="primary.blue.pure"
                     id={name}
                     placeholder={placeholder}
+                    borderColor="gray.600"
+                    borderWidth="1px"
+                    bg="white"
+                    _focus={{
+                      borderWidth: '2px',
+                    }}
                     onChange={(event) => {
                       setItemLabel(event.target.value)
                       form.setFieldValue(name, event.target.value, true)

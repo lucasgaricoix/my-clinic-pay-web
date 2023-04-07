@@ -28,7 +28,7 @@ export const FormikInput: React.FC<Props> = ({
   size = 'md',
 }) => {
   return (
-    <Field id={name} name={name} timezone="America/Sao_Paulo">
+    <Field id={name} name={name}>
       {({ field, form }: FieldProps<string>) => {
         return (
           <FormControl
@@ -49,7 +49,13 @@ export const FormikInput: React.FC<Props> = ({
               isRequired={isRequired}
               isDisabled={isDisabled}
               autoComplete={autocomplete ? 'true' : 'false'}
+              borderColor="gray.600"
+              borderWidth="1px"
+              bg="white"
               focusBorderColor="primary.blue.pure"
+              _focus={{
+                borderWidth: '2px'
+              }}
               w={size}
             />
             {form.errors[name] && (

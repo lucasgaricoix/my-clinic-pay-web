@@ -60,7 +60,7 @@ export default function AppointmentCalendarDay() {
   // hooks
   const userSession = useSelector((state: RootState) => state.userSession)
   const toast = useToast()
-  const {push} = useRouter()
+  const { push } = useRouter()
 
   const getAppointments = useCallback(async () => {
     try {
@@ -83,7 +83,6 @@ export default function AppointmentCalendarDay() {
 
   const removeSchedule = useCallback(async () => {
     try {
-      console.log({ appointmentId })
       setIsLoading(true)
       const response = await appointmentService.deleteByIds(
         appointmentId,
@@ -92,8 +91,8 @@ export default function AppointmentCalendarDay() {
       if (response.status === 200) {
         toast({
           title: 'Agendamento deletado',
-          description: 'O agendamento do ${name} foi removido com sucesso.',
-          status: 'info',
+          description: 'O agendamento foi removido com sucesso.',
+          status: 'success',
           position: 'top-right',
           duration: 2000,
           isClosable: true,
@@ -303,7 +302,7 @@ export default function AppointmentCalendarDay() {
       </Accordion>
       <IconButton
         bg="primary.blue.pure"
-        color='white'
+        color="white"
         aria-label="add-appointment"
         size="lg"
         borderRadius="full"
@@ -312,9 +311,9 @@ export default function AppointmentCalendarDay() {
         bottom={5}
         icon={<Plus width={6} height={6} />}
         _hover={{
-          background: 'primary.blue.pure'
+          background: 'primary.blue.pure',
         }}
-        onClick={() => push("/appointment/patient/pick")}
+        onClick={() => push('/appointment/patient/pick')}
       />
       <CustomAlertDialog
         title="Confirma remover o agendamento?"

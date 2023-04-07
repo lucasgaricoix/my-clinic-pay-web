@@ -130,6 +130,16 @@ export const addDays = (date: Date, days: number) => {
   return new Date(currentDate.setDate(currentDate.getDate() + days))
 }
 
+export const addMonths = (date: Date, months: number) => {
+  date.setMonth(date.getMonth() + months)
+  return date
+}
+
+export const addHours = (date: Date, hours: number) => {
+  date.setHours(date.getHours() + hours)
+  return date
+}
+
 export const getMonday = () => {
   const today = new Date()
   const first = today.getDate() - today.getDay() + 1

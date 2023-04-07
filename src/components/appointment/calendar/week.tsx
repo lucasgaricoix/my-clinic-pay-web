@@ -31,28 +31,31 @@ import {
   IoAddCircleOutline,
 } from 'react-icons/io5'
 import BookModal from './book-modal'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store/store'
 
 export default function AppointmentCalendarComponent() {
   //constants
   const hourHeight = 60
   const marginTop = 48
-  const date = new Date()
 
   // States
   const [mondayDate, setMondayDate] = useState(getMonday())
   const [isLoading, setIsLoading] = useState(false)
   const [appointments, setAppointments] = useState<AppointmentSchedule[]>([])
+  const [dateTimeSelect, setDateTimeSelect] = useState(new Date())
 
+  // Hooks
+  const { push } = useRouter()
+  const toast = useToast()
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
     onClose: onCloseModal,
   } = useDisclosure()
 
-  // Hooks
-  const { push } = useRouter()
-  const toast = useToast()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const userSession = useSelector((state: RootState) => state.userSession)
 
   //functions
   const range = (): number[] => {
@@ -78,6 +81,23 @@ export default function AppointmentCalendarComponent() {
     return isSameDate(new Date(), addDays(mondayDate, index))
   }
 
+  const handleOpenModal = (date: Date, index: number, timeIndex: number) => {
+    const timezoneOffSet = -3
+    const d = addDays(date, index)
+    const split = (timeIndex / 2).toString().split('.')
+    const hour = +split[0] + timezoneOffSet
+    if (split.length > 1) {
+      setDateTimeSelect(
+        new Date(d.getFullYear(), d.getMonth(), d.getDate(), hour, 30)
+      )
+    } else {
+      setDateTimeSelect(
+        new Date(d.getFullYear(), d.getMonth(), d.getDate(), hour)
+      )
+    }
+    onOpenModal()
+  }
+
   const nextWeek = () => setMondayDate(addDays(mondayDate, 7))
   const prevWeek = () => setMondayDate(addDays(mondayDate, -7))
 
@@ -101,32 +121,6 @@ export default function AppointmentCalendarComponent() {
   useEffect(() => {
     getAppointments()
   }, [getAppointments])
-
-  const removeSchedule = useCallback(
-    async (id: string, scheduleId: string) => {
-      try {
-        setIsLoading(true)
-        const response = await appointmentService.deleteByIds(id, scheduleId)
-        if (response.status === 200) {
-          toast({
-            title: 'Agendamento deletado',
-            description: 'O agendamento do ${name} foi removido com sucesso.',
-            status: 'info',
-            position: 'top-right',
-            duration: 2000,
-            isClosable: true,
-          })
-        }
-      } catch (error) {
-        console.log(error)
-      } finally {
-        onClose()
-        setIsLoading(false)
-        getAppointments()
-      }
-    },
-    [onClose, toast, getAppointments]
-  )
 
   return (
     <Stack p={4} spacing={4} bg="primary.gray.background">
@@ -255,8 +249,8 @@ export default function AppointmentCalendarComponent() {
                     width="calc(100% / 7 - 7px)"
                     templateRows="repeat(48, 1fr)"
                   >
-                    {timeRange().map((time, index, arr) => {
-                      if (arr.length - 1 === index) {
+                    {timeRange().map((time, timeIndex, arr) => {
+                      if (arr.length - 1 === timeIndex) {
                         return null
                       }
                       if (time % 2) {
@@ -271,6 +265,9 @@ export default function AppointmentCalendarComponent() {
                             <Button
                               w="full"
                               h="full"
+                              onClick={() =>
+                                handleOpenModal(mondayDate, index, timeIndex)
+                              }
                               borderRadius="none"
                               variant="unstyled"
                               _hover={{
@@ -291,6 +288,9 @@ export default function AppointmentCalendarComponent() {
                             <Button
                               w="full"
                               h="full"
+                              onClick={() =>
+                                handleOpenModal(mondayDate, index, timeIndex)
+                              }
                               borderRadius="none"
                               variant="unstyled"
                               _hover={{
@@ -303,47 +303,44 @@ export default function AppointmentCalendarComponent() {
                     })}
                   </Grid>
                   {appointments.map((appointment) => {
-                    return appointment.schedules.map(
-                      (schedule, scheduleIndex) => {
-                        let scheduleStart = new Date(schedule.start)
-                        if (
-                          isSameDate(addDays(mondayDate, index), scheduleStart)
-                        ) {
-                          return (
-                            <Flex
-                              key={schedule.start}
-                              p={2}
-                              position="absolute"
-                              top={`${fromTop(
-                                scheduleStart.getHours(),
-                                scheduleStart.getMinutes()
-                              )}px`}
-                              height={`${
-                                (schedule.duration / 60) * hourHeight - 2
-                              }px`}
-                              bgColor="primary.blue.pure"
-                              alignItems="center"
-                              borderRadius="md"
-                              color="white"
-                              borderLeft="10px solid"
-                              borderColor="#3b60e4"
-                              width="calc(100% / 7 - 10px)"
-                            >
-                              <PatientPopover
-                                id={appointment.id}
-                                schedule={schedule}
-                                isLoading={isLoading}
-                                isOpen={isOpen}
-                                onOpen={onOpen}
-                                onClose={onClose}
-                                removeSchedule={removeSchedule}
-                                onSubmit={() => {}}
-                              />
-                            </Flex>
-                          )
-                        }
+                    return appointment.schedules.map((schedule) => {
+                      let scheduleStart = new Date(schedule.start)
+                      if (
+                        isSameDate(addDays(mondayDate, index), scheduleStart)
+                      ) {
+                        return (
+                          <Flex
+                            key={schedule.id}
+                            p={2}
+                            position="absolute"
+                            top={`${fromTop(
+                              scheduleStart.getHours(),
+                              scheduleStart.getMinutes()
+                            )}px`}
+                            height={`${
+                              (schedule.duration / 60) * hourHeight - 2
+                            }px`}
+                            bgColor="primary.blue.pure"
+                            alignItems="center"
+                            borderRadius="md"
+                            color="white"
+                            borderLeft="10px solid"
+                            borderColor="#3b60e4"
+                            width="calc(100% / 7 - 10px)"
+                          >
+                            <PatientPopover
+                              id={appointment.id}
+                              schedule={schedule}
+                              isLoading={isLoading}
+                              isOpen={isOpen}
+                              onOpen={onOpen}
+                              onClose={onClose}
+                              getAppointments={getAppointments}
+                            />
+                          </Flex>
+                        )
                       }
-                    )
+                    })
                   })}
                 </GridItem>
               ))}
@@ -357,6 +354,13 @@ export default function AppointmentCalendarComponent() {
           />
         </Stack>
       </Stack>
+      <BookModal
+        isOpen={isOpenModal}
+        onClose={onCloseModal}
+        selectedDate={dateTimeSelect}
+        user={userSession}
+        getAppointments={getAppointments}
+      />
     </Stack>
   )
 }

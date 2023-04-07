@@ -20,6 +20,7 @@ import { RootState } from '@/store/store'
 import { Credential } from '@/types/user/user'
 import { useLazyLoginQuery } from '@/services/auth/auth-rtk-api'
 import { setCookie } from 'cookies-next'
+import { addMonths } from '@/utils/date'
 const initialValues = {
   username: '',
   password: '',
@@ -39,18 +40,11 @@ const Login = () => {
     }
   })
 
-  const addMonths = (date: Date, months: number) => {
-    date.setMonth(date.getMonth() + months)
-    return date
-  }
-
   const onSubmit = useCallback(
     async (values: Credential) => {
       setIsLoading(true)
       const response = await trigger(values)
       if (response.isSuccess) {
-        console.log(response.data.refreshToken)
-
         setCookie('refresh-token', response.data.refreshToken, {
           path: '/',
           expires: addMonths(new Date(), 1),

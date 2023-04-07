@@ -155,8 +155,8 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         times.push({
           start: oClockTimes,
           end: oClockTimes,
-          patientName: '',
-          type: '',
+          appointmentType: '',
+          description: '',
           duration: 0,
         })
       }
@@ -165,8 +165,8 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         times.push({
           start: halfMinutesTimes,
           end: halfMinutesTimes,
-          patientName: '',
-          type: '',
+          appointmentType: '',
+          description: '',
           duration: 0,
         })
       }
@@ -174,11 +174,13 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
 
     appointment?.schedules.forEach((value) => {
       times.push({
+        id: value.id,
         start: new Date(value.start),
         end: new Date(value.end),
-        patientName: value.patient.name,
-        type: value.appointmentType,
+        appointmentType: value.appointmentType,
+        description: value.description,
         duration: value.duration,
+        patient: value.patient,
       })
     })
 
@@ -257,29 +259,29 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         </Text>
         <Text fontSize="sm">Duração: {duration} min</Text>
         <Stack w="full">
-          {calendarTimes?.map((time, index) => (
-            <Fragment key={time.start.toLocaleString()}>
+          {calendarTimes?.map((schedule, index) => (
+            <Fragment key={schedule.start.toLocaleString()}>
               {indexSelected !== index && (
                 <Button
                   h="50px"
-                  disabled={time.patientName ? true : false}
-                  onClick={() => handleTimeSelect(time.start, index)}
+                  disabled={schedule.patient ? true : false}
+                  onClick={() => handleTimeSelect(schedule.start, index)}
                   variant="outline"
                   borderColor="primary.blue.pure"
-                  textColor={time.type ? 'gray.800' : 'primary.blue.pure'}
+                  textColor={schedule.patient ? 'gray.800' : 'primary.blue.pure'}
                 >
                   <HStack w="full" justifyContent="space-between">
                     <VStack>
-                      {time.patientName ? (
+                      {schedule.patient ? (
                         <Text>{`${formatToHourMinutes(
-                          time.start
-                        )} - ${formatToHourMinutes(time.end)}`}</Text>
+                          schedule.start
+                        )} - ${formatToHourMinutes(schedule.end)}`}</Text>
                       ) : (
-                        <Text>{formatToHourMinutes(time.start)}</Text>
+                        <Text>{formatToHourMinutes(schedule.start)}</Text>
                       )}
                     </VStack>
-                    {time.patientName && <Text>{time.patientName}</Text>}
-                    {time.type && (
+                    {schedule.patient && <Text>{schedule.patient.name}</Text>}
+                    {schedule.patient?.paymentType && (
                       <HStack>
                         <Box
                           w="18px"
@@ -290,7 +292,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
                         <Text>
                           {
                             appointmentTypeColorPicker.find(
-                              (value) => value.type === time.type
+                              (value) => value.type === schedule.appointmentType
                             )?.name
                           }
                         </Text>
@@ -309,7 +311,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
                       color="white"
                       onClick={handleCancelSelect}
                     >
-                      {formatToHourMinutes(time.start)}
+                      {formatToHourMinutes(schedule.start)}
                     </Button>
                     <Button
                       onClick={createAppointment}

@@ -9,6 +9,8 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import { SideBar } from './side-bar'
+import { useContext } from 'react'
+import { MediaContext } from '@/providers/media-provider'
 
 type Props = {
   children?: React.ReactNode
@@ -16,11 +18,7 @@ type Props = {
 
 export const MainLayout: React.FC<Props> = ({ children }) => {
   const { onClose } = useDisclosure()
-  const [isLargerThanSm, isLargerThanMd] = useMediaQuery([
-    '(min-width: 18em)',
-    '(min-width: 30em)',
-    '(min-width: 48em)',
-  ])
+  const { isBase, isLargerThanSm, isLargerThanMd } = useContext(MediaContext)
   const { pathname } = useRouter()
   const ignoreRenderRoutes = [
     '/auth/login',
@@ -39,9 +37,14 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
 
   return (
     <Flex minH="100vh" w="full" direction="row">
-      {isLargerThanMd && (
-        <Stack direction="row" w="full" spacing={0}>
-          <SideBar isLargerThanMd={isLargerThanSm} onClose={onClose} />
+      {isLargerThanSm ? (
+        <Stack direction="row" w="full" spacing={0} >
+          <SideBar
+            isBase={isBase}
+            isLargerThanSm={isLargerThanSm}
+            isLargerThanMd={isLargerThanMd}
+            onClose={onClose}
+          />
           <Divider orientation="vertical" />
           <VStack w="full" divider={<Divider />} spacing={0}>
             <Box w="full" minH="100vh" pl="67px">
@@ -49,8 +52,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
             </Box>
           </VStack>
         </Stack>
-      )}
-      {!isLargerThanMd && (
+      ) : (
         <VStack
           w="full"
           minH="100vh"
@@ -58,6 +60,7 @@ export const MainLayout: React.FC<Props> = ({ children }) => {
           divider={<Divider orientation="horizontal" />}
         >
           <SideBar
+            isBase={isBase}
             isLargerThanSm={isLargerThanSm}
             isLargerThanMd={isLargerThanMd}
             onClose={onClose}

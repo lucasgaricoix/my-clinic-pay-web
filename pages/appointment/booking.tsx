@@ -1,5 +1,5 @@
-import AppointmentComponent from '../../src/components/appointment/appointment-component'
+import AppointmentBookingComponent from '@/components/appointment/appointment-booking'
 
 export default function AppointmentBooking() {
-  return <AppointmentComponent />
+  return <AppointmentBookingComponent />
 }

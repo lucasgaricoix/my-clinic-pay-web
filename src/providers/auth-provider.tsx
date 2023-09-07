@@ -1,8 +1,4 @@
-import {
-  useLazyRefreshQuery,
-  useRefreshQuery,
-} from '@/services/auth/auth-rtk-api'
-import { login, refresh } from '@/services/auth/auth.service'
+import { useLazyRefreshQuery } from '@/services/auth/auth-rtk-api'
 import { Box } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { createContext, useCallback, useEffect } from 'react'
@@ -27,10 +23,14 @@ export const AuthProvider: React.FC<Props> = ({
 
   const triggerRefreshToken = useCallback(async () => {
     const refreshToken = cookies['refresh-token']
+    if (!refreshToken) {
+      await replace('/auth/login')
+    }
+
     const { isSuccess, error } = await trigger(refreshToken)
 
     if (isSuccess) {
-      await replace('/')
+      await replace(pathname)
     }
 
     if (error) {
@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<Props> = ({
     if (!isAuthenticated && !notProtected.includes(pathname)) {
       triggerRefreshToken()
     }
-  }, [])
+  }, [isAuthenticated])
 
   if (!isAuthenticated && !notProtected.includes(pathname)) {
     return null

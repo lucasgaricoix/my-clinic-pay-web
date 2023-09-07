@@ -15,7 +15,7 @@ const initialState: AppointmentSchedule = {
     tenantId: ''
   },
   date: '',
-  schedule: [],
+  schedules: [],
   unavailableSchedule: []
 }
 
@@ -27,8 +27,8 @@ const scheduleSession = createSlice({
       state.id = action.payload.id
       state.user = action.payload.user
       state.date = action.payload.date
-      state.schedule = action.payload.schedule
-      state.unavailableSchedule = action.payload.schedule
+      state.schedules = action.payload.schedules
+      state.unavailableSchedule = action.payload.schedules
     }
   },
   extraReducers: {

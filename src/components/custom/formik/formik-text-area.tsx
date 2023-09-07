@@ -39,6 +39,13 @@ export const FormikTextArea: React.FC<Props> = ({
               name={name}
               placeholder={placeholder}
               isDisabled={isDisabled}
+              borderColor="gray.600"
+              borderWidth="1px"
+              bg="white"
+              focusBorderColor='primary.blue.pure'
+              _focus={{
+                borderWidth: '2px'
+              }}
             />
             {form.errors[name] && (
               <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>

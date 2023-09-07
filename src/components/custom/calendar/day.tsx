@@ -23,23 +23,17 @@ import { RootState } from '../../../store/store'
 import {
   Appointment,
   AppointmentSchedule,
+  ScheduleTimes,
 } from '../../../types/appointment/appointment'
 import { formatToHourMinutes, weekdaysNames } from '../../../utils/date'
 import { formatMonthNames } from '../../../utils/format'
 import { appointmentTypeColorPicker } from '../../appointment/appointment-colors'
+import { Error } from '@/types/http/exception'
 
 type Props = {
   date: Date
   duration: number
   onClose: () => void
-}
-
-type CalendarTimes = {
-  start: Date
-  end: Date
-  patientName: string
-  type: string
-  duration: number
 }
 
 export default function CalendarDay({ date, duration, onClose }: Props) {
@@ -55,7 +49,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
   const toast = useToast()
   const { isLargerThanMd } = useContext(MediaContext)
   const userSession = useSelector((state: RootState) => state.userSession)
-  const [calendarTimes, setCalendarTimes] = useState<CalendarTimes[]>([])
+  const [calendarTimes, setCalendarTimes] = useState<ScheduleTimes[]>([])
 
   const handleTimeSelect = useCallback(
     (date: Date, index: number) => {
@@ -78,7 +72,7 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
     onCloseTime()
   }
 
-  const fetchAppointment = async () => {
+  const createAppointment = async () => {
     try {
       setLoading(true)
       const data: Appointment = {
@@ -87,17 +81,20 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         at: dateTime,
         duration,
         appointmentType: query.type as string,
-        description: '',
+        description: query.description as string,
       }
       await appointmentService.create(data)
       await push('/appointment')
-    } catch (error) {
+    } catch (e) {
+      const error = e as Error
+      handleCancelSelect()
+      getAppointments()
       toast({
-        title: 'Erro',
-        description: 'Erro ao tentar cadastrar o agendamento :(',
+        title: 'Erro ao tentar cadastrar o agendamento',
+        description: error.message,
         status: 'error',
         position: 'top-right',
-        duration: 5000,
+        duration: 2000,
         isClosable: true,
       })
     } finally {
@@ -129,28 +126,28 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
     } finally {
       setLoading(false)
     }
-  }, [date])
+  }, [date, toast])
 
   const getAvailableTimesInterval = (appointment?: AppointmentSchedule) => {
-    const times: CalendarTimes[] = []
+    const times: ScheduleTimes[] = []
     const startOfDay = 7
     const endOfDay = 22
 
     for (let i = startOfDay; i < endOfDay; i++) {
       const oClockTimes = new Date(year, month, day, i)
       const halfMinutesTimes = new Date(year, month, day, i, 30)
-      
-      const oClockFinded = appointment?.schedule.find(value => {
+
+      const oClockFinded = appointment?.schedules.find((value) => {
         return (
           oClockTimes.getTime() >= new Date(value.start).getTime() &&
           oClockTimes.getTime() < new Date(value.end).getTime()
         )
       })
 
-      const halfTimesFinded = appointment?.schedule.find(value => {
+      const halfTimesFinded = appointment?.schedules.find((value) => {
         return (
           halfMinutesTimes.getTime() >= new Date(value.start).getTime() &&
-            halfMinutesTimes.getTime() < new Date(value.end).getTime()
+          halfMinutesTimes.getTime() < new Date(value.end).getTime()
         )
       })
 
@@ -158,8 +155,8 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         times.push({
           start: oClockTimes,
           end: oClockTimes,
-          patientName: '',
-          type: '',
+          appointmentType: '',
+          description: '',
           duration: 0,
         })
       }
@@ -168,23 +165,24 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         times.push({
           start: halfMinutesTimes,
           end: halfMinutesTimes,
-          patientName: '',
-          type: '',
+          appointmentType: '',
+          description: '',
           duration: 0,
         })
       }
     }
 
-    appointment?.schedule.forEach((value) => {
+    appointment?.schedules.forEach((value) => {
       times.push({
+        id: value.id,
         start: new Date(value.start),
         end: new Date(value.end),
-        patientName: value.patient.name,
-        type: value.appointmentType,
+        appointmentType: value.appointmentType,
+        description: value.description,
         duration: value.duration,
+        patient: value.patient,
       })
     })
-
 
     times.sort((a, b) => a.start.getTime() - b.start.getTime())
 
@@ -261,38 +259,43 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
         </Text>
         <Text fontSize="sm">Duração: {duration} min</Text>
         <Stack w="full">
-          {calendarTimes?.map((time, index) => (
-            <Fragment key={time.start.toLocaleString()}>
+          {calendarTimes?.map((schedule, index) => (
+            <Fragment key={schedule.start.toLocaleString()}>
               {indexSelected !== index && (
                 <Button
                   h="50px"
-                  disabled={time.patientName ? true : false}
-                  onClick={() => handleTimeSelect(time.start, index)}
+                  disabled={schedule.patient ? true : false}
+                  onClick={() => handleTimeSelect(schedule.start, index)}
                   variant="outline"
                   borderColor="primary.blue.pure"
-                  textColor={time.type ? 'gray.800' : 'primary.blue.pure'}
+                  textColor={schedule.patient ? 'gray.800' : 'primary.blue.pure'}
                 >
                   <HStack w="full" justifyContent="space-between">
                     <VStack>
-                      {time.patientName ? (
+                      {schedule.patient ? (
                         <Text>{`${formatToHourMinutes(
-                          time.start
-                        )} - ${formatToHourMinutes(time.end)}`}</Text>
+                          schedule.start
+                        )} - ${formatToHourMinutes(schedule.end)}`}</Text>
                       ) : (
-                        <Text>{formatToHourMinutes(time.start)}</Text>
+                        <Text>{formatToHourMinutes(schedule.start)}</Text>
                       )}
                     </VStack>
-                    {time.patientName && <Text>{time.patientName}</Text>}
-                    {time.type && (
+                    {schedule.patient && <Text>{schedule.patient.name}</Text>}
+                    {schedule.patient?.paymentType && (
                       <HStack>
-                      <Box w="18px" h="18px" borderRadius="50%" bg={query.color} />
-                      <Text>
-                        {
-                          appointmentTypeColorPicker.find(
-                            (value) => value.type === time.type
-                          )?.name
-                        }
-                      </Text>
+                        <Box
+                          w="18px"
+                          h="18px"
+                          borderRadius="50%"
+                          bg={query.color}
+                        />
+                        <Text>
+                          {
+                            appointmentTypeColorPicker.find(
+                              (value) => value.type === schedule.appointmentType
+                            )?.name
+                          }
+                        </Text>
                       </HStack>
                     )}
                   </HStack>
@@ -308,10 +311,10 @@ export default function CalendarDay({ date, duration, onClose }: Props) {
                       color="white"
                       onClick={handleCancelSelect}
                     >
-                      {formatToHourMinutes(time.start)}
+                      {formatToHourMinutes(schedule.start)}
                     </Button>
                     <Button
-                      onClick={fetchAppointment}
+                      onClick={createAppointment}
                       w="48%"
                       h="50px"
                       bg="primary.blue.pure"

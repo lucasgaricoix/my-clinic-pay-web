@@ -3,3 +3,11 @@ export interface Exception {
   message: string
   meta?: Record<string, string>
 }
+
+export interface Error {
+  status: number
+  error: string
+  trace: string
+  message: string
+  path: string
+}

@@ -26,6 +26,22 @@ export function formatToHourMinutes(date: Date) {
     .padStart(2, '0')}`
 }
 
+export function getDateString(date: Date) {
+  const month = ptBRMonths[date.getMonth()]
+  return `${date
+    .getDate()
+    .toString()
+    .padStart(2, '0')} ${month} ${date.getFullYear()}`
+}
+
+export function formatDateWithWeekDate(date: Date) {
+  const month = ptBRMonths[date.getMonth()]
+  const weekDay = weekdaysNames[date.getDay()]
+  return `
+  ${weekDay}, 
+  ${date.getDate().toString().padStart(2, '0')} ${month} ${date.getFullYear()}`
+}
+
 export const weekdaysNames = [
   'Domingo',
   'Segunda-feira',
@@ -34,6 +50,31 @@ export const weekdaysNames = [
   'Quinta-feira',
   'Sexta-feira',
   'Sábado',
+]
+
+export const ptBRMonths = [
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
+]
+
+export const simpleWeekdaysShortNames = [
+  'Seg',
+  'Ter',
+  'Qua',
+  'Qui',
+  'Sex',
+  'Sáb',
+  'Dom',
 ]
 
 export const weekdaysShortNames = [
@@ -74,3 +115,40 @@ export const weekdaysShortNamesDefault = [
   'thursday',
   'friday',
 ]
+
+export const isSameDate = (first: Date, second: Date) => {
+  return (
+    first.getFullYear() === second.getFullYear() &&
+    first.getMonth() === second.getMonth() &&
+    first.getDate() === second.getDate()
+  )
+}
+
+export const addDays = (date: Date, days: number) => {
+  const currentDate = new Date(date)
+
+  return new Date(currentDate.setDate(currentDate.getDate() + days))
+}
+
+export const addMonths = (date: Date, months: number) => {
+  date.setMonth(date.getMonth() + months)
+  return date
+}
+
+export const addHours = (date: Date, hours: number) => {
+  date.setHours(date.getHours() + hours)
+  return date
+}
+
+export const getMonday = () => {
+  const today = new Date()
+  const first = today.getDate() - today.getDay() + 1
+  return new Date(today.setDate(first))
+}
+
+export const getAge = (birthday: string) => {
+  const date = new Date(birthday)
+  var ageDifMs = Date.now() - date.getTime()
+  var ageDate = new Date(ageDifMs)
+  return Math.abs(ageDate.getUTCFullYear() - 1970)
+}

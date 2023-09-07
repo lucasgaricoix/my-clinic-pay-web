@@ -19,8 +19,8 @@ import { MediaContext } from '@/providers/media-provider'
 import { RootState } from '@/store/store'
 import { Credential } from '@/types/user/user'
 import { useLazyLoginQuery } from '@/services/auth/auth-rtk-api'
-import { useCookies } from 'react-cookie'
-
+import { setCookie } from 'cookies-next'
+import { addMonths } from '@/utils/date'
 const initialValues = {
   username: '',
   password: '',
@@ -32,8 +32,7 @@ const Login = () => {
   const state = useSelector((state: RootState) => state.userSession)
   const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
-  const [trigger, response] = useLazyLoginQuery()
-  const [cookies, setCookie] = useCookies(['refresh-token'])
+  const [trigger] = useLazyLoginQuery()
 
   useEffect(() => {
     if (state.token) {
@@ -41,28 +40,19 @@ const Login = () => {
     }
   })
 
-  const addMonths = (date: Date, months: number) => {
-    date.setMonth(date.getMonth(), months)
-    return date
-  }
-
   const onSubmit = useCallback(
     async (values: Credential) => {
       setIsLoading(true)
       const response = await trigger(values)
       if (response.isSuccess) {
-        const cookie = response.data.refreshToken.split(';')
-        setCookie('refresh-token', cookie[0].trim().substring(14), {
-          path: cookie[1].trim().substring(4),
-          maxAge: +cookie[2].trim().substring(9),
+        setCookie('refresh-token', response.data.refreshToken, {
+          path: '/',
           expires: addMonths(new Date(), 1),
-          sameSite: 'none',
         })
+
         setIsLoading(false)
         await replace('/')
       }
-
-      console.log(response.error)
 
       if (response.isError) {
         toast({
@@ -70,7 +60,7 @@ const Login = () => {
           description: 'Verifique se o usuário e senha estão corretos',
           status: 'error',
           position: 'top-right',
-          duration: 3000,
+          duration: 2000,
           isClosable: true,
           onCloseComplete: function () {
             setIsLoading(false)
@@ -78,7 +68,7 @@ const Login = () => {
         })
       }
     },
-    [replace, toast, trigger, setCookie]
+    [replace, toast, trigger]
   )
 
   if (state.token) {
@@ -121,9 +111,7 @@ const Login = () => {
         >
           <Heading mb={2}>
             Bem vindo de volta ao
-            <span>
-              <Text textColor="primary.blue.pure">MyClinic</Text>
-            </span>
+            <Text textColor="primary.blue.pure">MyClinic</Text>
           </Heading>
           <Text wordBreak="normal" textColor="gray.500">
             Entre novamente na sua conta e volte para o gerenciamento de suas

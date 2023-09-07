@@ -1,5 +1,6 @@
 import {
   Box,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -49,9 +50,11 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
               isRequired
               isInvalid={!!form.errors[name] || !!form.errors[name]}
             >
-              <FormLabel fontWeight="bold" htmlFor={name}>
-                {label}
-              </FormLabel>
+              <Flex>
+                <FormLabel fontWeight="bold" htmlFor={name}>
+                  {label}
+                </FormLabel>
+              </Flex>
               <Stack spacing={4}>
                 <InputGroup>
                   <Input
@@ -60,6 +63,12 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
                     focusBorderColor="primary.blue.pure"
                     id={name}
                     placeholder={placeholder}
+                    borderColor="gray.600"
+                    borderWidth="1px"
+                    bg="white"
+                    _focus={{
+                      borderWidth: '2px',
+                    }}
                     onChange={(event) => {
                       setItemLabel(event.target.value)
                       form.setFieldValue(name, event.target.value, true)
@@ -94,7 +103,6 @@ export const FormikCustomAutoCompleteDebounce: React.FC<Props> = ({
                             setIsVisible(!isVisible)
                           }}
                         >
-                          <TagLeftIcon w={5} h={5} as={IoAdd} />
                           <TagLabel>{item.label}</TagLabel>
                         </Tag>
                       </Box>

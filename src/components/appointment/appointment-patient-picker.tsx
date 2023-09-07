@@ -8,7 +8,6 @@ import {
   Text,
   Tooltip,
   useToast,
-  VStack,
 } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/router'
@@ -16,9 +15,10 @@ import { useCallback, useState } from 'react'
 import { ImCheckmark } from 'react-icons/im'
 import { PatientService } from '../../services/patient'
 import { Option, Patient } from '../../types/patient'
-import { FormikSelect } from '../custom/formik'
+import { FormikSelect, FormikTextArea } from '../custom/formik'
 import { FormikCustomAutoCompleteDebounce } from '../custom/formik/formik-auto-complete-debounce'
 import { appointmentTypeColorPicker } from './appointment-colors'
+import { appointmentStatus } from './appointment-status'
 
 const selectOptions = [
   { label: '30 min', value: '30' },
@@ -28,12 +28,12 @@ const selectOptions = [
 type AppointmentType = {
   name: string
   type: string
-  color: string
 }
 
 type AppointmentPatientPicker = {
   person: Patient
   duration: number
+  description: string
 }
 
 const initialValues: AppointmentPatientPicker = {
@@ -48,10 +48,12 @@ const initialValues: AppointmentPatientPicker = {
       id: '',
       type: '',
       description: '',
-      value: 0
-    }
+      value: 0,
+      color: '',
+    },
   },
   duration: 30,
+  description: '',
 }
 
 const initialAppointmentTypeValues = {
@@ -70,8 +72,8 @@ export default function AppointmentPatientPicker() {
   const toast = useToast()
   const { push } = useRouter()
 
-  const handleColorPicker = useCallback((name: string, type: string, color: string) => {
-    setAppointmentType({ name, type, color })
+  const handleSelect = useCallback((name: string, type: string) => {
+    setAppointmentType({ name, type })
   }, [])
 
   const searchPatientByName = useCallback(
@@ -110,21 +112,30 @@ export default function AppointmentPatientPicker() {
     actions: FormikHelpers<AppointmentPatientPicker>
   ) => {
     const patient = patients.find((patient) => patient.id === values.person.id)
-    push(
-      `/appointment/booking?type=${appointmentType.type}&appointmentName=${appointmentType.name}&color=${appointmentType.color}&patient=${patient?.name}&patientId=${patient?.id}&duration=${values.duration}`
-    )
+    push({
+      pathname: '/appointment/booking',
+      query: {
+        type: appointmentType.type,
+        appointmentName: appointmentType.name,
+        color: patient?.paymentType.color,
+        patient: patient?.name,
+        patientId: patient?.id,
+        duration: values.duration,
+        description: values.description,
+      },
+    })
     actions.resetForm()
   }
 
   return (
     <Stack
       direction="column"
-      w='full'
+      w="full"
       minH="100vh"
       bg="primary.gray.background"
       spacing={{
         base: 6,
-        md: 12
+        md: 12,
       }}
     >
       <Stack
@@ -142,12 +153,7 @@ export default function AppointmentPatientPicker() {
         {appointmentType && (
           <HStack>
             <Text fontSize="xs">{appointmentType.name}</Text>
-            <Box
-              w="18px"
-              h="18px"
-              borderRadius="50%"
-              bg={appointmentType.color}
-            />
+            <Box w="18px" h="18px" borderRadius="50%" />
           </HStack>
         )}
       </Stack>
@@ -159,7 +165,7 @@ export default function AppointmentPatientPicker() {
         }}
         h={{
           base: 'auto',
-          md: 'lg',
+          md: 'auto',
         }}
         borderColor="gray.300"
         borderWidth={1}
@@ -172,39 +178,18 @@ export default function AppointmentPatientPicker() {
           md: 16,
         }}
       >
-        <Text fontWeight="bold">Qual o tipo da agenda</Text>
         <Flex
           flexWrap="wrap"
           justifyContent="flex-start"
           alignItems="center"
           alignContent="space-between"
-        >
-          {appointmentTypeColorPicker.map((value) => (
-            <Flex mr={2} mb={2} key={value.name}>
-              <Tooltip hasArrow label={value.name}>
-                <Button
-                  onClick={() => handleColorPicker(value.name, value.type, value.color)}
-                  size="sm"
-                  w="32px"
-                  h="32px"
-                  borderRadius="50%"
-                  borderWidth={0}
-                  bgColor={value.color}
-                >
-                  {appointmentType?.name === value.name && (
-                    <Icon as={ImCheckmark} w="18px" h="18px" color="white" />
-                  )}
-                </Button>
-              </Tooltip>
-            </Flex>
-          ))}
-        </Flex>
+        ></Flex>
         <Formik<AppointmentPatientPicker>
           initialValues={initialValues}
           onSubmit={onSubmit}
         >
           {({}) => (
-            <Form autoComplete='off'>
+            <Form autoComplete="off">
               <FormikCustomAutoCompleteDebounce
                 name="person.id"
                 label="Paciente"
@@ -213,12 +198,26 @@ export default function AppointmentPatientPicker() {
                 search={searchPatientByName}
                 isLoading={loading}
               />
+              <Box pb={2}>
+              <FormikSelect
+                name="appointmentType"
+                label="Tipo da agenda"
+                options={appointmentStatus}
+              />
+              </Box>
               <FormikSelect
                 name="duration"
                 label="Duração"
                 options={selectOptions}
               />
-              <Flex py={8} w="full">
+              <Box pt={4}>
+                <FormikTextArea
+                  name="description"
+                  label="Descrição"
+                  placeholder="Observações do agendamento"
+                />
+              </Box>
+              <Flex direction="column" pt={8} w="full">
                 <Button
                   type="submit"
                   w="full"

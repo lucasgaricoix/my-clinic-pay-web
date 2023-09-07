@@ -27,6 +27,7 @@ const initialValues: Expense = {
     description: '',
     type: '',
     value: 0,
+    color: ''
   },
   description: '',
 }

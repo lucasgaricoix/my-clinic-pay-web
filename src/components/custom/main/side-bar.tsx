@@ -47,7 +47,7 @@ const menus: Menu[] = [
     description: 'Agendamento',
     icon: TbCalendarStats,
     href: '/appointment',
-    subLink: ['/appointment/booking'],
+    subLink: ['/appointment/booking', '/appointment/patient/pick'],
   },
   {
     description: 'Pagamentos',
@@ -93,7 +93,7 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
       direction="column"
       justifyContent="center"
       alignItems={['space-between', 'center']}
-      p={2}
+      pl={2}
       w={{ base: 'full', md: 'auto' }}
       h={{ base: 'auto', md: '100vh' }}
       position={{ base: 'relative', md: 'fixed' }}
@@ -102,7 +102,7 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
       zIndex={1}
       bgColor="#fff"
     >
-      {userSession.name && isLargerThanMd ? (
+      {userSession.name && isLargerThanMd && (
         <Button
           p={0}
           bgColor="transparent"
@@ -117,7 +117,8 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
         >
           <Avatar size="md" name={userSession.name} src={userSession.picture} />
         </Button>
-      ) : (
+      )}
+      {userSession.name && !isLargerThanMd && (
         <Flex
           w="full"
           alignSelf="start"

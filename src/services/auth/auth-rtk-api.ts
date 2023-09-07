@@ -34,6 +34,7 @@ export const useAuthApi = createApi({
         const tokenSubstring = token?.substring(7)
         const value = jwt.decode(tokenSubstring ?? '', { json: true })
         return {
+          id: value?.jti,
           token: token ?? '',
           refreshToken: refreshToken ?? '',
           name: value?.aud as string,
@@ -71,6 +72,7 @@ export const useAuthApi = createApi({
         const tokenSubstring = token?.substring(7)
         const value = jwt.decode(tokenSubstring ?? '', { json: true })
         return {
+          id: value?.jti,
           token: token ?? '',
           refreshToken: refreshToken ?? '',
           name: value?.aud as string,

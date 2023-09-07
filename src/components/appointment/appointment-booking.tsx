@@ -19,7 +19,7 @@ import { RootState } from '../../store/store'
 import useCalendar from '../custom/calendar'
 import CalendarDay from '../custom/calendar/day'
 
-export default function AppointmentComponent() {
+export default function AppointmentBookingComponent() {
   const { isLargerThanMd } = useContext(MediaContext)
 
   const { query } = useRouter()
@@ -27,7 +27,7 @@ export default function AppointmentComponent() {
   const userSession = useSelector((state: RootState) => state.userSession)
 
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const {Calendar, selectedDate} = useCalendar(onOpen)
+  const { Calendar, selectedDate } = useCalendar(onOpen)
 
   return (
     <Flex
@@ -96,16 +96,16 @@ export default function AppointmentComponent() {
             w="sm"
           >
             <Text fontWeight="bold">Selecione uma Data</Text>
-            <Calendar/>
+            <Calendar />
           </VStack>
           {isLargerThanMd && (
             <Flex w="full" height="auto">
-            <CalendarDay
-              date={selectedDate}
-              duration={+query.duration!}
-              onClose={onClose}
-            />
-          </Flex>
+              <CalendarDay
+                date={selectedDate}
+                duration={+query.duration!}
+                onClose={onClose}
+              />
+            </Flex>
           )}
         </Stack>
       )}

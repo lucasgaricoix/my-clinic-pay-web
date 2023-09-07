@@ -17,13 +17,16 @@ export const theme = extendTheme({
       },
       blue: {
         pure: '#0069ff',
-        
       },
     },
     secondary: {
       blue: {
         pure: '#0080ff',
-      }
-    }
+      },
+    },
+    blue: {
+      500: '#0069ff',
+      600: '#0069ff',
+    },
   },
 })

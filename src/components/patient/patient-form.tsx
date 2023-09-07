@@ -76,7 +76,7 @@ export const PatientFormComponent = () => {
           description: 'Se não conseguir encontrar, cadastre um novo :)',
           status: 'warning',
           position: 'top-right',
-          duration: 9000,
+          duration: 3000,
           isClosable: true,
         })
       } finally {
@@ -101,7 +101,7 @@ export const PatientFormComponent = () => {
           description: 'Não foi encontrado o paciente com o id informado :(',
           status: 'warning',
           position: 'top-right',
-          duration: 9000,
+          duration: 3000,
           isClosable: true,
         })
       } finally {
@@ -140,7 +140,7 @@ export const PatientFormComponent = () => {
         description: 'Dados salvos do paciente :)',
         status: 'success',
         position: 'top-right',
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
       })
       action.resetForm()
@@ -151,7 +151,7 @@ export const PatientFormComponent = () => {
         description: 'Não foi possível cadastrar o paciente :(',
         status: 'warning',
         position: 'top-right',
-        duration: 9000,
+        duration: 3000,
         isClosable: true,
       })
     } finally {
@@ -209,6 +209,7 @@ export const PatientFormComponent = () => {
                     placeholder="Clique para procurar o paciente"
                     items={paymentTypesOptions}
                     search={searchPaymentType}
+                    isLoading={loading}
                   />
                   <Button
                     type="submit"

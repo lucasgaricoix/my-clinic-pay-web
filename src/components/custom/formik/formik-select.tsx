@@ -43,6 +43,12 @@ export const FormikSelect: React.FC<Props> = ({
               onSelect={onSelect}
               id={name}
               isRequired={isRequired}
+              borderColor="gray.600"
+              borderWidth="1px"
+              bg="white"
+              _focus={{
+                borderWidth: '2px'
+              }}
             >
               {options.map((option) => (
                 <option key={option.value} value={option.value}>

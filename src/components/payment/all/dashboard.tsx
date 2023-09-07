@@ -1,18 +1,23 @@
 import { Box, Flex, Progress, Text, useToast } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { PaymentService } from '../../../services/payment'
 import { PaymentOverMonthType } from '../../../types/payment/payment'
 import { NivoLineChart } from '../../custom/charts/line/nivo-line-chart'
+import { MediaContext } from '@/providers/media-provider'
 
 export const PaymentDashboard = () => {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<PaymentOverMonthType[]>([])
+  const { isLargerThanMd } = useContext(MediaContext)
   const toast = useToast()
 
   const fetch = useCallback(async () => {
     try {
       setLoading(true)
       const response = await PaymentService.findAllOverMonth()
+      isLargerThanMd
+        ? setData(response.data)
+        : setData(response.data.splice(0, 2))
       setData(response.data)
     } catch {
       toast({
@@ -60,6 +65,7 @@ export const PaymentDashboard = () => {
           alignItems="center"
           direction="column"
           w={{ base: '350px', md: '500px' }}
+          // w={{ base: '350px', md: '500px' }}
           height="350px"
           bgColor="white"
           rounded="lg"

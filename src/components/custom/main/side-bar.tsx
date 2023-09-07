@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import NextLink from 'next/link'
-import { useCallback, useContext, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import { IconType } from 'react-icons'
 import { BiChevronDown } from 'react-icons/bi'
 import {
@@ -36,8 +36,9 @@ type Menu = {
   subLink?: string[]
 }
 type Props = {
-  isLargerThanMd?: boolean
+  isBase?: boolean
   isLargerThanSm?: boolean
+  isLargerThanMd?: boolean
   onClose: () => void
 }
 
@@ -75,10 +76,10 @@ const menus: Menu[] = [
   },
 ]
 
-export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
+export const SideBar: React.FC<Props> = ({ isLargerThanSm = false }) => {
   const { asPath, pathname, push, replace } = useRouter()
-  const iconSize = { base: 4, md: 5, lg: 5 }
-  const containerSize = { base: '38px', md: '50px', lg: '50px' }
+  const iconSize = { base: 4, sm: 5, lg: 5 }
+  const containerSize = { base: '38px', sm: '50px', lg: '50px' }
   const userSession = useSelector((state: RootState) => state.userSession)
   const initialFocusRef = useRef(null)
   const dispatch = useDispatch()
@@ -94,75 +95,79 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
       justifyContent="center"
       alignItems={['space-between', 'center']}
       pl={2}
-      w={{ base: 'full', md: 'auto' }}
-      h={{ base: 'auto', md: '100vh' }}
-      position={{ base: 'relative', md: 'fixed' }}
+      w={{ base: 'full', sm: 'auto' }}
+      h={{ base: 'auto', sm: '100vh' }}
+      position={{ base: 'relative', sm: 'fixed' }}
       borderRightColor="white"
-      borderRightWidth={{ base: '0px', md: '0.1rem', lg: '0.1rem' }}
+      borderRightWidth={{ base: '0px', sm: '0.1rem', lg: '0.1rem' }}
       zIndex={1}
       bgColor="#fff"
     >
-      {userSession.name && isLargerThanMd && (
-        <Button
-          p={0}
-          bgColor="transparent"
-          position="absolute"
-          top={4}
-          left={2}
-          _hover={{
-            backgroundColor: 'transparent',
-            blur: 'sm',
-          }}
-          onClick={() => push('/user')}
-        >
-          <Avatar size="md" name={userSession.name} src={userSession.picture} />
-        </Button>
-      )}
-      {userSession.name && !isLargerThanMd && (
-        <Flex
-          w="full"
-          alignSelf="start"
-          alignItems="center"
-          // bgColor="primary.blue.pure"
-          pb="3"
-          borderBottomRightRadius="xl"
-          borderBottomLeftRadius="xl"
-        >
-          <Popover
-            initialFocusRef={initialFocusRef}
-            placement="bottom"
-            closeOnBlur={false}
+      {userSession.name &&
+        (isLargerThanSm ? (
+          <Button
+            p={0}
+            bgColor="transparent"
+            position="absolute"
+            top={4}
+            left={2}
+            _hover={{
+              backgroundColor: 'transparent',
+              blur: 'sm',
+            }}
+            onClick={() => push('/user')}
           >
-            <PopoverTrigger>
-              <Button
-                bg="transparent"
-                _hover={{ bg: 'transparent' }}
-                rightIcon={<Icon as={BiChevronDown} />}
-                pl={2}
-              >
-                <Avatar
-                  showBorder
-                  alignSelf="center"
-                  justifySelf="center"
-                  size="sm"
-                  name={userSession.name}
-                  src={userSession.picture}
-                />
-              </Button>
-            </PopoverTrigger>
-            <AccountPopover logout={logout} />
-          </Popover>
-          <Text fontSize="sm">
-            Bem vindo de volta{' '}
-            <span style={{ fontWeight: 'bold' }}>{userSession.name}</span>
-          </Text>
-        </Flex>
-      )}
+            <Avatar
+              size="md"
+              name={userSession.name}
+              src={userSession.picture}
+            />
+          </Button>
+        ) : (
+          <Flex
+            w="full"
+            alignSelf="start"
+            alignItems="center"
+            // bgColor="primary.blue.pure"
+            pb="3"
+            borderBottomRightRadius="xl"
+            borderBottomLeftRadius="xl"
+          >
+            <Popover
+              initialFocusRef={initialFocusRef}
+              placement="bottom"
+              closeOnBlur={false}
+            >
+              <PopoverTrigger>
+                <Button
+                  bg="transparent"
+                  _hover={{ bg: 'transparent' }}
+                  rightIcon={<Icon as={BiChevronDown} />}
+                  pl={2}
+                >
+                  <Avatar
+                    showBorder
+                    alignSelf="center"
+                    justifySelf="center"
+                    size="sm"
+                    name={userSession.name}
+                    src={userSession.picture}
+                  />
+                </Button>
+              </PopoverTrigger>
+              <AccountPopover logout={logout} />
+            </Popover>
+            <Text fontSize="sm">
+              Bem vindo de volta{' '}
+              <span style={{ fontWeight: 'bold' }}>{userSession.name}</span>
+            </Text>
+          </Flex>
+        ))}
       <Grid
-        pt={{ base: 2, md: 0 }}
-        templateColumns={{ base: 'repeat(6, 1fr)', md: 'repeat(1, 1fr)' }}
-        h={{ base: 'auto', md: '250px' }}
-        gap={{ base: 4, md: 1 }}
+        py={{ base: 2, sm: 0 }}
+        templateColumns={{ base: 'repeat(6, 1fr)', sm: 'repeat(1, 1fr)' }}
+        h="auto"
+        gap={{ base: 4, sm: 1 }}
       >
         {menus.map((menu) => {
           const isActiveSubLink = menu.subLink?.includes(pathname)
@@ -200,7 +205,7 @@ export const SideBar: React.FC<Props> = ({ isLargerThanMd = false }) => {
           )
         })}
       </Grid>
-      {isLargerThanMd && userSession.token && (
+      {isLargerThanSm && userSession.token && (
         <Button
           position="absolute"
           bottom={4}

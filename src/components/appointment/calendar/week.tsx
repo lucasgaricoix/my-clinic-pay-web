@@ -106,7 +106,8 @@ export default function AppointmentCalendarComponent() {
       setIsLoading(true)
       const response = await appointmentService.findWeeklyAppointment(
         addDays(mondayDate, -1).toISOString(),
-        addDays(mondayDate, 7).toISOString()
+        addDays(mondayDate, 7).toISOString(),
+        userSession.tenantId!
       )
       if (response.data) {
         setAppointments(response.data)

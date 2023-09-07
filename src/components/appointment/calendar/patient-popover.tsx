@@ -87,7 +87,6 @@ export default function PatientPopover({
     }
   }
 
-
   return (
     <>
       <Popover placement="auto" isOpen={isOpenPopover} onClose={onClosePopover}>
@@ -150,8 +149,6 @@ export default function PatientPopover({
             </Flex>
           </PopoverHeader>
           <PopoverBody display="flex" flexDirection="column">
-            {/* <Text>{id}</Text>
-            <Text>{schedule.id}</Text> */}
             <ScheduleView start={start} end={end} schedule={schedule} />
           </PopoverBody>
         </PopoverContent>

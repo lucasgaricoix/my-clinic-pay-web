@@ -6,6 +6,7 @@ import {
 } from '@/types/appointment/appointment'
 import {
   addDays,
+  formatDateWithWeekDate,
   formatToHourMinutes,
   getAge,
   getDateString,
@@ -105,7 +106,7 @@ export default function AppointmentCalendarDay() {
       setIsLoading(false)
       getAppointments()
     }
-  }, [onClose, toast, getAppointments, appointmentId])
+  }, [appointmentId, scheduleId, toast, onClose, getAppointments])
 
   function handleRemoveSchedule(scheduleId: string) {
     setScheduleId(scheduleId)
@@ -156,6 +157,8 @@ export default function AppointmentCalendarDay() {
       }
     }
 
+    console.log(appointment)
+
     appointment?.schedules.forEach((value) => {
       times.push({
         id: value.id,
@@ -189,7 +192,7 @@ export default function AppointmentCalendarDay() {
           onClick={() => setDate(addDays(date, -1))}
         />
         <Text fontSize="sm" fontWeight="bold" color="gray.600">
-          {getDateString(date)}
+          {formatDateWithWeekDate(date)}
         </Text>
         <IconButton
           size="sm"

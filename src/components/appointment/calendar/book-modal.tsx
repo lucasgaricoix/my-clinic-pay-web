@@ -23,7 +23,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import { Form, Formik } from 'formik'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { appointmentStatus } from '../appointment-status'
 import appointmentService from '@/services/appointment/appointment.service'
 import { useRouter } from 'next/router'
@@ -51,7 +51,6 @@ export default function BookModal({
   const [isLoading, setLoading] = useState(false)
   const [patientsOptions, setPatientsOptions] = useState<Option[]>([])
   const toast = useToast()
-  const { replace } = useRouter()
 
   const initialValues: Appointment = {
     appointmentType: 'schedule',
@@ -121,6 +120,10 @@ export default function BookModal({
     },
     [toast]
   )
+
+  useEffect(() => {
+    return () => setPatientsOptions([])
+  }, [])
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
